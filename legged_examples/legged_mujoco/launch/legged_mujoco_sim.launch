@@ -1,6 +1,6 @@
 <launch>
 
-    <param name="legged_robot_description" textfile="$(find legged_hunter_description)/urdf/hunter.urdf"/>
+    <param name="legged_robot_description" textfile="$(find gr1t1_description)/urdf/GR1T1.urdf"/>
 
     <rosparam file="$(find legged_mujoco)/config/hunter.yaml" command="load"/>
 

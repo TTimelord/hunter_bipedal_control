@@ -5,18 +5,20 @@
     <arg name="rviz"               default="true" />
     <arg name="description_name"   default="legged_robot_description"/>
     <arg name="multiplot"          default="false"/>
-    <arg name="robot_type"         default="hunter" doc="Robot type: [hunter]"/>
+    <arg name="robot_type"         default="GR1T1" doc="Robot type: [hunter]"/>
 
     <!-- The task file for the mpc. -->
     <arg name="taskFile"          default="$(find legged_controllers)/config/$(arg robot_type)/task.info"/>
     <!-- The reference related config file of the robot -->
     <arg name="referenceFile"     default="$(find legged_controllers)/config/$(arg robot_type)/reference.info"/>
     <!-- The URDF model of the robot -->
-    <arg name="urdfFile"          default="$(find legged_hunter_description)/urdf/hunter.urdf"/>
+    <!-- <arg name="urdfFile"          default="$(find legged_hunter_description)/urdf/hunter.urdf"/> -->
+    <arg name="urdfFile"          default="$(find gr1t1_description)/urdf/GR1T1.urdf"/>
+
     <!-- The file defining gait definition -->
     <arg name="gaitCommandFile"   default="$(find legged_controllers)/config/$(arg robot_type)/gait.info"/>
 
-    <include file="$(find legged_controllers)/launch/joy_teleop.launch"/>
+    <!-- <include file="$(find legged_controllers)/launch/joy_teleop.launch"/> -->
 
     <!-- rviz -->
     <group if="$(arg rviz)">
@@ -41,12 +43,12 @@
           output="screen" launch-prefix=""/>
 
     <node pkg="legged_interface" type="legged_robot_dummy" name="legged_robot_dummy"
-          output="screen" launch-prefix=""/>
+          output="screen" launch-prefix="gnome-terminal --"/>
 
     <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target"
-          output="screen"/>
+          output="screen" launch-prefix="gnome-terminal --"/>
 
-    <!-- <node pkg="ocs2_legged_robot_ros" type="legged_robot_gait_command" name="legged_robot_gait_command"
-          output="screen" launch-prefix="gnome-terminal "/> -->
+    <node pkg="ocs2_legged_robot_ros" type="legged_robot_gait_command" name="legged_robot_gait_command"
+          output="screen" launch-prefix="gnome-terminal --"/>
 
 </launch>
