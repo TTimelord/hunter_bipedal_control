@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot
   name="GR1T1">
-  <link name="dummy_link">
-  </link>
+  <!-- <link name="dummy_link">
+  </link> -->
   <link
-    name="base">
+    name="base_link">
     <inertial>
       <origin
         xyz="-0.0508888422032162 0.000109183466089114 -0.0455794100581443"
@@ -49,11 +49,33 @@
       </geometry> -->
     </collision>
   </link>
-  <joint name="dummy_link_to_base" type="fixed">
+  <!-- <joint name="dummy_link_to_base_link" type="fixed">
       <parent link="dummy_link"/>
-      <child link="base"/>
+      <child link="base_link"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint> -->
+
+  <!-- Imu link -->
+  <link name="imu_link">
+    <!-- <inertial>
+      <mass value="0.01"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.015 0.015 0.004"/>
+      </geometry>
+    </visual> -->
+  </link>
+  <!-- Imu is fixed to the base link -->
+  <joint name="imu_joint" type="fixed">
+    <origin rpy="0. 0. 0." xyz="0. 0. 0"/>
+    <parent link="base_link"/>
+    <child link="imu_link"/>
   </joint>
+
   <link
     name="l_thigh_roll">
     <inertial>
@@ -101,7 +123,7 @@
       xyz="-0.047999 0.105 -0.057493"
       rpy="0 0 0" />
     <parent
-      link="base" />
+      link="base_link" />
     <child
       link="l_thigh_roll" />
     <axis
@@ -505,7 +527,7 @@
       xyz="-0.047999 -0.105 -0.057508"
       rpy="0 0 0" />
     <parent
-      link="base" />
+      link="base_link" />
     <child
       link="r_thigh_roll" />
     <axis
@@ -914,7 +936,7 @@
       xyz="0 0 0.0065"
       rpy="0 0 0" />
     <parent
-      link="base" />
+      link="base_link" />
     <child
       link="waist_yaw" />
     <axis
