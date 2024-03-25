@@ -6,8 +6,8 @@ struct low_state_t
     double gyroscope[3];
     double accelerometer[3];
 
-    double joint_pos[10];
-    double joint_vel[10];
-    double joint_torque[10];
+    double joint_pos[12];
+    double joint_vel[12];
+    double joint_torque[12];
 
 }

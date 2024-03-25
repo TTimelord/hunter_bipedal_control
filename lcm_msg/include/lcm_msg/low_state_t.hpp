@@ -22,11 +22,11 @@ class low_state_t
 
         double     accelerometer[3];
 
-        double     joint_pos[10];
+        double     joint_pos[12];
 
-        double     joint_vel[10];
+        double     joint_vel[12];
 
-        double     joint_torque[10];
+        double     joint_torque[12];
 
     public:
         /**
@@ -136,13 +136,13 @@ int low_state_t::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->accelerometer[0], 3);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -164,13 +164,13 @@ int low_state_t::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->accelerometer[0], 3);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -183,15 +183,15 @@ int low_state_t::_getEncodedSizeNoHash() const
     enc_size += __double_encoded_array_size(NULL, 4);
     enc_size += __double_encoded_array_size(NULL, 3);
     enc_size += __double_encoded_array_size(NULL, 3);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
     return enc_size;
 }
 
 uint64_t low_state_t::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xf8f17f4dc739f9ffLL;
+    uint64_t hash = 0x38f17f4dc73a0a02LL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

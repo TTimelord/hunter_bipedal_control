@@ -216,7 +216,7 @@ void InitRobotState(mjData* d)
   // init qpos
   d->qpos[0] = 0;
   d->qpos[1] = 0;
-  d->qpos[2] = 0.63;
+  d->qpos[2] = 0.88;
 
   d->qpos[3] = 1;
   d->qpos[4] = 0;
@@ -224,25 +224,27 @@ void InitRobotState(mjData* d)
   d->qpos[6] = 0;
 
   // left leg
-  d->qpos[7] = 0.10;
-  d->qpos[8] = 0.00;
-  d->qpos[9] = 0.40;
-  d->qpos[10] = 0.93;
-  d->qpos[11] = 0.53;
+  d->qpos[7] = 0;
+  d->qpos[8] = 0;
+  d->qpos[9] = -0.41;
+  d->qpos[10] = 1;
+  d->qpos[11] = -0.59;
+  d->qpos[12] = 0;
 
   // right leg
-  d->qpos[12] = -0.10;
-  d->qpos[13] = 0.00;
-  d->qpos[14] = -0.40;
-  d->qpos[15] = 0.93;
-  d->qpos[16] = -0.53;
+  d->qpos[13] = 0;
+  d->qpos[14] = 0;
+  d->qpos[15] = -0.41;
+  d->qpos[16] = 1;
+  d->qpos[17] = -0.59;
+  d->qpos[18] = 0;
   
 }
 
 
 void mycontroller(const mjModel* m, mjData* d)
 {
-  // 10 
+  // 12 
   for (size_t i = 0; i < m->nu; i++)
     d->ctrl[i] = recvCmd.ff_tau[i]+ recvCmd.kp[i]*(recvCmd.joint_pos[i] - d->qpos[7+i]) + recvCmd.kd[i]*(recvCmd.joint_vel[i] - d->qvel[6+i]) ;
 

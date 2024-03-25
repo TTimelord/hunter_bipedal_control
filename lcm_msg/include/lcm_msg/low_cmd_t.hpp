@@ -16,17 +16,17 @@ class low_cmd_t
     public:
         int64_t    timestamp;
 
-        double     joint_pos[10];
+        double     joint_pos[12];
 
-        double     joint_vel[10];
+        double     joint_vel[12];
 
-        double     joint_torque[10];
+        double     joint_torque[12];
 
-        double     ff_tau[10];
+        double     ff_tau[12];
 
-        double     kp[10];
+        double     kp[12];
 
-        double     kd[10];
+        double     kd[12];
 
     public:
         /**
@@ -127,22 +127,22 @@ int low_cmd_t::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->ff_tau[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->ff_tau[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->kp[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->kp[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->kd[0], 10);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->kd[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -155,22 +155,22 @@ int low_cmd_t::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_pos[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_vel[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->joint_torque[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->ff_tau[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->ff_tau[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->kp[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->kp[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->kd[0], 10);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->kd[0], 12);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -180,18 +180,18 @@ int low_cmd_t::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
-    enc_size += __double_encoded_array_size(NULL, 10);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
+    enc_size += __double_encoded_array_size(NULL, 12);
     return enc_size;
 }
 
 uint64_t low_cmd_t::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xb9791de1704a084cLL;
+    uint64_t hash = 0x268d0e7269d76457LL;
     return (hash<<1) + ((hash>>63)&1);
 }
 
