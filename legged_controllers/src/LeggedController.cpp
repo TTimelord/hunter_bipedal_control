@@ -213,10 +213,14 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       {
         hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 0);
       }
-      else
+      else if(j==0 || j==1 || j==2 || j==6 || j==7 || j==8)
       {
         hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position,
                                           0);
+      }
+      else // knee
+      {
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position, 0);
       }
     }
     else
@@ -241,6 +245,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
                                           cmdContactFlag[int(j / 6)] ? kp_big_stance : kp_big_swing, kd_big,
                                           wbc_planned_torque(j));
       }
+      // ROS_INFO("wbc torque %i: %f", wbc_planned_torque(j));
     }
     if (emergencyStopFlag_)
     {

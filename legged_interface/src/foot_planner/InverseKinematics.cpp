@@ -54,9 +54,9 @@ vector6_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vect
   vector6_t leg_q_max = model.upperPositionLimit.segment<6>(6 + index);
 
   Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_i;
-  Eigen::Matrix<scalar_t, 6, JOINT_NUM> Jac;
+  Eigen::Matrix<scalar_t, 6, Eigen::Dynamic> Jac;
   Jac.setZero(6, model.nv);
-  vector6_t v(model.nv);
+  vector_t v(model.nv);
   v.setZero();
 
   pinocchio::framesForwardKinematics(model, data, init_q);
@@ -155,9 +155,9 @@ vector6_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3
 
   Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_i;
   Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_linear_i;
-  Eigen::Matrix<scalar_t, 6, JOINT_NUM> Jac;
+  Eigen::Matrix<scalar_t, 6, Eigen::Dynamic> Jac;
   Jac.setZero(6, model.nv);
-  vector6_t v(model.nv);
+  vector_t v(model.nv);
   v.setZero();
 
   pinocchio::framesForwardKinematics(model, data, init_q);

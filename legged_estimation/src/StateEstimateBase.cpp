@@ -20,6 +20,8 @@ at www.bridgedp.com.
 #include <pinocchio/algorithm/crba.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 
+#define JOINT_NUM 6
+
 namespace legged
 {
 using namespace legged_robot;
@@ -176,7 +178,7 @@ void StateEstimateBase::estContactForce(const ros::Duration& period)
   estDisturbancetorque_ = beta * p - pSCg_z_inv;
 
   auto Jac_i = matrix_t(6, info_.generalizedCoordinatesNum);
-  auto S_li = matrix_t(5, info_.generalizedCoordinatesNum);
+  auto S_li = matrix_t(JOINT_NUM, info_.generalizedCoordinatesNum);
   for (size_t i = 0; i < 2; ++i)
   {
     Eigen::Matrix<scalar_t, 6, Eigen::Dynamic> jac;
@@ -188,10 +190,10 @@ void StateEstimateBase::estContactForce(const ros::Duration& period)
     if (i == 0)
       index = 0;
     else if (i == 1)
-      index = 5;
-    S_li.block<5, 5>(0, 6 + index) = Eigen::Matrix<scalar_t, 5, 5>::Identity();
-    matrix56_t S_JT = S_li * Jac_i.transpose();
-    vector5_t S_tau = S_li * estDisturbancetorque_;
+      index = JOINT_NUM;
+    S_li.block<JOINT_NUM, JOINT_NUM>(0, 6 + index) = Eigen::Matrix<scalar_t, JOINT_NUM, JOINT_NUM>::Identity();
+    Eigen::Matrix<scalar_t, JOINT_NUM, JOINT_NUM> S_JT = S_li * Jac_i.transpose();
+    vector6_t S_tau = S_li * estDisturbancetorque_;
     estContactforce_.segment<6>(6 * i) = S_JT.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(S_tau);
   }
 

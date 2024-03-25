@@ -14,7 +14,7 @@ model_settings
 
   verboseCppAd                  false
   recompileLibrariesCppAd       false
-  modelFolderCppAd              /tmp/bridge/legged_control/hunter
+  modelFolderCppAd              /tmp/gr1t1
 }
 
 
@@ -164,7 +164,7 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.88    ; p_base_z
+   (8,0)  0.87    ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
@@ -211,11 +211,13 @@ Q
   (14,14)  10.0     ; leg_l3_joint
   (15,15)  10.0     ; leg_l4_joint
   (16,16)  10.0     ; leg_l5_joint
-  (17,17)  10.0     ; leg_r1_joint
-  (18,18)  10.0     ; leg_r2_joint
-  (19,19)  10.0     ; leg_r3_joint
-  (20,20)  10.0     ; leg_r4_joint
-  (21,21)  10.0     ; leg_r5_joint
+  (17,17)  10.0     ; leg_l6_joint
+  (18,18)  10.0     ; 
+  (19,19)  10.0     ; 
+  (20,20)  10.0     ; 
+  (21,21)  10.0     ; 
+  (22,22)  10.0     ; 
+  (23,23)  10.0     ; 
 }
 
 ; control weight matrix
