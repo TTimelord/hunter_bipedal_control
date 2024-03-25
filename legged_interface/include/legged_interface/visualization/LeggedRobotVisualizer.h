@@ -66,8 +66,8 @@ public:
   scalar_t copMarkerDiameter_ = 0.03;         // Size of the sphere at the center of pressure
   scalar_t supportPolygonLineWidth_ = 0.005;  // LineThickness for the support polygon
   scalar_t trajectoryLineWidth_ = 0.01;       // LineThickness for trajectories
-  std::vector<Color> feetColorMap_ = { Color::blue, Color::orange, Color::yellow,
-                                       Color::purple };  // Colors for markers per feet
+  std::vector<Color> feetColorMap_ = { Color::blue, Color::blue, Color::orange,
+                                       Color::orange };  // Colors for markers per feet
 
   /**
    *

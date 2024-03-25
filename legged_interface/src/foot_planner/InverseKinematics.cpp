@@ -13,27 +13,29 @@ at www.bridgedp.com.
 #include "legged_interface/foot_planner/InverseKinematics.h"
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
 
+#define JOINT_NUM 6 // joint number per leg
+
 namespace ocs2
 {
 namespace legged_robot
 {
-vector5_t InverseKinematics::computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz,
+vector6_t InverseKinematics::computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz,
                                        vector3_t des_foot_eular_zyx)
 {
   const int index = leg2index(leg);
-  init_q.segment<5>(6 + index) = computeTranslationIK(init_q, leg, des_foot_linear_xyz);
+  init_q.segment<JOINT_NUM>(6 + index) = computeTranslationIK(init_q, leg, des_foot_linear_xyz);
   return computeRotationIK(init_q, leg, des_foot_eular_zyx);
 }
 
-vector5_t InverseKinematics::computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz,
+vector6_t InverseKinematics::computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz,
                                        matrix3_t des_foot_R_des)
 {
   const int index = leg2index(leg);
-  init_q.segment<5>(6 + index) = computeTranslationIK(init_q, leg, des_foot_linear_xyz);
+  init_q.segment<JOINT_NUM>(6 + index) = computeTranslationIK(init_q, leg, des_foot_linear_xyz);
   return computeRotationIK(init_q, leg, des_foot_R_des);
 }
 
-vector5_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz)
+vector6_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz)
 {
   const scalar_t err_tol = 0.01;
   const scalar_t converage_tol = 0.001;
@@ -48,13 +50,13 @@ vector5_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vect
   auto FRAME_ID = info_->endEffectorFrameIndices[leg];
   int index = leg2index(leg);
 
-  vector5_t leg_q_min = model.lowerPositionLimit.segment<5>(6 + index);
-  vector5_t leg_q_max = model.upperPositionLimit.segment<5>(6 + index);
+  vector6_t leg_q_min = model.lowerPositionLimit.segment<6>(6 + index);
+  vector6_t leg_q_max = model.upperPositionLimit.segment<6>(6 + index);
 
-  matrix35_t Jac_i;
-  Eigen::Matrix<scalar_t, 6, Eigen::Dynamic> Jac;
+  Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_i;
+  Eigen::Matrix<scalar_t, 6, JOINT_NUM> Jac;
   Jac.setZero(6, model.nv);
-  vector_t v(model.nv);
+  vector6_t v(model.nv);
   v.setZero();
 
   pinocchio::framesForwardKinematics(model, data, init_q);
@@ -74,13 +76,13 @@ vector5_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vect
     while (true)
     {
       pinocchio::computeFrameJacobian(model, data, init_q, FRAME_ID, pinocchio::LOCAL_WORLD_ALIGNED, Jac);
-      Jac_i = Jac.block<3, 5>(0, 6 + index);
+      Jac_i = Jac.block<3, JOINT_NUM>(0, 6 + index);
       qr_.compute(Jac_i);
-      vector5_t v_i = -qr_.solve(err);
-      v.segment<5>(6 + index) = v_i;
+      vector6_t v_i = -qr_.solve(err);
+      v.segment<JOINT_NUM>(6 + index) = v_i;
       vector_t new_q = pinocchio::integrate(model, init_q, v * dt);
 
-      for (int i = 0; i < 5; i++)
+      for (int i = 0; i < JOINT_NUM; i++)
       {
         new_q[6 + index + i] = std::max(leg_q_min[i], new_q[6 + index + i]);
         new_q[6 + index + i] = std::min(leg_q_max[i], new_q[6 + index + i]);
@@ -123,16 +125,16 @@ vector5_t InverseKinematics::computeTranslationIK(vector_t init_q, int leg, vect
     }
   }
 
-  return std::move(init_q.segment<5>(6 + index));
+  return std::move(init_q.segment<JOINT_NUM>(6 + index));
 }
 
-vector5_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, vector3_t des_foot_eular_zyx)
+vector6_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, vector3_t des_foot_eular_zyx)
 {
   matrix3_t R_des = getRotationMatrixFromZyxEulerAngles(des_foot_eular_zyx);
   return computeRotationIK(init_q, leg, R_des);
 }
 
-vector5_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3_t des_foot_R_des)
+vector6_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3_t des_foot_R_des)
 {
   const scalar_t err_tol = 0.01;
   const scalar_t converage_tol = 0.001;
@@ -148,14 +150,14 @@ vector5_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3
 
   int index = leg2index(leg);
 
-  vector5_t leg_q_min = model.lowerPositionLimit.segment<5>(6 + index);
-  vector5_t leg_q_max = model.upperPositionLimit.segment<5>(6 + index);
+  vector6_t leg_q_min = model.lowerPositionLimit.segment<JOINT_NUM>(6 + index);
+  vector6_t leg_q_max = model.upperPositionLimit.segment<JOINT_NUM>(6 + index);
 
-  matrix35_t Jac_i;
-  matrix35_t Jac_linear_i;
-  Eigen::Matrix<scalar_t, 6, Eigen::Dynamic> Jac;
+  Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_i;
+  Eigen::Matrix<scalar_t, 3, JOINT_NUM> Jac_linear_i;
+  Eigen::Matrix<scalar_t, 6, JOINT_NUM> Jac;
   Jac.setZero(6, model.nv);
-  vector_t v(model.nv);
+  vector6_t v(model.nv);
   v.setZero();
 
   pinocchio::framesForwardKinematics(model, data, init_q);
@@ -175,17 +177,17 @@ vector5_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3
     while (true)
     {
       pinocchio::computeFrameJacobian(model, data, init_q, FRAME_ID, pinocchio::LOCAL, Jac);
-      Jac_i = Jac.block<3, 5>(3, 6 + index);
-      Jac_linear_i = Jac.block<3, 5>(0, 6 + index);
+      Jac_i = Jac.block<3, JOINT_NUM>(3, 6 + index);
+      Jac_linear_i = Jac.block<3, JOINT_NUM>(0, 6 + index);
       matrix_t null_space = Jac_linear_i.fullPivLu().kernel();
 
       qr_.compute(Jac_i * null_space);
       vector_t v_i_n = qr_.solve(err);
-      vector5_t v_i = -null_space * v_i_n;
-      v.segment<5>(6 + index) = v_i;
+      vector6_t v_i = -null_space * v_i_n;
+      v.segment<JOINT_NUM>(6 + index) = v_i;
       vector_t new_q = pinocchio::integrate(model, init_q, v * dt);
 
-      for (int i = 0; i < 5; i++)
+      for (int i = 0; i < JOINT_NUM; i++)
       {
         new_q[6 + index + i] = std::max(leg_q_min[i], new_q[6 + index + i]);
         new_q[6 + index + i] = std::min(leg_q_max[i], new_q[6 + index + i]);
@@ -227,12 +229,12 @@ vector5_t InverseKinematics::computeRotationIK(vector_t init_q, int leg, matrix3
       }
     }
   }
-  return std::move(init_q.segment<5>(6 + index));
+  return std::move(init_q.segment<JOINT_NUM>(6 + index));
 }
 
-vector5_t InverseKinematics::computeDIK(vector_t q, int leg, vector3_t foot_linear_vel, vector3_t foot_angular_vel)
+vector6_t InverseKinematics::computeDIK(vector_t q, int leg, vector3_t foot_linear_vel, vector3_t foot_angular_vel)
 {
-  vector5_t joint_vel;
+  vector6_t joint_vel;
   const auto& model = pinocchio_interface_->getModel();
   auto& data = pinocchio_interface_->getData();
   auto FRAME_ID = info_->endEffectorFrameIndices[leg];
@@ -240,9 +242,9 @@ vector5_t InverseKinematics::computeDIK(vector_t q, int leg, vector3_t foot_line
   Jac.setZero(6, model.nv);
   pinocchio::framesForwardKinematics(model, data, q);
   pinocchio::computeFrameJacobian(model, data, q, FRAME_ID, pinocchio::LOCAL_WORLD_ALIGNED, Jac);
-  matrix65_t Jac_i;
+  Eigen::Matrix<scalar_t, 6, JOINT_NUM> Jac_i;
   const int index = leg2index(leg);
-  Jac_i = Jac.block<6, 5>(0, 6 + index);
+  Jac_i = Jac.block<6, JOINT_NUM>(0, 6 + index);
   qr_.compute(Jac_i);
   vector6_t foot_vel;
   foot_vel << foot_linear_vel, foot_angular_vel;

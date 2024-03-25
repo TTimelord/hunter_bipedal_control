@@ -121,10 +121,10 @@ private:
   std::atomic_bool firstStartMpc_{ false };
 
   // Initializing based on the number of joints
-  vector_t posDes_ = vector_t::Zero(10);
-  vector_t velDes_ = vector_t::Zero(10);
-  vector_t posDesOutput_ = vector_t::Zero(10);
-  vector_t velDesOutput_ = vector_t::Zero(10);
+  vector_t posDes_ = vector_t::Zero(12);
+  vector_t velDes_ = vector_t::Zero(12);
+  vector_t posDesOutput_ = vector_t::Zero(12);
+  vector_t velDesOutput_ = vector_t::Zero(12);
 
   size_t stateDim_{ 0 };
   size_t inputDim_{ 0 };

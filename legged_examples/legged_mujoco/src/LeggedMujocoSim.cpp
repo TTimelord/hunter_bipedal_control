@@ -1,7 +1,8 @@
 
 
 #include "legged_mujoco/LeggedMujocoSim.h"
-
+#define TOTAL_JOINT_NUM 12
+#define JOINT_NUM 6 // number of joints per leg
 
 namespace legged {
 
@@ -28,7 +29,7 @@ bool MujocoSIM::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
 void MujocoSIM::read(const ros::Time& time, const ros::Duration& /*period*/) {
   mujocoLcm_->GetRecv(lowState_);
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     jointData_[i].pos_ = lowState_.joint_pos[i];
     jointData_[i].vel_ = lowState_.joint_vel[i];
     jointData_[i].tau_ = lowState_.joint_torque[i];
@@ -54,7 +55,7 @@ void MujocoSIM::read(const ros::Time& time, const ros::Duration& /*period*/) {
 void MujocoSIM::write(const ros::Time& time, const ros::Duration& /*period*/) {
 
   lowCmd_.timestamp = time.toNSec();
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     lowCmd_.joint_pos[i] = static_cast<double>(jointData_[i].posDes_);
     lowCmd_.joint_vel[i] = static_cast<double>(jointData_[i].velDes_);
     lowCmd_.kp[i] = static_cast<double>(jointData_[i].kp_);
@@ -71,30 +72,32 @@ bool MujocoSIM::setupJoints() {
   for (const auto& joint : urdfModel_->joints_)
   {
     int leg_index, joint_index;
-    if (joint.first.find("leg_l") != std::string::npos)
+    if (joint.first.find("l_") != std::string::npos)
     {
       leg_index = 0;
     }
-    else if (joint.first.find("leg_r") != std::string::npos)
+    else if (joint.first.find("r_") != std::string::npos)
     {
       leg_index = 1;
     }
     else
       continue;
-    if (joint.first.find("1_joint") != std::string::npos)
+    if (joint.first.find("hip_roll") != std::string::npos)
       joint_index = 0;
-    else if (joint.first.find("2_joint") != std::string::npos)
+    else if (joint.first.find("hip_yaw") != std::string::npos)
       joint_index = 1;
-    else if (joint.first.find("3_joint") != std::string::npos)
+    else if (joint.first.find("hip_pitch") != std::string::npos)
       joint_index = 2;
-    else if (joint.first.find("4_joint") != std::string::npos)
+    else if (joint.first.find("knee_pitch") != std::string::npos)
       joint_index = 3;
-    else if (joint.first.find("5_joint") != std::string::npos)
+    else if (joint.first.find("ankle_pitch") != std::string::npos)
       joint_index = 4;
+    else if (joint.first.find("ankle_roll") != std::string::npos)
+      joint_index = 5;
     else
       continue;
 
-    int index = leg_index * 5 + joint_index;
+    int index = leg_index * JOINT_NUM + joint_index;
     hardware_interface::JointStateHandle state_handle(joint.first, &jointData_[index].pos_, &jointData_[index].vel_,
                                                       &jointData_[index].tau_);
     jointStateInterface_.registerHandle(state_handle);

@@ -69,8 +69,8 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   // Hardware interface
   auto* hybridJointInterface = robot_hw->get<HybridJointInterface>();
   std::vector<std::string> joint_names{
-    "leg_l1_joint", "leg_l2_joint", "leg_l3_joint", "leg_l4_joint", "leg_l5_joint",
-    "leg_r1_joint", "leg_r2_joint", "leg_r3_joint", "leg_r4_joint", "leg_r5_joint"
+    "l_hip_roll", "l_hip_yaw", "l_hip_pitch", "l_knee_pitch", "l_ankle_pitch", "l_ankle_roll",
+    "r_hip_roll", "r_hip_yaw", "r_hip_pitch", "r_knee_pitch", "r_ankle_pitch", "r_ankle_roll"
   };
   for (const auto& joint_name : joint_names)
   {
@@ -209,7 +209,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     }
     if (!loadControllerFlag_)
     {
-      if (j == 4 || j == 9)
+      if (j == 4 || j == 5 || j == 10 || j == 11)
       {
         hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 0);
       }
@@ -223,22 +223,22 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     {
       contact_flag_t cmdContactFlag = modeNumber2StanceLeg(
           mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time));
-      if (j == 0 || j == 1 || j == 5 || j == 6)
+      if (j == 0 || j == 1 || j == 6 || j == 7)
       {
         hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
-                                          cmdContactFlag[int(j / 5)] ? kp_small_stance : kp_small_swing, kd_small,
+                                          cmdContactFlag[int(j / 6)] ? kp_small_stance : kp_small_swing, kd_small,
                                           wbc_planned_torque(j));
       }
-      else if (j == 4 || j == 9)
+      else if (j == 4 || j== 5 || j == 10 || j == 11)
       {
         hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
-                                          cmdContactFlag[int(j / 5)] ? kp_small_stance : kp_small_swing, kd_feet,
+                                          cmdContactFlag[int(j / 6)] ? kp_small_stance : kp_small_swing, kd_feet,
                                           wbc_planned_torque(j));
       }
       else
-      {
+      {    // hip and knee pitch
         hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
-                                          cmdContactFlag[int(j / 5)] ? kp_big_stance : kp_big_swing, kd_big,
+                                          cmdContactFlag[int(j / 6)] ? kp_big_stance : kp_big_swing, kd_big,
                                           wbc_planned_torque(j));
       }
     }

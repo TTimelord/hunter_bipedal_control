@@ -63,7 +63,7 @@ void MujocoLcm::SetSend(const mjData * d) {
     sendState_.gyroscope[2] = d->sensordata[5];
 
 
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 12; i++)
     {
         sendState_.joint_pos[i] = d->qpos[7+i];
         sendState_.joint_vel[i] = d->qvel[6+i];
@@ -92,7 +92,7 @@ void MujocoLcm::SetSend(const mjData * d) {
     sendFullState_.velocity[1] = d->qvel[1];
     sendFullState_.velocity[2] = d->qvel[2];
 
-    for (size_t i = 0; i < 10; i++)
+    for (size_t i = 0; i < 12; i++)
     {
         sendFullState_.joint_pos[i] = d->qpos[7+i];
         sendFullState_.joint_vel[i] = d->qvel[6+i];

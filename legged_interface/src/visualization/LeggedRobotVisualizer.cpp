@@ -244,12 +244,17 @@ void LeggedRobotVisualizer::publishJointTransforms(const ros::Time& timeStamp, c
 {
   if (robotStatePublisherPtr_ != nullptr)
   {
-    std::map<std::string, scalar_t> jointPositions{
-      { "leg_l1_joint", jointAngles[0] }, { "leg_l2_joint", jointAngles[1] }, { "leg_l3_joint", jointAngles[2] },
-      { "leg_l4_joint", jointAngles[3] }, { "leg_l5_joint", jointAngles[4] }, { "leg_r1_joint", jointAngles[5] },
-      { "leg_r2_joint", jointAngles[6] }, { "leg_r3_joint", jointAngles[7] }, { "leg_r4_joint", jointAngles[8] },
-      { "leg_r5_joint", jointAngles[9] }
-    };
+    std::map<std::string, scalar_t> jointPositions{{"l_hip_roll", jointAngles[0]}, {"l_hip_yaw", jointAngles[1]},  {"l_hip_pitch", jointAngles[2]},
+                                                   {"l_knee_pitch", jointAngles[3]}, {"l_ankle_pitch", jointAngles[4]},  {"l_ankle_roll", jointAngles[5]},
+                                                    {"r_hip_roll", jointAngles[6]}, {"r_hip_yaw", jointAngles[7]},  {"r_hip_pitch", jointAngles[8]},
+                                                    {"r_knee_pitch", jointAngles[9]}, {"r_ankle_pitch", jointAngles[10]}, {"r_ankle_roll", jointAngles[11]},
+                                                    {"waist_yaw", 0}, {"waist_pitch", 0}, {"waist_roll", 0}, 
+                                                    {"head_yaw", 0}, {"head_roll", 0}, {"head_pitch", 0}, 
+                                                    {"l_shoulder_pitch", 0}, {"l_shoulder_roll", 0.3}, {"l_shoulder_yaw", 0}, {"l_elbow_pitch", -0.5}, 
+                                                    {"l_wrist_yaw", 0}, {"l_wrist_roll", 0}, {"l_wrist_pitch", 0}, 
+                                                    {"r_shoulder_pitch", 0}, {"r_shoulder_roll", -0.3}, {"r_shoulder_yaw", 0}, {"r_elbow_pitch", -0.5}, 
+                                                    {"r_wrist_yaw", 0}, {"r_wrist_roll", 0}, {"r_wrist_pitch", 0}
+                                                    };
     robotStatePublisherPtr_->publishTransforms(jointPositions, timeStamp, tf_prefix);
     robotStatePublisherPtr_->publishFixedTransforms(tf_prefix, true);
   }

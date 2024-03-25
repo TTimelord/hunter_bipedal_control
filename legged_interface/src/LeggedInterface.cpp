@@ -326,7 +326,7 @@ std::unique_ptr<StateInputCost> LeggedInterface::getLimitConstraints(const Centr
   D.setZero();
   C.topRightCorner(info.actuatedDofNum, info.actuatedDofNum).setIdentity();
   D.block(info.actuatedDofNum, totalContactDim, info.actuatedDofNum, info.actuatedDofNum).setIdentity();
-  D(info.actuatedDofNum + info.actuatedDofNum + 0, 2) = 1;
+  D(info.actuatedDofNum + info.actuatedDofNum + 0, 2) = 1;  // mlq: F_z = 0 ??
   D(info.actuatedDofNum + info.actuatedDofNum + 1, 5) = 1;
   D(info.actuatedDofNum + info.actuatedDofNum + 2, 8) = 1;
   D(info.actuatedDofNum + info.actuatedDofNum + 3, 11) = 1;
@@ -349,7 +349,7 @@ std::unique_ptr<StateInputCost> LeggedInterface::getLimitConstraints(const Centr
   for (int leg = 0; leg < info.numThreeDofContacts; leg++)
   {
     state_input_limit_penalty[info.actuatedDofNum + info.actuatedDofNum + leg] = std::make_unique<DoubleSidedPenalty>(
-        0, 350, std::make_unique<RelaxedBarrierPenalty>(force_limit_barrier_penalty_config));
+        0, 1000, std::make_unique<RelaxedBarrierPenalty>(force_limit_barrier_penalty_config));
   }
 
   return std::make_unique<StateInputSoftConstraint>(std::make_unique<LinearStateInputConstraint>(e, C, D),

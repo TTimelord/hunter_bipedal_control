@@ -48,6 +48,8 @@ at www.bridgedp.com.
 #include <iostream>
 #include <iomanip>
 
+#define JOINT_NUM 6  // Joint number per leg
+
 namespace ocs2
 {
 namespace legged_robot
@@ -282,7 +284,7 @@ void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_
   const int feet_num = 2;
   for (int i = 0; i < sample_size; i++)
   {
-    q_ref.head<6>() = targetTrajectories.stateTrajectory[i].segment<6>(6);
+    q_ref.head<6>() = targetTrajectories.stateTrajectory[i].segment<JOINT_NUM>(6);
     q_ref.segment(6, joint_num) = targetTrajectories.stateTrajectory[std::max(i - 1, 0)].segment(6 + 6, joint_num);
     vector3_t des_foot_p;
     for (int leg = 0; leg < feet_num; leg++)
@@ -292,7 +294,7 @@ void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_
       des_foot_p.y() = swingTrajectoryPtr_->getYpositionConstraint(leg, Ts[i]);
       des_foot_p.z() = swingTrajectoryPtr_->getZpositionConstraint(leg, Ts[i]);
       ikTimer_.startTimer();
-      targetTrajectories.stateTrajectory[i].segment<5>(12 + index) =
+      targetTrajectories.stateTrajectory[i].segment<JOINT_NUM>(12 + index) =
           inverseKinematics_.computeIK(q_ref, leg, des_foot_p, R_des);
       ikTimer_.endTimer();
     }

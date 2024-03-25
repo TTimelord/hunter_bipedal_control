@@ -56,14 +56,14 @@ struct ModelSettings
   bool recompileLibrariesCppAd = true;
   std::string modelFolderCppAd = "/tmp/ocs2";
 
-  std::vector<std::string> jointNames{ "leg_l1_joint", "leg_l2_joint", "leg_l3_joint", "leg_l4_joint", "leg_l5_joint",
-                                       "leg_r1_joint", "leg_r2_joint", "leg_r3_joint", "leg_r4_joint", "leg_r5_joint" };
+  std::vector<std::string> jointNames{"l_hip_roll", "l_hip_yaw", "l_hip_pitch", "l_knee_pitch", "l_ankle_pitch", "l_ankle_roll",
+                                        "r_hip_roll", "r_hip_yaw", "r_hip_pitch", "r_knee_pitch", "r_ankle_pitch", "r_ankle_roll"};
   std::vector<std::string> contactNames6DoF{};
-  std::vector<std::string> contactNames3DoF{ "leg_l_f1_link", "leg_r_f1_link", "leg_l_f2_link", "leg_r_f2_link" };
+  std::vector<std::string> contactNames3DoF{"l_foot_toe", "r_foot_toe", "l_foot_heel", "r_foot_heel"};
 };
 
 ModelSettings loadModelSettings(const std::string& filename, const std::string& fieldName = "model_settings",
-                                bool verbose = "true");
+                                bool verbose = "false");
 
 }  // namespace legged_robot
 }  // namespace ocs2

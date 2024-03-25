@@ -26,14 +26,14 @@ public:
     qr_.setThreshold(0.01);
   }
 
-  vector5_t computeTranslationIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz);
-  vector5_t computeRotationIK(vector_t init_q, int leg, matrix3_t des_foot_R_des);
-  vector5_t computeRotationIK(vector_t init_q, int leg, vector3_t des_foot_eular_zyx);
+  vector6_t computeTranslationIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz);
+  vector6_t computeRotationIK(vector_t init_q, int leg, matrix3_t des_foot_R_des);
+  vector6_t computeRotationIK(vector_t init_q, int leg, vector3_t des_foot_eular_zyx);
 
-  vector5_t computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz, matrix3_t des_foot_R_des);
-  vector5_t computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz, vector3_t des_foot_eular_zyx);
+  vector6_t computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz, matrix3_t des_foot_R_des);
+  vector6_t computeIK(vector_t init_q, int leg, vector3_t des_foot_linear_xyz, vector3_t des_foot_eular_zyx);
 
-  vector5_t computeDIK(vector_t q, int leg, vector3_t foot_linear_vel, vector3_t foot_angular_vel);
+  vector6_t computeDIK(vector_t q, int leg, vector3_t foot_linear_vel, vector3_t foot_angular_vel);
 
   feet_array_t<vector3_t> computeFootPos(const vector_t& state);
 
@@ -43,7 +43,7 @@ public:
     if (leg == 0)
       index = 0;
     else if (leg == 1)
-      index = 5;
+      index = 6;
     return index;
   }
 
