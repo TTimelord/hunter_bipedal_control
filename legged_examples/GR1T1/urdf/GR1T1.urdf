@@ -458,7 +458,7 @@
     name="l_foot_toe_joint"
     type="fixed">
     <origin
-      xyz="0.1415 0 -0.05"
+      xyz="0.17 0 -0.05"
       rpy="0 0 0" />
     <parent
       link="l_foot_roll" />
@@ -472,7 +472,7 @@
     name="l_foot_heel_joint"
     type="fixed">
     <origin
-      xyz="-0.0445 0 -0.05"
+      xyz="-0.07 0 -0.05"
       rpy="0 0 0" />
     <parent
       link="l_foot_roll" />
@@ -861,7 +861,7 @@
     name="r_foot_toe_joint"
     type="fixed">
     <origin
-      xyz="0.1415 0 -0.05"
+      xyz="0.17 0 -0.05"
       rpy="0 0 0" />
     <parent
       link="r_foot_roll" />
@@ -875,7 +875,7 @@
     name="r_foot_heel_joint"
     type="fixed">
     <origin
-      xyz="-0.0445 0 -0.05"
+      xyz="-0.07 0 -0.05"
       rpy="0 0 0" />
     <parent
       link="r_foot_roll" />

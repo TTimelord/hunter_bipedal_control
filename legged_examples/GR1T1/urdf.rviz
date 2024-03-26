@@ -58,7 +58,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base:
+        base_link:
           Value: true
         head_pitch:
           Value: true
@@ -66,9 +66,15 @@ Visualization Manager:
           Value: true
         head_yaw:
           Value: true
+        imu_link:
+          Value: true
+        l_foot_heel:
+          Value: true
         l_foot_pitch:
           Value: true
         l_foot_roll:
+          Value: true
+        l_foot_toe:
           Value: true
         l_hand_pitch:
           Value: true
@@ -92,9 +98,13 @@ Visualization Manager:
           Value: true
         l_upper_arm_yaw:
           Value: true
+        r_foot_heel:
+          Value: true
         r_foot_pitch:
           Value: true
         r_foot_roll:
+          Value: true
+        r_foot_toe:
           Value: true
         r_hand_pitch:
           Value: true
@@ -131,21 +141,29 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base:
+        base_link:
+          imu_link:
+            {}
           l_thigh_roll:
             l_thigh_yaw:
               l_thigh_pitch:
                 l_shank_pitch:
                   l_foot_pitch:
                     l_foot_roll:
-                      {}
+                      l_foot_heel:
+                        {}
+                      l_foot_toe:
+                        {}
           r_thigh_roll:
             r_thigh_yaw:
               r_thigh_pitch:
                 r_shank_pitch:
                   r_foot_pitch:
                     r_foot_roll:
-                      {}
+                      r_foot_heel:
+                        {}
+                      r_foot_toe:
+                        {}
           waist_yaw:
             waist_pitch:
               waist_roll:
@@ -181,7 +199,7 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base:
+        base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -195,7 +213,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         head_yaw:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        l_foot_heel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -203,11 +231,16 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_foot_roll:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        l_foot_toe:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         l_hand_pitch:
           Alpha: 1
           Show Axes: false
@@ -217,6 +250,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_hand_yaw:
           Alpha: 1
           Show Axes: false
@@ -226,6 +260,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_shank_pitch:
           Alpha: 1
           Show Axes: false
@@ -240,14 +275,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_thigh_yaw:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_upper_arm_pitch:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         l_upper_arm_roll:
           Alpha: 1
           Show Axes: false
@@ -258,15 +296,24 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        r_foot_heel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         r_foot_pitch:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_foot_roll:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        r_foot_toe:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         r_hand_pitch:
           Alpha: 1
           Show Axes: false
@@ -276,6 +323,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_hand_yaw:
           Alpha: 1
           Show Axes: false
@@ -285,6 +333,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_shank_pitch:
           Alpha: 1
           Show Axes: false
@@ -299,14 +348,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_thigh_yaw:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_upper_arm_pitch:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         r_upper_arm_roll:
           Alpha: 1
           Show Axes: false
@@ -321,6 +373,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         waist_roll:
           Alpha: 1
           Show Axes: false
@@ -330,6 +383,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -340,7 +394,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -364,7 +418,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 2.12673020362854
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -380,9 +434,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.785398006439209
+      Pitch: 0.30539849400520325
       Target Frame: <Fixed Frame>
-      Yaw: 0.785398006439209
+      Yaw: 0.5603982210159302
     Saved: ~
 Window Geometry:
   Displays:
@@ -401,4 +455,4 @@ Window Geometry:
     collapsed: false
   Width: 1200
   X: 692
-  Y: 224
+  Y: 187
