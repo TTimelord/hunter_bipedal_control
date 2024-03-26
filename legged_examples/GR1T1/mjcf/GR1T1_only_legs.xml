@@ -265,6 +265,8 @@
   </actuator>
 
   <sensor>
+    <accelerometer name="accel" site="imu"/>
+    <gyro name="gyro" site="imu"/>
     <jointpos name="l_hip_roll_pos" joint="l_hip_roll"/>
     <jointpos name="l_hip_yaw_pos" joint="l_hip_yaw"/>
     <jointpos name="l_hip_pitch_pos" joint="l_hip_pitch"/>
@@ -289,8 +291,6 @@
     <jointvel name="lr_knee_pitch_vel" joint="r_knee_pitch"/>
     <jointvel name="r_ankle_pitch_vel" joint="r_ankle_pitch"/>
     <jointvel name="r_ankle_roll_vel" joint="r_ankle_roll"/>
-    <accelerometer name="accel" site="imu"/>
-    <gyro name="gyro" site="imu"/>
     <!-- <velocimeter name="BodyVel" site="imu"/> -->
     <!-- <framepos name="BodyPos" objtype="site" objname="imu"/>
     <framequat name="BodyQuat" objtype="site" objname="imu"/> -->
