@@ -216,7 +216,7 @@ void InitRobotState(mjData* d)
   // init qpos
   d->qpos[0] = 0;
   d->qpos[1] = 0;
-  d->qpos[2] = 0.86;
+  d->qpos[2] = 0.865;
 
   d->qpos[3] = 1;
   d->qpos[4] = 0;
@@ -226,17 +226,17 @@ void InitRobotState(mjData* d)
   // left leg
   d->qpos[7] = 0;
   d->qpos[8] = 0;
-  d->qpos[9] = -0.49;
-  d->qpos[10] = 1;
-  d->qpos[11] = -0.51;
+  d->qpos[9] = -0.48;
+  d->qpos[10] = 1.00;
+  d->qpos[11] = -0.52;
   d->qpos[12] = 0;
 
   // right leg
   d->qpos[13] = 0;
   d->qpos[14] = 0;
-  d->qpos[15] = -0.49;
-  d->qpos[16] = 1;
-  d->qpos[17] = -0.51;
+  d->qpos[15] = -0.48;
+  d->qpos[16] = 1.00;
+  d->qpos[17] = -0.52;
   d->qpos[18] = 0;
   
 }

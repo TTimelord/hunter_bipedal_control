@@ -349,7 +349,7 @@ std::unique_ptr<StateInputCost> LeggedInterface::getLimitConstraints(const Centr
   for (int leg = 0; leg < info.numThreeDofContacts; leg++)
   {
     state_input_limit_penalty[info.actuatedDofNum + info.actuatedDofNum + leg] = std::make_unique<DoubleSidedPenalty>(
-        0, 1000, std::make_unique<RelaxedBarrierPenalty>(force_limit_barrier_penalty_config));
+        0, 500, std::make_unique<RelaxedBarrierPenalty>(force_limit_barrier_penalty_config));
   }
 
   return std::make_unique<StateInputSoftConstraint>(std::make_unique<LinearStateInputConstraint>(e, C, D),

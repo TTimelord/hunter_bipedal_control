@@ -22,15 +22,15 @@ swing_trajectory_config
 {
   liftOffVelocity               0.05
   touchDownVelocity             0.0
-  swingHeight                   0.04
+  swingHeight                   0.07
   swingTimeScale                0.15
 
-  feet_bias_x1                  0.034
-  feet_bias_x2                 -0.056
-  feet_bias_y                   0.11
-  feet_bias_z                  -0.63
+  feet_bias_x1                  0.17
+  feet_bias_x2                 -0.07
+  feet_bias_y                   0.12
+  feet_bias_z                  -0.87
   
-  next_stance_position_z        0.02
+  next_stance_position_z        0.0
 }
 
 ; DDP settings
@@ -141,7 +141,7 @@ rollout
 
 mpc
 {
-  timeHorizon                     0.8  ; [s]
+  timeHorizon                     1.3  ; [s]
   solutionTimeWindow              -1   ; maximum [s]
   coldStart                       false
 
@@ -172,15 +172,15 @@ initialState
    ;; Leg Joint Positions: [LF, LH, RF, RH] ;
    (12,0)   0.00   ; leg_l1_joint
    (13,0)   0.00   ; leg_l2_joint
-   (14,0)  -0.41   ; leg_l3_joint
+   (14,0)  -0.48   ; leg_l3_joint
    (15,0)   1.00   ; leg_l4_joint
-   (16,0)  -0.59   ; leg_l5_joint
+   (16,0)  -0.52   ; leg_l5_joint
    (17,0)   0.00   ; leg_l6_joint
    (18,0)   0.00   ; leg_r1_joint
    (19,0)   0.00   ; leg_r2_joint
-   (20,0)  -0.41   ; leg_r3_joint
+   (20,0)  -0.48   ; leg_r3_joint
    (21,0)   1.00   ; leg_r4_joint
-   (22,0)   -0.59   ; leg_r5_joint
+   (22,0)  -0.52   ; leg_r5_joint
    (23,0)   0.00   ; leg_r6_joint
 }
 
