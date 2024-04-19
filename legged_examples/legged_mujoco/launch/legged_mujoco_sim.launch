@@ -5,5 +5,5 @@
     <rosparam file="$(find legged_mujoco)/config/hunter.yaml" command="load"/>
 
     <node name="legged_mujoco" pkg="legged_mujoco" type="legged_mujoco" respawn="false"
-          clear_params="true"/>
+          clear_params="true" output="screen"/>
 </launch>

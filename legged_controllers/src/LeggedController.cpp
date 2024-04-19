@@ -121,7 +121,7 @@ void LeggedController::starting(const ros::Time& time)
 
   mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
 
-  mpcRunning_ = false;
+  // mpcRunning_ = false;
 
   // Mode Subscribe
   ModeSubscribe();
@@ -132,6 +132,9 @@ void LeggedController::starting(const ros::Time& time)
   dynamic_reconfigure::Server<legged_controllers::TutorialsConfig>::CallbackType f;
   f = boost::bind(&LeggedController::dynamicParamCallback, this, _1, _2);
   serverPtr_->setCallback(f);
+
+  loadControllerFlag_ = true;
+  mpcRunning_ = true;
 }
 
 void LeggedController::update(const ros::Time& time, const ros::Duration& period)
@@ -166,7 +169,9 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   {
     optimizedState.setZero();
     optimizedInput.setZero();
-    optimizedState.segment(6, 6) = currentObservation_.state.segment<6>(6);
+    // optimizedState.segment(6, 6) = currentObservation_.state.segment<6>(6);
+    optimizedState(6) = -0.05;
+    optimizedState(8) = 0.88;
     optimizedState.segment(6 + 6, jointDim_) = defalutJointPos_;
     plannedMode = 3;
     wbc_->setStanceMode(true);
@@ -191,6 +196,20 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   posDes_ = posDes_ + 0.5 * wbc_planned_joint_acc * dt * dt;
   velDes_ = velDes_ + wbc_planned_joint_acc * dt;
 
+  std::cout<<"WBC start =========="<<std::endl;
+  std::cout<<"observation"<<std::endl;
+  std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
+  std::cout<<"period"<<period<<std::endl;
+  // std::cout<<"wbc_planned_torque"<<std::endl;
+  // std::cout<<wbc_planned_torque<<std::endl;
+  // std::cout<<"wbc_planned_joint_acc"<<std::endl;
+  // std::cout<<wbc_planned_joint_acc<<std::endl;
+  // std::cout<<"wbc_planned_body_acc"<<std::endl;
+  // std::cerr<<wbc_planned_body_acc<<std::endl;
+  // std::cout<<"wbc_planned_contact_force"<<std::endl;
+  // std::cout<<wbc_planned_contact_force<<std::endl;
+  std::cout<<"WBC end =========="<<std::endl;
+
   vector_t output_torque(jointDim_);
   //*********************** Set Joint Command: Normal Tracking *****************************//
   for (size_t j = 0; j < jointDim_; ++j)
@@ -209,18 +228,22 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     }
     if (!loadControllerFlag_)
     {
-      if (j == 4 || j == 5 || j == 10 || j == 11)
-      {
-        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 0);
-      }
-      else if(j==0 || j==1 || j==2 || j==6 || j==7 || j==8)
+      if(j==0 || j==1 || j==2 || j==6 || j==7 || j==8)
       {
         hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position,
                                           0);
       }
-      else // knee
+      else if(j==3 || j==9) // knee
       {
-        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position, 0);
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position, -34);
+      }
+      else if (j == 4 || j == 10) //ankle_pitch
+      {
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 6);
+      }
+      else
+      {
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 0);
       }
     }
     else
@@ -245,7 +268,13 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
                                           cmdContactFlag[int(j / 6)] ? kp_big_stance : kp_big_swing, kd_big,
                                           wbc_planned_torque(j));
       }
-      // ROS_INFO("wbc torque %i: %f", wbc_planned_torque(j));
+      // {
+      //   hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
+      //                                     0, 0,
+      //                                     wbc_planned_torque(j));
+      // }
+      // ROS_INFO("wbc torque %i: %f", j, wbc_planned_torque(j)); 
+      // ROS_INFO("pos %i: %f", j, posDes_[j]);
     }
     if (emergencyStopFlag_)
     {
@@ -331,7 +360,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
   }
 
   stateEstimate_->updateJointStates(jointPos, jointVel);
-  stateEstimate_->updateContact(cmdContactFlag);
+  stateEstimate_->updateContact(cmdContactFlag); // mlq: duplication?
   stateEstimate_->updateImu(quat, angularVel, linearAccel, orientationCovariance, angularVelCovariance,
                             linearAccelCovariance);
   measuredRbdState_ = stateEstimate_->update(time, period);
