@@ -83,14 +83,40 @@ Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vec
 Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
                                                scalar_t period)
 {
-  matrix_t a(6, numDecisionVars_);
-  a.setZero();
-  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
+  return formulateBaseAccelTask(stateDesired, inputDesired, period);
+//   matrix_t a(6, numDecisionVars_);
+//   a.setZero();
+//   a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
+//   // a.block(9, 9, 10, 10) = matrix_t::Identity(1, 1);
+//   // a.block(15, 15, 16, 16) = matrix_t::Identity(1, 1);
 
-  vector6_t b;
-  b.setZero();
+//   vector6_t b;
+//   vector6_t stance_q_desired;
+//   b.setZero();
 
-  return { a, b, matrix_t(), vector_t() };
+//   stance_q_desired.setZero();
+//   stance_q_desired(2) = 0.88;
+//   stance_q_desired(0) = -0.05;
+
+//   vector3_t eulerAngles = qMeasured_.segment<3>(3);
+
+//   // from derivative euler to angular
+//   vector3_t vMeasuredGlobal =
+//       getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<scalar_t>(eulerAngles, vMeasured_.segment<3>(3));
+
+//   // from euler to rotation
+//   vector3_t eulerAnglesDesired = stance_q_desired.tail<3>();
+//   matrix3_t rotationBaseMeasuredToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAngles);
+//   matrix3_t rotationBaseReferenceToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAnglesDesired);
+
+//   vector3_t error = rotationErrorInWorld<scalar_t>(rotationBaseReferenceToWorld, rotationBaseMeasuredToWorld);
+
+//   b.block(0, 0, 2, 1) = com_kp_ * (stance_q_desired.segment<2>(0) - qMeasured_.segment<2>(0)) +
+//         com_kd_ * ( - vMeasured_.segment<2>(0));
+//   b(2) = baseHeightKp_*(stance_q_desired(2) - qMeasured_(2)) + baseHeightKd_*(0 - vMeasured_(2));
+//   b.block(3, 0, 3, 1) = baseAngularKp_ * error + baseAngularKd_ * ( - vMeasuredGlobal);
+
+//   return { a, b, matrix_t(), vector_t() };
 }
 
 void WeightedWbc::loadTasksSetting(const std::string& taskFile, bool verbose)

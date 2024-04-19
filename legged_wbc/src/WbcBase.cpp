@@ -234,7 +234,8 @@ Task WbcBase::formulateBaseXYLinearAccelTask()
   b.setZero();
 
   a.block(0, 0, 2, 2) = matrix_t::Identity(2, 2);
-  b = baseAccelerationDes_.segment<2>(0);
+  b = baseAccelerationDes_.segment<2>(0) + com_kp_ * (basePoseDes_.segment<2>(0) - qMeasured_.segment<2>(0)) +
+         com_kd_ * (baseVelocityDes_.segment<2>(0) - vMeasured_.segment<2>(0));
 
   return { a, b, matrix_t(), vector_t() };
 }
