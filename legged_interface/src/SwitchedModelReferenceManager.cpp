@@ -41,6 +41,7 @@ at www.bridgedp.com.
 
 #include "legged_interface/SwitchedModelReferenceManager.h"
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/Point.h>
 #include <std_msgs/Int32.h>
 #include <numeric>
 #include <ocs2_robotic_tools/common/RotationTransforms.h>
@@ -104,6 +105,15 @@ SwitchedModelReferenceManager::SwitchedModelReferenceManager(std::shared_ptr<Gai
 
   auto gait_type_callback = [this](const std_msgs::Int32::ConstPtr& msg) { gaitType_ = msg->data; };
   gaitTypeSub_ = nh.subscribe<std_msgs::Int32>("/gait_type", 1, gait_type_callback);
+
+  // ball position subscriber
+  auto ballPosCallback = [this](const geometry_msgs::Point::ConstPtr& msg) {
+      ballPosition_[0] = msg->x; // Access vector elements to assign values
+      ballPosition_[1] = msg->y;
+      ballPosition_[2] = msg->z;
+  };
+  ballPositionSub_ = nh.subscribe<geometry_msgs::Point>("ball_position_wrt_body", 1, ballPosCallback);
+
   std::string referenceFile;
   nh.getParam("/referenceFile", referenceFile);
   defaultJointState_.resize(info_.actuatedDofNum);
@@ -167,6 +177,9 @@ void SwitchedModelReferenceManager::modifyReferences(scalar_t initTime, scalar_t
   swingTrajectoryPtr_->setGaitLevel(gaitLevel_);
   swingTrajectoryPtr_->setBodyVelCmd(velCmdInBuf_.get());
   swingTrajectoryPtr_->setCurrentFeetPosition(inverseKinematics_.computeFootPos(initState));
+  // swingTrajectoryPtr_->setBallPosition(ballPosition_);
+  swingTrajectoryPtr_->setBallPosition(vector3_t::Zero(3));
+
   swingTrajectoryPtr_->update(modeSchedule, targetTrajectories, initTime);
 
   calculateJointRef(initTime, finalTime, initState, targetTrajectories);

@@ -106,6 +106,9 @@ public:
       feet_pos[i] = current_feet_position.segment<3>(3 * i);
     current_feet_position_buf_.setBuffer(feet_pos);
   }
+  void setBallPosition(vector3_t ball_position){
+    ball_position_ = ball_position;
+  }
 
   vector_t getBodyVelWorld()
   {
@@ -205,6 +208,12 @@ private:
   BufferedValue<vector_t> body_vel_world_buf_;
 
   vector_t body_vel_cmd_;
+
+  vector3_t ball_position_;
+  vector3_t kick_stance_position;
+  bool kick_stance_flag = false;
+  int kick_stance_leg;
+  scalar_t kick_stance_middle_time = -1.0;
 
   ros::Subscriber swing_cmd_sub_;
   BufferedValue<vector3_t> swing_cmd_buf_;

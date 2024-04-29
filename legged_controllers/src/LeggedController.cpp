@@ -196,10 +196,10 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   posDes_ = posDes_ + 0.5 * wbc_planned_joint_acc * dt * dt;
   velDes_ = velDes_ + wbc_planned_joint_acc * dt;
 
-  std::cout<<"WBC start =========="<<std::endl;
-  std::cout<<"observation"<<std::endl;
-  std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
-  std::cout<<"period"<<period<<std::endl;
+  // std::cout<<"WBC start =========="<<std::endl;
+  // std::cout<<"observation"<<std::endl;
+  // std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
+  // std::cout<<"period"<<period<<std::endl;
   // std::cout<<"wbc_planned_torque"<<std::endl;
   // std::cout<<wbc_planned_torque<<std::endl;
   // std::cout<<"wbc_planned_joint_acc"<<std::endl;
@@ -208,7 +208,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   // std::cerr<<wbc_planned_body_acc<<std::endl;
   // std::cout<<"wbc_planned_contact_force"<<std::endl;
   // std::cout<<wbc_planned_contact_force<<std::endl;
-  std::cout<<"WBC end =========="<<std::endl;
+  // std::cout<<"WBC end =========="<<std::endl;
 
   vector_t output_torque(jointDim_);
   //*********************** Set Joint Command: Normal Tracking *****************************//

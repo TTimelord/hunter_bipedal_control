@@ -242,6 +242,55 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, const Targ
           vector_t current_body_vel = targetTrajectories.stateTrajectory[0].segment<3>(0);
           next_stance_position[j] = calNextFootPos(j, initTime, swingFinalTime, next_middle_time, next_middle_body_pos,
                                                    current_body_pos, current_body_vel);
+          if(j==0 || j==1){
+            ball_position_(0) = 3;
+            vector3_t stance_to_ball = ball_position_ - next_stance_position[j];
+            stance_to_ball(3) = 0; // project to ground
+            vector3_t current_stride = next_stance_position[j] - last_stance_position[j];
+            if(!kick_stance_flag){  // find kick stance position
+              if(stance_to_ball.norm() < 2*current_stride.norm()){
+                kick_stance_flag = true;
+                kick_stance_leg = j; // 0 for left; 1 for right
+                kick_stance_middle_time = next_middle_time;
+                if(j == 0){
+                  next_stance_position[j](0) = ball_position_(0);
+                  next_stance_position[j](1) = ball_position_(1) - 0.14;
+                }
+                else{
+                  next_stance_position[j](0) = ball_position_(0);
+                  next_stance_position[j](1) = ball_position_(1) + 0.14;
+                }
+                kick_stance_position = next_stance_position[j];
+              }
+            }
+            if(kick_stance_flag){
+              std::cout<<"kick_stance_middle_time:"<<kick_stance_middle_time<<std::endl;
+              std::cout<<"SWINGFINAL:"<<swingFinalTime<<" nextStanceFinalTime:"<<nextStanceFinalTime<<std::endl;
+              if(j==kick_stance_leg){
+                std::cout<<"11"<<std::endl;
+                if(swingFinalTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < nextStanceFinalTime + 0.001){
+                  //kick stance
+                  next_stance_position[j] = kick_stance_position;
+                  std::cout<<"1:"<<next_stance_position[j]<<std::endl;
+                }
+              }
+              else{
+                std::cout<<"22"<<std::endl;
+
+                if(swingStartTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < swingFinalTime +0.001){
+                  // kick swing
+                  next_stance_position[j](0) = ball_position_(0) + 1*(ball_position_(0) - last_stance_position[j](0));
+                  next_stance_position[j](1) = ball_position_(1) + 1*(ball_position_(1) - last_stance_position[j](1));
+                  std::cout<<"2:"<<next_stance_position[j]<<std::endl;
+                }
+              }
+            }
+          }
+          // std::cout<<"kick_stance_flag:"<<kick_stance_flag<<std::endl;
+          // std::cout<<"stance_to_ball:"<<std::endl<<stance_to_ball.norm()<<std::endl;
+          // std::cout<<"current_stride:"<<std::endl<<current_stride.norm()<<std::endl;
+          // std::cout<<"left:"<<std::endl<<next_stance_position[0]<<std::endl;
+          // std::cout<<"right:"<<std::endl<<next_stance_position[1]<<std::endl;
           last_final_idx[j] = swingFinalIndex;
         }
 

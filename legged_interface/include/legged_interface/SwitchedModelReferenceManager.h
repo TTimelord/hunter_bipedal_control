@@ -146,6 +146,7 @@ protected:
 
   ros::Subscriber velCmdSub_;
   ros::Subscriber gaitTypeSub_;
+  ros::Subscriber ballPositionSub_;
 
   std_msgs::Float64MultiArray earlyLateContactMsg_;
 
@@ -154,6 +155,7 @@ protected:
 
   std::atomic_int32_t gaitType_{ 0 };
   int gaitLevel_{ 0 };
+  vector3_t ballPosition_;
 
   std::deque<scalar_t> velAbsHistory_;
 
