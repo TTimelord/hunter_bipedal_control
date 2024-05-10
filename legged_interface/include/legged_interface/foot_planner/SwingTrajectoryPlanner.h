@@ -72,7 +72,7 @@ public:
 
   SwingTrajectoryPlanner(Config config);
 
-  void update(const ModeSchedule& modeSchedule, const TargetTrajectories& targetTrajectories, scalar_t initTime);
+  void update(const ModeSchedule& modeSchedule, TargetTrajectories& targetTrajectories, scalar_t initTime);
 
   void setFeetBias(const feet_array_t<vector3_t>& feet_bias)
   {
@@ -213,7 +213,8 @@ private:
   vector3_t kick_stance_position;
   bool kick_stance_flag = false;
   int kick_stance_leg;
-  scalar_t kick_stance_middle_time = -1.0;
+  scalar_t kick_stance_middle_time;
+  scalar_t body_accelerate_start_time;
 
   ros::Subscriber swing_cmd_sub_;
   BufferedValue<vector3_t> swing_cmd_buf_;

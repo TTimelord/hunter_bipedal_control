@@ -256,7 +256,13 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
                                           cmdContactFlag[int(j / 6)] ? kp_small_stance : kp_small_swing, kd_small,
                                           wbc_planned_torque(j));
       }
-      else if (j == 4 || j== 5 || j == 10 || j == 11)
+      else if (j== 4 || j == 10)
+      {
+        hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
+                                          cmdContactFlag[int(j / 6)] ? 30 : 20, kd_feet,
+                                          wbc_planned_torque(j));
+      }
+      else if (j== 5 || j == 11)
       {
         hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
                                           cmdContactFlag[int(j / 6)] ? kp_small_stance : kp_small_swing, kd_feet,

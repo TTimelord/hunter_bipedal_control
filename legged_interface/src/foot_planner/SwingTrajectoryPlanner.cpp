@@ -161,9 +161,10 @@ std::array<scalar_t, 2> SwingTrajectoryPlanner::getSwingStartStopTime(size_t leg
 /******************************************************************************************************/
 /******************************************************************************************************/
 /******************************************************************************************************/
-void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, const TargetTrajectories& targetTrajectories,
+void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, TargetTrajectories& targetTrajectories,
                                     scalar_t initTime)
 {
+  const auto original_target_trajectories = targetTrajectories;
   const auto& modeSequence = modeSchedule.modeSequence;
   const auto& eventTimes = modeSchedule.eventTimes;
   body_vel_world_buf_.updateFromBuffer();
@@ -190,6 +191,61 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, const Targ
   for (size_t leg = 0; leg < numFeet_; leg++)
   {
     std::tie(startTimesIndices[leg], finalTimesIndices[leg]) = updateFootSchedule(eesContactFlagStocks[leg]);
+  }
+
+  vector_t current_body_pos = targetTrajectories.getDesiredState(initTime).segment<6>(6);
+  vector_t current_body_vel = targetTrajectories.stateTrajectory[0].segment<3>(0);
+
+  ball_position_(0) = 2;
+  ball_position_(1) = -0.1;
+
+  bool enable_kick = true;
+
+  if(enable_kick){
+    if(kick_stance_flag && kick_stance_middle_time > initTime){
+      const scalar_t finalTime = original_target_trajectories.timeTrajectory.back();
+      if(kick_stance_middle_time < finalTime){
+        vector_t kick_stance_middle_body_pos = (ball_position_.segment<2>(0) + kick_stance_position.segment<2>(0)) / 2;
+        if(body_accelerate_start_time > initTime){ 
+          // consider the entire accelerate process
+          const scalar_array_t timeTrajectory{initTime, body_accelerate_start_time, kick_stance_middle_time, finalTime};
+          vector_array_t stateTrajectory(4, vector_t::Zero(original_target_trajectories.stateTrajectory.front().size()));
+          for(int i = 0; i < 4; i++){
+            stateTrajectory[i] = original_target_trajectories.getDesiredState(timeTrajectory[i]);
+          }
+          stateTrajectory[3].segment<2>(6) += kick_stance_middle_body_pos - stateTrajectory[2].segment<2>(6);
+          stateTrajectory[2].segment<2>(6) = kick_stance_middle_body_pos;
+          const vector_array_t inputTrajectory(4, original_target_trajectories.inputTrajectory.front());
+          targetTrajectories.timeTrajectory.resize(4);
+          targetTrajectories.stateTrajectory.resize(4);
+          targetTrajectories.inputTrajectory.resize(4);
+          for(int i = 0; i < 4; i++){
+            targetTrajectories.timeTrajectory[i] = timeTrajectory[i];
+            targetTrajectories.stateTrajectory[i] = stateTrajectory[i];
+            targetTrajectories.inputTrajectory[i] = inputTrajectory[i];
+          }
+        }
+        else{
+          // consider the entire accelerate process
+          const scalar_array_t timeTrajectory{initTime, kick_stance_middle_time, finalTime};
+          vector_array_t stateTrajectory(3, vector_t::Zero(original_target_trajectories.stateTrajectory.front().size()));
+          for(int i = 0; i < 3; i++){
+            stateTrajectory[i] = original_target_trajectories.getDesiredState(timeTrajectory[i]);
+          }
+          stateTrajectory[2].segment<2>(6) += kick_stance_middle_body_pos - stateTrajectory[1].segment<2>(6);
+          stateTrajectory[1].segment<2>(6) = kick_stance_middle_body_pos;
+          const vector_array_t inputTrajectory(3, original_target_trajectories.inputTrajectory.front());
+          targetTrajectories.timeTrajectory.resize(3);
+          targetTrajectories.stateTrajectory.resize(3);
+          targetTrajectories.inputTrajectory.resize(3);
+          for(int i = 0; i < 3; i++){
+            targetTrajectories.timeTrajectory[i] = timeTrajectory[i];
+            targetTrajectories.stateTrajectory[i] = stateTrajectory[i];
+            targetTrajectories.inputTrajectory[i] = inputTrajectory[i];
+          } 
+        }
+      }
+    }
   }
 
   for (size_t j = 0; j < numFeet_; j++)
@@ -237,51 +293,49 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, const Targ
             next_middle_time = swingFinalTime;
           }
 
-          vector_t next_middle_body_pos = targetTrajectories.getDesiredState(next_middle_time).segment<6>(6);
-          vector_t current_body_pos = targetTrajectories.getDesiredState(initTime).segment<6>(6);
-          vector_t current_body_vel = targetTrajectories.stateTrajectory[0].segment<3>(0);
+          vector_t next_middle_body_pos = original_target_trajectories.getDesiredState(next_middle_time).segment<6>(6);
           next_stance_position[j] = calNextFootPos(j, initTime, swingFinalTime, next_middle_time, next_middle_body_pos,
                                                    current_body_pos, current_body_vel);
-          if(j==0 || j==1){
-            ball_position_(0) = 3;
-            vector3_t stance_to_ball = ball_position_ - next_stance_position[j];
-            stance_to_ball(3) = 0; // project to ground
-            vector3_t current_stride = next_stance_position[j] - last_stance_position[j];
-            if(!kick_stance_flag){  // find kick stance position
-              if(stance_to_ball.norm() < 2*current_stride.norm()){
-                kick_stance_flag = true;
-                kick_stance_leg = j; // 0 for left; 1 for right
-                kick_stance_middle_time = next_middle_time;
-                if(j == 0){
-                  next_stance_position[j](0) = ball_position_(0);
-                  next_stance_position[j](1) = ball_position_(1) - 0.14;
+          if(enable_kick){
+            if(j==0 || j==1){
+              vector3_t stance_to_ball = ball_position_ - next_stance_position[j];
+              stance_to_ball(3) = 0; // project to ground
+              vector3_t current_stride = next_stance_position[j] - last_stance_position[j];
+              if(!kick_stance_flag && j==0){  // find kick stance position  // only use left foot to stance
+                if(stance_to_ball.norm() < std::max(0.75, 1.5*current_stride.norm())){
+                  kick_stance_flag = true;
+                  kick_stance_leg = j; // 0 for left; 1 for right
+                  kick_stance_middle_time = next_middle_time;
+                  // const int lastStanceStartIndex = startTimesIndices[j][swingStartIndex - 1];
+                  // scalar_t lastStanceStartTime = eventTimes[lastStanceStartIndex];
+                  body_accelerate_start_time = swingFinalTime;
+                  if(j == 0){
+                    next_stance_position[j](0) = ball_position_(0);
+                    next_stance_position[j](1) = ball_position_(1) + 0.25;
+                  }
+                  else{
+                    next_stance_position[j](0) = ball_position_(0);
+                    next_stance_position[j](1) = ball_position_(1) - 0.25;
+                  }
+                  kick_stance_position = next_stance_position[j];
+                }
+              }
+              if(kick_stance_flag){
+                // std::cout<<"kick_stance_middle_time:"<<kick_stance_middle_time<<std::endl;
+                // std::cout<<"SWINGFINAL:"<<swingFinalTime<<" nextStanceFinalTime:"<<nextStanceFinalTime<<std::endl;
+                if(j==kick_stance_leg){
+                  if(swingFinalTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < nextStanceFinalTime + 0.001){
+                    //kick stance
+                    next_stance_position[j] = kick_stance_position;
+                  }
                 }
                 else{
-                  next_stance_position[j](0) = ball_position_(0);
-                  next_stance_position[j](1) = ball_position_(1) + 0.14;
-                }
-                kick_stance_position = next_stance_position[j];
-              }
-            }
-            if(kick_stance_flag){
-              std::cout<<"kick_stance_middle_time:"<<kick_stance_middle_time<<std::endl;
-              std::cout<<"SWINGFINAL:"<<swingFinalTime<<" nextStanceFinalTime:"<<nextStanceFinalTime<<std::endl;
-              if(j==kick_stance_leg){
-                std::cout<<"11"<<std::endl;
-                if(swingFinalTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < nextStanceFinalTime + 0.001){
-                  //kick stance
-                  next_stance_position[j] = kick_stance_position;
-                  std::cout<<"1:"<<next_stance_position[j]<<std::endl;
-                }
-              }
-              else{
-                std::cout<<"22"<<std::endl;
 
-                if(swingStartTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < swingFinalTime +0.001){
-                  // kick swing
-                  next_stance_position[j](0) = ball_position_(0) + 1*(ball_position_(0) - last_stance_position[j](0));
-                  next_stance_position[j](1) = ball_position_(1) + 1*(ball_position_(1) - last_stance_position[j](1));
-                  std::cout<<"2:"<<next_stance_position[j]<<std::endl;
+                  if(swingStartTime -0.001 < kick_stance_middle_time && kick_stance_middle_time < swingFinalTime +0.001){
+                    // kick swing
+                    next_stance_position[j](0) = ball_position_(0) + 0.6*(ball_position_(0) - last_stance_position[j](0));
+                    next_stance_position[j](1) = ball_position_(1) + 0.6*(ball_position_(1) - last_stance_position[j](1));
+                  }
                 }
               }
             }
