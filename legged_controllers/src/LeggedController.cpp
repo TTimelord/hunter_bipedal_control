@@ -82,6 +82,8 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   setupStateEstimate(taskFile, verbose);
 
   // Whole body control
+  stance_filter_max_duration = 1.0;
+  stance_flag = false;
   wbc_ = std::make_shared<WeightedWbc>(leggedInterface_->getPinocchioInterface(),
                                        leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
   wbc_->loadTasksSetting(taskFile, verbose);
@@ -161,9 +163,45 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     mpc_updated_ = true;
   }
 
+
   if (setWalkFlag_)
   {
     wbc_->setStanceMode(false);
+    if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3 && 
+        mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.6) == 3 ){
+      if(!stance_flag){
+        stance_flag = true;
+        stance_start_time = currentObservation_.time;
+        stance_body_pose.setZero();
+        feet_array_t<vector3_t> current_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
+        stance_body_pose.segment<3>(0) = (current_feet_positions[0] + current_feet_positions[1] + current_feet_positions[2] + current_feet_positions[3]) / 4;
+        stance_body_pose(4) = currentObservation_.state(9);
+        stance_body_pose(0) -= 0.05*cos(stance_body_pose(4));
+        stance_body_pose(0) -= 0.05*sin(stance_body_pose(4));
+        stance_body_pose(2) = 0.88;
+        std::cout<<stance_body_pose<<std::endl<<"====="<<std::endl;
+      }
+      geometry_msgs::Point msg;
+      msg.x = stance_body_pose(0);
+      msg.y = stance_body_pose(1);
+      msg.z = stance_body_pose(2);
+      stanceBodyPositionPublisher_.publish(msg);
+      // scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
+      scalar_t filter_ratio = 1.0;
+      optimizedState.setZero();
+      optimizedInput.setZero();
+
+      optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*currentObservation_.state.segment<3>(6);
+      optimizedState(9) = stance_body_pose(4);
+      optimizedState.segment<12>(12) = defalutJointPos_;
+      // std::cout<<"stance_body_pose:\n"<<stance_body_pose<<"\n";
+      // std::cout<<"currentObservation_:\n"<<currentObservation_.state.segment<3>(6)<<"\n=========\n";
+    }
+    else{
+      if(stance_flag){
+        stance_flag = false;
+      }
+    }
   }
   else
   {
@@ -425,6 +463,7 @@ void LeggedController::setupMpc()
   rosReferenceManagerPtr->subscribe(nh);
   mpc_->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
   observationPublisher_ = nh.advertise<ocs2_msgs::mpc_observation>(robotName + "_mpc_observation", 1);
+  stanceBodyPositionPublisher_ = nh.advertise<geometry_msgs::Point>("stance_body_position", 1);
 }
 
 void LeggedController::setupMrt()

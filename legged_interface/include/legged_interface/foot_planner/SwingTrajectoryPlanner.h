@@ -106,6 +106,10 @@ public:
       feet_pos[i] = current_feet_position.segment<3>(3 * i);
     current_feet_position_buf_.setBuffer(feet_pos);
   }
+  feet_array_t<vector3_t> getCurrentFeetPosition(){
+      current_feet_position_buf_.updateFromBuffer();
+      return current_feet_position_buf_.get();
+  }
   void setBallPosition(vector3_t ball_position){
     ball_position_ = ball_position;
   }

@@ -93,6 +93,7 @@ protected:
   // Nonlinear MPC
   std::shared_ptr<MPC_BASE> mpc_;
   std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
+  ros::Publisher stanceBodyPositionPublisher_;
 
   // Visualization
   std::shared_ptr<legged::LeggedRobotVisualizer> robotVisualizer_;
@@ -144,6 +145,11 @@ private:
   std::atomic<scalar_t> kp_feet_stance{ 0 };
   std::atomic<scalar_t> kp_feet_swing{ 0 };
   std::atomic<scalar_t> kd_feet{ 0 };
+
+  scalar_t stance_start_time;
+  scalar_t stance_filter_max_duration;
+  bool stance_flag = false;
+  vector6_t stance_body_pose;
 
   vector_t defalutJointPos_;
 

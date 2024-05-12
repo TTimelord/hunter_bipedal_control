@@ -196,10 +196,10 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, TargetTraj
   vector_t current_body_pos = targetTrajectories.getDesiredState(initTime).segment<6>(6);
   vector_t current_body_vel = targetTrajectories.stateTrajectory[0].segment<3>(0);
 
-  ball_position_(0) = 2;
+  ball_position_(0) = 3;
   ball_position_(1) = -0.1;
 
-  bool enable_kick = true;
+  bool enable_kick = false;
 
   if(enable_kick){
     if(kick_stance_flag && kick_stance_middle_time > initTime){

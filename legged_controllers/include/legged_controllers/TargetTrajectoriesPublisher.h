@@ -24,6 +24,7 @@ at www.bridgedp.com.
 #include <ocs2_ros_interfaces/command/TargetTrajectoriesRosPublisher.h>
 #include "std_msgs/Float32.h"
 #include <atomic>
+#include <legged_interface/common/Types.h>
 
 namespace legged
 {
@@ -126,7 +127,18 @@ public:
 
       cmdVelfilteredpub_.publish(filter_msg);
 
-      const auto trajectories = cmdVelToTargetTrajectories_(lastVel_, latestObservation_);
+      auto trajectories = cmdVelToTargetTrajectories_(lastVel_, latestObservation_);
+      if(isStance_){
+        if(lastVel_.norm() < 0.01){
+          // for(int i = 0; i < trajectories.stateTrajectory.size(); i++){
+          //   trajectories.stateTrajectory[i].segment<3>(6) = stance_body_position;
+          // }
+          trajectories.stateTrajectory[1].segment<3>(6) = stance_body_position;
+        }
+        else{
+          isStance_ = false;
+        }
+      }
       targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);
     };
 
@@ -147,7 +159,15 @@ public:
       deadTimeforswitch_ = 100;
     };
 
+    auto start_stance_callback = [this](const geometry_msgs::Point::ConstPtr& msg) {
+      if(!isStance_){
+        isStance_ = true;
+        stance_body_position << msg->x, msg->y, msg->z;
+      }
+    };
+
     stanceSwitchsub_ = nh.subscribe<std_msgs::Float32>("/stance_switch", 1, stance_switch_callback);
+    stanceBodyPositionSub_ = nh.subscribe<geometry_msgs::Point>("/stance_body_position", 1, start_stance_callback);
   }
 
 private:
@@ -156,7 +176,7 @@ private:
   std::unique_ptr<TargetTrajectoriesRosPublisher> targetTrajectoriesPublisher_;
 
   ::ros::Subscriber observationSub_, goalSub_, cmdVelSub_, comAdjustmentSub_, runningSwitchsub_, stanceSwitchsub_,
-      bodyRotationsub_, bodyrotationSwitchsub_, pawupSwitchsub_;
+      bodyRotationsub_, bodyrotationSwitchsub_, pawupSwitchsub_, stanceBodyPositionSub_;
   tf2_ros::Buffer buffer_;
   tf2_ros::TransformListener tf2_;
 
@@ -172,6 +192,9 @@ private:
   std::atomic_int32_t deadTimeforswitch_{ 0 };
   std::atomic_bool velCmdconnection_{ true };
 
+  // stance
+  bool isStance_ = true;
+  legged_robot::vector3_t stance_body_position; 
 };
 
 }  // namespace legged
