@@ -77,6 +77,10 @@ SwingTrajectoryPlanner::SwingTrajectoryPlanner(Config config)
   feet_bias_[1] << config.feet_bias_x1, -config.feet_bias_y, config.feet_bias_z;
   feet_bias_[2] << config.feet_bias_x2, config.feet_bias_y, config.feet_bias_z;
   feet_bias_[3] << config.feet_bias_x2, -config.feet_bias_y, config.feet_bias_z;
+  feet_bias_[4] << config.feet_bias_x1, config.feet_bias_y - 0.04, config.feet_bias_z;
+  feet_bias_[5] << config.feet_bias_x1, -config.feet_bias_y + 0.04, config.feet_bias_z;
+  // feet_bias_[6] << config.feet_bias_x2, config.feet_bias_y - 0.04, config.feet_bias_z;
+  // feet_bias_[7] << config.feet_bias_x2, -config.feet_bias_y + 0.04, config.feet_bias_z;
 
   body_vel_cmd_.resize(6);
   body_vel_cmd_.setZero();

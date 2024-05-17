@@ -46,7 +46,8 @@ namespace ocs2
 namespace legged_robot
 {
 template <typename T>
-using feet_array_t = std::array<T, 4>;
+// using feet_array_t = std::array<T, 4>;
+using feet_array_t = std::array<T, 6>;
 
 using contact_flag_t = feet_array_t<bool>;
 

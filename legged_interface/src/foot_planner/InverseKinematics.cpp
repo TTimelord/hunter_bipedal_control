@@ -262,7 +262,7 @@ feet_array_t<vector3_t> InverseKinematics::computeFootPos(const vector_t& state)
   for (int leg = 0; leg < feet_pos.size(); leg++)
   {
     auto FRAME_ID = info_->endEffectorFrameIndices[leg];
-    int index = leg2index(leg);
+    // int index = leg2index(leg);
     feet_pos[leg] = data.oMf[FRAME_ID].translation();
   }
   return std::move(feet_pos);

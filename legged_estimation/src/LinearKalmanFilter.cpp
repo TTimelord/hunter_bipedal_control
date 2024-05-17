@@ -59,7 +59,8 @@ KalmanFilterEstimate::KalmanFilterEstimate(PinocchioInterface pinocchioInterface
   p_ = 100. * p_;
   q_.setIdentity();
   r_.setIdentity();
-  feetHeights_.setZero(info_.numThreeDofContacts);
+  // feetHeights_.setZero(info_.numThreeDofContacts);  // use 4 contact point
+  feetHeights_.setZero(4);
   eeKinematics_->setPinocchioInterface(pinocchioInterface_);
 
   world2odom_.setRotation(tf2::Quaternion::getIdentity());
@@ -111,10 +112,12 @@ vector_t KalmanFilterEstimate::update(const ros::Time& time, const ros::Duration
   Eigen::Matrix<scalar_t, 28, 28> r = Eigen::Matrix<scalar_t, 28, 28>::Identity();
   r.block(0, 0, 12, 12) = r_.block(0, 0, 12, 12) * footSensorNoisePosition_;
   r.block(12, 12, 12, 12) = r_.block(12, 12, 12, 12) * footSensorNoiseVelocity_;
-  const int fn = info_.numThreeDofContacts;
+  // const int fn = info_.numThreeDofContacts;
+  // use 4 contact point
+  const int fn = 4;
   r.block(24, 24, fn, fn) = r_.block(24, 24, fn, fn) * footHeightSensorNoise_;
 
-  for (int i = 0; i < info_.numThreeDofContacts; i++)
+  for (int i = 0; i < fn; i++)
   {
     int i1 = 3 * i;
 
@@ -272,7 +275,8 @@ void KalmanFilterEstimate::resetEstimationCallback(const std_msgs::Float32::Cons
   p_ = 100. * p_;
   q_.setIdentity();
   r_.setIdentity();
-  feetHeights_.setZero(info_.numThreeDofContacts);
+  // feetHeights_.setZero(info_.numThreeDofContacts);  // use 4 contact point
+  feetHeights_.setZero(4);
   world2odom_.setRotation(tf2::Quaternion::getIdentity());
   
 }
