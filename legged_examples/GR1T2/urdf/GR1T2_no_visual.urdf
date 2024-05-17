@@ -18,15 +18,7 @@
       <inertia ixx="0.045749" ixy="-0.00020848" ixz="-0.0025121" iyy="0.016772" iyz="-4.364E-05"
         izz="0.048814" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/base.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <link name="l_thigh_roll">
     <inertial>
@@ -35,15 +27,7 @@
       <inertia ixx="0.00098092" ixy="2E-08" ixz="6.191E-05" iyy="0.00109617" iyz="1.42E-06"
         izz="0.001388" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_hip_roll" type="revolute">
     <origin xyz="-0.0480000000000005 0.105 -0.0575" rpy="0 0 0" />
@@ -59,15 +43,7 @@
       <inertia ixx="0.00974309" ixy="-5.137E-05" ixz="0.00011781" iyy="0.01400783" iyz="0.00112062"
         izz="0.00730946" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_hip_yaw" type="revolute">
     <origin xyz="0.048 0 -0.0304999999999989" rpy="0 0 0" />
@@ -83,21 +59,8 @@
       <inertia ixx="0.08138824" ixy="-0.00020343" ixz="0.00179871" iyy="0.08464794" iyz="0.00989289"
         izz="0.01559965" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.15" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.35" radius="0.05" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="l_hip_pitch" type="revolute">
     <origin xyz="0 0 -0.109999999999336" rpy="0 0 0" />
@@ -113,21 +76,8 @@
       <inertia ixx="0.02094885" ixy="-1.793E-05" ixz="-0.00036658" iyy="0.02117876" iyz="0.00034981"
         izz="0.00160342" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg4.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.15" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.2" radius="0.05" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="l_knee_pitch" type="revolute">
     <origin xyz="0 0 -0.359995124115987" rpy="0 0 0" />
@@ -142,15 +92,7 @@
       <mass value="0.049737" />
       <inertia ixx="5.2E-06" ixy="0" ixz="0" iyy="3.71E-06" iyz="0" izz="4.41E-06" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg5.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_ankle_pitch" type="revolute">
     <origin xyz="0 0 -0.339999992262544" rpy="0 0 0" />
@@ -166,27 +108,7 @@
       <inertia ixx="0.00039846" ixy="2.9E-07" ixz="0.00013398" iyy="0.00258496" iyz="0"
         izz="0.00281514" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg6.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision name="l_foot_1">
-      <origin rpy="0 1.5708 0" xyz="0.05 0.02 -0.035" />
-      <geometry>
-        <cylinder length="0.24" radius="0.02" />
-      </geometry>
-    </collision>
-    <collision name="l_foot_2">
-      <origin rpy="0 1.5708 0" xyz="0.05 -0.02 -0.035" />
-      <geometry>
-        <cylinder length="0.24" radius="0.02" />
-      </geometry>
-    </collision>
+    
   </link>
   <joint name="l_ankle_roll" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -197,101 +119,33 @@
   </joint>
 
   <!-- 3 dof contact in pinocchio -->
-  <!-- <link
-    name="l_foot_toe">
-    <inertial>
-      <mass value="0.001"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
-    </inertial>
-  </link>
-  <joint
-    name="l_foot_toe_joint"
-    type="fixed">
-    <origin
-      xyz="0.17 0 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_toe" />
+ <joint name="leg_l5_fixed_1" type="fixed">
+    <origin xyz="0.1 0 -0.0300" rpy="0 0 0" />
+    <parent link="l_foot_roll" />
+    <child link="l_foot_toe" />
   </joint>
-  <link
-    name="l_foot_heel">
+  <link name="l_foot_toe">
     <inertial>
-      <mass value="0.001"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+      <mass value="0.01" />
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
     </inertial>
+    
+    
   </link>
-  <joint
-    name="l_foot_heel_joint"
-    type="fixed">
-    <origin
-      xyz="-0.07 0 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_heel" />
-  </joint> -->
 
-  <link
-    name="l_foot_toe_1">
-  </link>
-  <joint
-    name="l_foot_toe_joint_1"
-    type="fixed">
-    <origin
-      xyz="0.17 0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_toe_1" />
+  <joint name="leg_l5_fixed_2" type="fixed">
+    <origin xyz="-0.04 0 -0.0300" rpy="0 0 0" />
+    <parent link="l_foot_roll" />
+    <child link="l_foot_heel" />
   </joint>
-  <link
-    name="l_foot_heel_1">
+  <link name="l_foot_heel">
+    <inertial>
+      <mass value="0.01" />
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
+    </inertial>
+    
+    
   </link>
-  <joint
-    name="l_foot_heel_joint_1"
-    type="fixed">
-    <origin
-      xyz="-0.07 0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_heel_1" />
-  </joint>
-  <link
-    name="l_foot_toe_2">
-  </link>
-  <joint
-    name="l_foot_toe_joint_2"
-    type="fixed">
-    <origin
-      xyz="0.17 -0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_toe_2" />
-  </joint>
-  <link
-    name="l_foot_heel_2">
-  </link>
-  <joint
-    name="l_foot_heel_joint_2"
-    type="fixed">
-    <origin
-      xyz="-0.07 -0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="l_foot_roll" />
-    <child
-      link="l_foot_heel_2" />
-  </joint>
 
   <link name="r_thigh_roll">
     <inertial>
@@ -300,15 +154,7 @@
       <inertia ixx="0.00098097" ixy="-2E-08" ixz="6.189E-05" iyy="0.00109627" iyz="-1.43E-06"
         izz="0.00138804" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_hip_roll" type="revolute">
     <origin xyz="-0.0480000000000003 -0.105 -0.0575" rpy="0 0 0" />
@@ -324,15 +170,7 @@
       <inertia ixx="0.00974298" ixy="5.139E-05" ixz="0.0001179" iyy="0.01400765" iyz="-0.00112065"
         izz="0.0073094" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_hip_yaw" type="revolute">
     <origin xyz="0.0480000000000212 0 -0.0305000000000011" rpy="0 0 0" />
@@ -348,21 +186,8 @@
       <inertia ixx="0.08151107" ixy="0.00019413" ixz="0.0017867" iyy="0.08477204" iyz="-0.00994489"
         izz="0.01565212" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.15" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.35" radius="0.05" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_hip_pitch" type="revolute">
     <origin xyz="0 0 -0.109999999999337" rpy="0 0 0" />
@@ -378,21 +203,8 @@
       <inertia ixx="0.02088663" ixy="1.78E-05" ixz="-0.00036399" iyy="0.02111895" iyz="-0.00036161"
         izz="0.00160131" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg4.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.15" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.2" radius="0.05" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_knee_pitch" type="revolute">
     <origin xyz="0 0 -0.359995124115985" rpy="0 0 0" />
@@ -407,15 +219,7 @@
       <mass value="0.049737" />
       <inertia ixx="5.2E-06" ixy="0" ixz="0" iyy="3.71E-06" iyz="0" izz="4.41E-06" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg5.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_ankle_pitch" type="revolute">
     <origin xyz="0 0 -0.339999999788054" rpy="0 0 0" />
@@ -431,27 +235,7 @@
       <inertia ixx="0.00039843" ixy="-3.3E-07" ixz="0.00013399" iyy="0.00258489" iyz="0"
         izz="0.00281503" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg6.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision name="r_foot_1">
-      <origin rpy="0 1.5708 0" xyz="0.05 0.02 -0.035" />
-      <geometry>
-        <cylinder length="0.24" radius="0.02" />
-      </geometry>
-    </collision>
-    <collision name="r_foot_2">
-      <origin rpy="0 1.5708 0" xyz="0.05 -0.02 -0.035" />
-      <geometry>
-        <cylinder length="0.24" radius="0.02" />
-      </geometry>
-    </collision>
+    
   </link>
   <joint name="r_ankle_roll" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -462,101 +246,36 @@
   </joint>
 
   <!-- 3 dof contact in pinocchio -->
-  <!-- <link
-    name="r_foot_toe">
-    <inertial>
-      <mass value="0.001"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
-    </inertial>
-  </link>
-  <joint
-    name="r_foot_toe_joint"
-    type="fixed">
-    <origin
-      xyz="0.17 0 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_toe" />
+  <joint name="leg_r5_fixed_1" type="fixed">
+    <origin xyz="0.1 0 -0.0300" rpy="0 0 0" />
+    <parent link="r_foot_roll" />
+    <child link="r_foot_toe" />
   </joint>
-  <link
-    name="r_foot_heel">
+  <link name="r_foot_toe">
     <inertial>
-      <mass value="0.001"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+      <mass value="0.01" />
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
     </inertial>
+    
+    
   </link>
-  <joint
-    name="r_foot_heel_joint"
-    type="fixed">
-    <origin
-      xyz="-0.07 0 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_heel" />
-  </joint> -->
 
-  <link
-    name="r_foot_toe_1">
-  </link>
-  <joint
-    name="r_foot_toe_joint_1"
-    type="fixed">
-    <origin
-      xyz="0.17 -0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_toe_1" />
+  <joint name="leg_r5_fixed_2" type="fixed">
+    <origin xyz="-0.040 0 -0.0300" rpy="0 0 0" />
+    <parent link="r_foot_roll" />
+    <child link="r_foot_heel" />
   </joint>
-  <link
-    name="r_foot_heel_1">
+  <link name="r_foot_heel">
+    <inertial>
+      <mass value="0.01" />
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
+    </inertial>
+    
+    
   </link>
-  <joint
-    name="r_foot_heel_joint_1"
-    type="fixed">
-    <origin
-      xyz="-0.07 -0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_heel_1" />
-  </joint>
-  <link
-    name="r_foot_toe_2">
-  </link>
-  <joint
-    name="r_foot_toe_joint_2"
-    type="fixed">
-    <origin
-      xyz="0.17 0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_toe_2" />
-  </joint>
-  <link
-    name="r_foot_heel_2">
-  </link>
-  <joint
-    name="r_foot_heel_joint_2"
-    type="fixed">
-    <origin
-      xyz="-0.07 0.02 -0.05"
-      rpy="0 0 0" />
-    <parent
-      link="r_foot_roll" />
-    <child
-      link="r_foot_heel_2" />
-  </joint>
+
+
+
 
 
 
@@ -567,15 +286,7 @@
       <inertia ixx="0.00110565" ixy="-4.9E-07" ixz="4.837E-05" iyy="0.00082433" iyz="1.198E-05"
         izz="0.00141909" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="joint_waist_yaw" type="revolute">
     <origin xyz="0 0 0.00649999999999984" rpy="0 0 0" />
@@ -591,15 +302,7 @@
       <inertia ixx="0.00845426" ixy="-5.355E-05" ixz="-0.00049265" iyy="0.00844076"
         iyz="-0.00047579" izz="0.00329151" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="joint_waist_pitch" type="revolute">
     <origin xyz="0 0 0.0570000000000001" rpy="0 0 0" />
@@ -615,21 +318,8 @@
       <inertia ixx="0.06293498" ixy="5.308E-05" ixz="0.00175668" iyy="0.05101438" iyz="-3.98E-06"
         izz="0.03853047" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.15" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.2" radius="0.1" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="joint_waist_roll" type="revolute">
     <origin xyz="0 0 0.081" rpy="0 0 0" />
@@ -658,15 +348,7 @@
       <inertia ixx="0.0007753" ixy="-2.589E-05" ixz="3.7E-07" iyy="0.00049478" iyz="7.2E-06"
         izz="0.00067965" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_shoulder_pitch" type="revolute">
     <origin xyz="0 0.126623540943386 0.0590455268445764" rpy="0.436334785573203 0 0" />
@@ -682,22 +364,8 @@
       <inertia ixx="0.000202" ixy="3.959E-05" ixz="-4.406E-05" iyy="0.00016117" iyz="4.295E-05"
         izz="0.00017433" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.89804 0.91765 0.92941 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.04" />
-      </geometry>
-
-    </collision>
+    
+    
   </link>
   <joint name="l_shoulder_roll" type="revolute">
     <origin xyz="0 0.0669999999997965 0" rpy="-0.436334785573203 0 0" />
@@ -713,22 +381,8 @@
       <inertia ixx="0.00618618" ixy="-1.2E-07" ixz="1.28E-06" iyy="0.00611274" iyz="0.00019627"
         izz="0.00057714" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.05" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.11" radius="0.03" />
-      </geometry>
-
-    </collision>
+    
+    
   </link>
   <joint name="l_shoulder_yaw" type="revolute">
     <origin xyz="0 0.040381430445538 -0.0572327709897897" rpy="0 0 0" />
@@ -743,15 +397,7 @@
       <mass value="0.059535" />
       <inertia ixx="2.796E-05" ixy="0" ixz="0" iyy="2.596E-05" iyz="-7.95E-06" izz="1.931E-05" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm4.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_elbow_pitch" type="revolute">
     <origin xyz="0 0.00125501157055688 -0.188749174791823" rpy="0 0 0" />
@@ -767,21 +413,8 @@
       <inertia ixx="0.00419457" ixy="6.15E-06" ixz="5E-07" iyy="0.00409118" iyz="-1.263E-05"
         izz="0.00084731" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm5.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.08" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.17" radius="0.035" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="l_wrist_yaw" type="revolute">
     <origin xyz="0 0.000299612107771352 -0.0404989031042769" rpy="0 0 0" />
@@ -796,15 +429,7 @@
       <mass value="0.0054351" />
       <inertia ixx="7E-08" ixy="0" ixz="0" iyy="3.6E-07" iyz="0" izz="3.6E-07" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm6.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="l_wrist_roll" type="revolute">
     <origin xyz="0 0.00133699944291396 -0.20107985186864" rpy="0 0 0" />
@@ -820,21 +445,8 @@
       <inertia ixx="0.0011317" ixy="0.00013711" ixz="-2.516E-05" iyy="0.0014781" iyz="4.232E-05"
         izz="0.00058665" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm7.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.07" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.036" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="l_wrist_pitch" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -850,15 +462,7 @@
       <inertia ixx="0.00077478" ixy="2.506E-05" ixz="3.6E-07" iyy="0.00049477" iyz="-9.49E-06"
         izz="0.00067913" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_shoulder_pitch" type="revolute">
     <origin xyz="0 -0.126623540926852 0.0590455268368039" rpy="-0.436332306093773 0 0" />
@@ -874,21 +478,8 @@
       <inertia ixx="0.00020199" ixy="-3.928E-05" ixz="-4.432E-05" iyy="0.00016173" iyz="-4.302E-05"
         izz="0.00017374" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.89804 0.91765 0.92941 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.04" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_shoulder_roll" type="revolute">
     <origin xyz="0 -0.0670000000000026 0" rpy="0.436332306093773 0 0" />
@@ -904,21 +495,8 @@
       <inertia ixx="0.0061732" ixy="1E-08" ixz="-1.2E-06" iyy="0.00610224" iyz="-0.00015934"
         izz="0.00057482" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.05" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.11" radius="0.03" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_shoulder_yaw" type="revolute">
     <origin xyz="0 -0.039999999998954 -0.0575000000000302" rpy="0 0 0" />
@@ -933,15 +511,7 @@
       <mass value="0.059535" />
       <inertia ixx="2.796E-05" ixy="0" ixz="0" iyy="2.586E-05" iyz="8E-06" izz="1.942E-05" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm4.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.79216 0.81961 0.93333 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_elbow_pitch" type="revolute">
     <origin xyz="0 0 -0.188530330300762" rpy="0 0 0" />
@@ -957,21 +527,8 @@
       <inertia ixx="0.00419457" ixy="6.15E-06" ixz="-4.6E-07" iyy="0.00409087" iyz="3.42E-05"
         izz="0.00084762" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm5.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.08" rpy="0 0 0" />
-      <geometry>
-        <cylinder length="0.17" radius="0.035" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_wrist_yaw" type="revolute">
     <origin xyz="0 -3.03303104252084E-05 -0.0404999999922469" rpy="0 0 0" />
@@ -986,15 +543,7 @@
       <mass value="0.0054351" />
       <inertia ixx="7E-08" ixy="0" ixz="0" iyy="3.6E-07" iyz="0" izz="3.6E-07" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm6.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.8902 0.8902 0.91373 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="r_wrist_roll" type="revolute">
     <origin xyz="0 0 -0.201084296746609" rpy="0 0 0" />
@@ -1010,21 +559,8 @@
       <inertia ixx="0.00113168" ixy="-0.00013694" ixz="-2.607E-05" iyy="0.00147867" iyz="-3.638E-05"
         izz="0.00058614" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm7.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 -0.07" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.036" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="r_wrist_pitch" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -1039,21 +575,8 @@
       <mass value="0.00543512" />
       <inertia ixx="3.6E-07" ixy="0" ixz="0" iyy="7E-08" iyz="0" izz="3.6E-07" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head3.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.1" rpy="0 0 0" />
-      <geometry>
-        <sphere radius="0.07" />
-      </geometry>
-    </collision>
+    
+    
   </link>
   <joint name="joint_head_pitch" type="revolute">
     <origin xyz="0.000999999999997045 -0.000225512658326668 0.144786985472057" rpy="0 0 0" />
@@ -1068,15 +591,7 @@
       <mass value="0.07131711" />
       <inertia ixx="2.863E-05" ixy="0" ixz="-2.8E-06" iyy="2.039E-05" iyz="0" izz="2.713E-05" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head2.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="joint_head_roll" type="revolute">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -1092,15 +607,7 @@
       <inertia ixx="0.00803907" ixy="-9.9E-07" ixz="0.00082206" iyy="0.00988205" iyz="-1.27E-06"
         izz="0.00625075" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head1.STL" />
-      </geometry>
-      <material name="">
-        <color rgba="0.75294 0.75294 0.75294 1" />
-      </material>
-    </visual>
+    
   </link>
   <joint name="joint_head_yaw" type="revolute">
     <origin xyz="0 5.37300128340204E-05 0.0359999599039489" rpy="0 0 0" />

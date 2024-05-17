@@ -2,7 +2,6 @@
   <compiler angle="radian" meshdir="../meshes/"/>
   <default>
     <joint damping="1" armature="0.1"/>
-    <motor gear="1" ctrllimited="true" ctrlrange="-100  100" />
   </default>
   <asset>
     <mesh name="base" file="base.STL"/>
