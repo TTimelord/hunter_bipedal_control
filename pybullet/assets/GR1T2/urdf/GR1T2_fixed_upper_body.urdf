@@ -21,7 +21,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/base.STL" />
+        <mesh filename="../meshes/base.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -38,7 +38,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg1.STL" />
+        <mesh filename="../meshes/Lleg1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -62,7 +62,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg2.STL" />
+        <mesh filename="../meshes/Lleg2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -86,7 +86,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg3.STL" />
+        <mesh filename="../meshes/Lleg3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -116,7 +116,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg4.STL" />
+        <mesh filename="../meshes/Lleg4.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -145,7 +145,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg5.STL" />
+        <mesh filename="../meshes/Lleg5.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -169,7 +169,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Lleg6.STL" />
+        <mesh filename="../meshes/Lleg6.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -246,7 +246,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg1.STL" />
+        <mesh filename="../meshes/Rleg1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -270,7 +270,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg2.STL" />
+        <mesh filename="../meshes/Rleg2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -294,7 +294,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg3.STL" />
+        <mesh filename="../meshes/Rleg3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -324,7 +324,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg4.STL" />
+        <mesh filename="../meshes/Rleg4.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -353,7 +353,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg5.STL" />
+        <mesh filename="../meshes/Rleg5.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -377,7 +377,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rleg6.STL" />
+        <mesh filename="../meshes/Rleg6.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -454,14 +454,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist3.STL" />
+        <mesh filename="../meshes/waist3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="joint_waist_yaw" type="revolute">
+  <joint name="joint_waist_yaw" type="fixed">
     <origin xyz="0 0 0.00649999999999984" rpy="0 0 0" />
     <parent link="base_link" />
     <child link="link_waist_yaw" />
@@ -478,14 +478,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist2.STL" />
+        <mesh filename="../meshes/waist2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="joint_waist_pitch" type="revolute">
+  <joint name="joint_waist_pitch" type="fixed">
     <origin xyz="0 0 0.0570000000000001" rpy="0 0 0" />
     <parent link="link_waist_yaw" />
     <child link="link_waist_pitch" />
@@ -502,7 +502,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/waist1.STL" />
+        <mesh filename="../meshes/waist1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -515,7 +515,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="joint_waist_roll" type="revolute">
+  <joint name="joint_waist_roll" type="fixed">
     <origin xyz="0 0 0.081" rpy="0 0 0" />
     <parent link="link_waist_pitch" />
     <child link="link_waist_roll" />
@@ -545,14 +545,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm1.STL" />
+        <mesh filename="../meshes/Larm1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="l_shoulder_pitch" type="revolute">
+  <joint name="l_shoulder_pitch" type="fixed">
     <origin xyz="0 0.126623540943386 0.0590455268445764" rpy="0.436334785573203 0 0" />
     <parent link="link_torso" />
     <child link="l_upper_arm_pitch" />
@@ -569,7 +569,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm2.STL" />
+        <mesh filename="../meshes/Larm2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.89804 0.91765 0.92941 1" />
@@ -583,7 +583,7 @@
 
     </collision>
   </link>
-  <joint name="l_shoulder_roll" type="revolute">
+  <joint name="l_shoulder_roll" type="fixed">
     <origin xyz="0 0.0669999999997965 0" rpy="-0.436334785573203 0 0" />
     <parent link="l_upper_arm_pitch" />
     <child link="l_upper_arm_roll" />
@@ -600,7 +600,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm3.STL" />
+        <mesh filename="../meshes/Larm3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -614,7 +614,7 @@
 
     </collision>
   </link>
-  <joint name="l_shoulder_yaw" type="revolute">
+  <joint name="l_shoulder_yaw" type="fixed">
     <origin xyz="0 0.040381430445538 -0.0572327709897897" rpy="0 0 0" />
     <parent link="l_upper_arm_roll" />
     <child link="l_upper_arm_yaw" />
@@ -630,14 +630,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm4.STL" />
+        <mesh filename="../meshes/Larm4.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="l_elbow_pitch" type="revolute">
+  <joint name="l_elbow_pitch" type="fixed">
     <origin xyz="0 0.00125501157055688 -0.188749174791823" rpy="0 0 0" />
     <parent link="l_upper_arm_yaw" />
     <child link="l_lower_arm_pitch" />
@@ -654,7 +654,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm5.STL" />
+        <mesh filename="../meshes/Larm5.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -667,7 +667,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="l_wrist_yaw" type="revolute">
+  <joint name="l_wrist_yaw" type="fixed">
     <origin xyz="0 0.000299612107771352 -0.0404989031042769" rpy="0 0 0" />
     <parent link="l_lower_arm_pitch" />
     <child link="l_hand_yaw" />
@@ -683,14 +683,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm6.STL" />
+        <mesh filename="../meshes/Larm6.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="l_wrist_roll" type="revolute">
+  <joint name="l_wrist_roll" type="fixed">
     <origin xyz="0 0.00133699944291396 -0.20107985186864" rpy="0 0 0" />
     <parent link="l_hand_yaw" />
     <child link="l_hand_roll" />
@@ -707,7 +707,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Larm7.STL" />
+        <mesh filename="../meshes/Larm7.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -720,7 +720,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="l_wrist_pitch" type="revolute">
+  <joint name="l_wrist_pitch" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <parent link="l_hand_roll" />
     <child link="l_hand_pitch" />
@@ -737,14 +737,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm1.STL" />
+        <mesh filename="../meshes/Rarm1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="r_shoulder_pitch" type="revolute">
+  <joint name="r_shoulder_pitch" type="fixed">
     <origin xyz="0 -0.126623540926852 0.0590455268368039" rpy="-0.436332306093773 0 0" />
     <parent link="link_torso" />
     <child link="r_upper_arm_pitch" />
@@ -761,7 +761,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm2.STL" />
+        <mesh filename="../meshes/Rarm2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.89804 0.91765 0.92941 1" />
@@ -774,7 +774,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="r_shoulder_roll" type="revolute">
+  <joint name="r_shoulder_roll" type="fixed">
     <origin xyz="0 -0.0670000000000026 0" rpy="0.436332306093773 0 0" />
     <parent link="r_upper_arm_pitch" />
     <child link="r_upper_arm_roll" />
@@ -791,7 +791,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm3.STL" />
+        <mesh filename="../meshes/Rarm3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -804,7 +804,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="r_shoulder_yaw" type="revolute">
+  <joint name="r_shoulder_yaw" type="fixed">
     <origin xyz="0 -0.039999999998954 -0.0575000000000302" rpy="0 0 0" />
     <parent link="r_upper_arm_roll" />
     <child link="r_upper_arm_yaw" />
@@ -820,14 +820,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm4.STL" />
+        <mesh filename="../meshes/Rarm4.STL" />
       </geometry>
       <material name="">
         <color rgba="0.79216 0.81961 0.93333 1" />
       </material>
     </visual>
   </link>
-  <joint name="r_elbow_pitch" type="revolute">
+  <joint name="r_elbow_pitch" type="fixed">
     <origin xyz="0 0 -0.188530330300762" rpy="0 0 0" />
     <parent link="r_upper_arm_yaw" />
     <child link="r_lower_arm_pitch" />
@@ -844,7 +844,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm5.STL" />
+        <mesh filename="../meshes/Rarm5.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -857,7 +857,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="r_wrist_yaw" type="revolute">
+  <joint name="r_wrist_yaw" type="fixed">
     <origin xyz="0 -3.03303104252084E-05 -0.0404999999922469" rpy="0 0 0" />
     <parent link="r_lower_arm_pitch" />
     <child link="r_hand_yaw" />
@@ -873,14 +873,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm6.STL" />
+        <mesh filename="../meshes/Rarm6.STL" />
       </geometry>
       <material name="">
         <color rgba="0.8902 0.8902 0.91373 1" />
       </material>
     </visual>
   </link>
-  <joint name="r_wrist_roll" type="revolute">
+  <joint name="r_wrist_roll" type="fixed">
     <origin xyz="0 0 -0.201084296746609" rpy="0 0 0" />
     <parent link="r_hand_yaw" />
     <child link="r_hand_roll" />
@@ -897,7 +897,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/Rarm7.STL" />
+        <mesh filename="../meshes/Rarm7.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -910,7 +910,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="r_wrist_pitch" type="revolute">
+  <joint name="r_wrist_pitch" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <parent link="r_hand_roll" />
     <child link="r_hand_pitch" />
@@ -926,7 +926,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head3.STL" />
+        <mesh filename="../meshes/head3.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
@@ -939,7 +939,7 @@
       </geometry>
     </collision>
   </link>
-  <joint name="joint_head_pitch" type="revolute">
+  <joint name="joint_head_pitch" type="fixed">
     <origin xyz="0.000999999999997045 -0.000225512658326668 0.144786985472057" rpy="0 0 0" />
     <parent link="link_torso" />
     <child link="link_head_pitch" />
@@ -955,14 +955,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head2.STL" />
+        <mesh filename="../meshes/head2.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="joint_head_roll" type="revolute">
+  <joint name="joint_head_roll" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <parent link="link_head_pitch" />
     <child link="link_head_roll" />
@@ -979,14 +979,14 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://gr1t2_description/meshes/head1.STL" />
+        <mesh filename="../meshes/head1.STL" />
       </geometry>
       <material name="">
         <color rgba="0.75294 0.75294 0.75294 1" />
       </material>
     </visual>
   </link>
-  <joint name="joint_head_yaw" type="revolute">
+  <joint name="joint_head_yaw" type="fixed">
     <origin xyz="0 5.37300128340204E-05 0.0359999599039489" rpy="0 0 0" />
     <parent link="link_head_roll" />
     <child link="link_head_yaw" />

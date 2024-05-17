@@ -226,18 +226,45 @@ void InitRobotState(mjData* d)
   // left leg
   d->qpos[7] = 0;
   d->qpos[8] = 0;
-  d->qpos[9] = -0.46;
+  d->qpos[9] = -0.4;
   d->qpos[10] = 0.9;
-  d->qpos[11] = -0.44;
+  d->qpos[11] = -0.5;
   d->qpos[12] = 0;
 
   // right leg
   d->qpos[13] = 0;
   d->qpos[14] = 0;
-  d->qpos[15] = -0.46;
+  d->qpos[15] = -0.4;
   d->qpos[16] = 0.9;
-  d->qpos[17] = -0.44;
+  d->qpos[17] = -0.5;
   d->qpos[18] = 0;
+
+  // humanoid
+  // d->qpos[2] = 0.97;
+  // d->qpos[9] = 0.35;
+  // d->qpos[10] = -0.9;
+  // d->qpos[11] = -0.55;
+  // d->qpos[15] = 0.35;
+  // d->qpos[16] = -0.9;
+  // d->qpos[17] = -0.55;
+
+  //high_torque
+  // d->qpos[2] = 0.36;
+  // d->qpos[9] = 0.4;
+  // d->qpos[10] = 0.8;
+  // d->qpos[11] = 0.4;
+  // d->qpos[15] = -0.4;
+  // d->qpos[16] = 0.8;
+  // d->qpos[17] = -0.4;
+
+  // h1
+  d->qpos[2] = 0.96;
+  d->qpos[9] = -0.35;
+  d->qpos[10] = 0.9;
+  d->qpos[11] = -0.55;
+  d->qpos[15] = -0.35;
+  d->qpos[16] = 0.9;
+  d->qpos[17] = -0.55;
   
 }
 
