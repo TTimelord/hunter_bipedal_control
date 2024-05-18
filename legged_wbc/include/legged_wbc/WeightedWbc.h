@@ -27,9 +27,11 @@ protected:
   virtual Task formulateConstraints();
   virtual Task formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
   Task formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
+  Task formulateContactForceRegularizationTask();
+  Task formulateZeroContactForceTask();
 
 private:
-  scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_;
+  scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_, weightContactForceRegularization_;
 
   vector_t last_qpSol;
 };

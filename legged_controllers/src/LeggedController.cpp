@@ -82,7 +82,7 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   setupStateEstimate(taskFile, verbose);
 
   // Whole body control
-  stance_filter_max_duration = 1.0;
+  stance_filter_max_duration = 2.0;
   stance_flag = false;
   wbc_ = std::make_shared<WeightedWbc>(leggedInterface_->getPinocchioInterface(),
                                        leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
@@ -167,41 +167,44 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   if (setWalkFlag_)
   {
     wbc_->setStanceMode(false);
-    if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3 && 
-        mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.6) == 3 ){
-      if(!stance_flag){
-        stance_flag = true;
-        stance_start_time = currentObservation_.time;
-        stance_body_pose.setZero();
-        feet_array_t<vector3_t> current_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
-        stance_body_pose.segment<3>(0) = (current_feet_positions[0] + current_feet_positions[1] + current_feet_positions[2] + current_feet_positions[3]) / 4;
-        stance_body_pose(4) = currentObservation_.state(9);
-        stance_body_pose(0) -= 0.05*cos(stance_body_pose(4));
-        stance_body_pose(0) -= 0.05*sin(stance_body_pose(4));
-        stance_body_pose(2) = 0.88;
-        std::cout<<stance_body_pose<<std::endl<<"====="<<std::endl;
-      }
-      geometry_msgs::Point msg;
-      msg.x = stance_body_pose(0);
-      msg.y = stance_body_pose(1);
-      msg.z = stance_body_pose(2);
-      stanceBodyPositionPublisher_.publish(msg);
-      // scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
-      scalar_t filter_ratio = 1.0;
-      optimizedState.setZero();
-      optimizedInput.setZero();
+    // if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3 && 
+    //     mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.5) == 3){
+    //   if(!stance_flag){
+    //     stance_flag = true;
+    //     stance_start_time = currentObservation_.time;
+    //     stance_start_body_pose = currentObservation_.state.segment<6>(6);
+    //     stance_start_body_pose(2) = 0.88;
+    //     // stance_start_body_pose(2) = 0.98;
+    //     stance_body_pose.setZero();
+    //     feet_array_t<vector3_t> current_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
+    //     stance_body_pose.segment<3>(0) = (current_feet_positions[0] + current_feet_positions[1] + current_feet_positions[2] + current_feet_positions[3]) / 4;
+    //     stance_body_pose(3) = currentObservation_.state(9);
+    //     stance_body_pose(0) -= 0.05*cos(stance_body_pose(3));
+    //     stance_body_pose(0) -= 0.05*sin(stance_body_pose(3));
+    //     stance_body_pose(2) = 0.88;
+    //     // stance_body_pose(2) = 0.98;
+    //   }
+    //   geometry_msgs::Point msg;
+    //   msg.x = stance_body_pose(0);
+    //   msg.y = stance_body_pose(1);
+    //   msg.z = stance_body_pose(2);
+    //   stanceBodyPositionPublisher_.publish(msg);
+    //   scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
+    //   // scalar_t filter_ratio = 1.0;
+    //   optimizedState.setZero();
+    //   optimizedInput.setZero();
 
-      optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*currentObservation_.state.segment<3>(6);
-      optimizedState(9) = stance_body_pose(4);
-      optimizedState.segment<12>(12) = defalutJointPos_;
-      // std::cout<<"stance_body_pose:\n"<<stance_body_pose<<"\n";
-      // std::cout<<"currentObservation_:\n"<<currentObservation_.state.segment<3>(6)<<"\n=========\n";
-    }
-    else{
-      if(stance_flag){
-        stance_flag = false;
-      }
-    }
+    //   optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);
+    //   optimizedState(9) = stance_body_pose(3);
+    //   optimizedState.segment<12>(12) = defalutJointPos_;
+    //   // std::cout<<"stance_body_pose:\n"<<stance_body_pose<<"\n";
+    //   // std::cout<<"currentObservation_:\n"<<currentObservation_.state.segment<3>(6)<<"\n=========\n";
+    // }
+    // else{
+    //   if(stance_flag){
+    //     stance_flag = false;
+    //   }
+    // }
   }
   else
   {
@@ -210,6 +213,8 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     // optimizedState.segment(6, 6) = currentObservation_.state.segment<6>(6);
     optimizedState(6) = -0.05;
     optimizedState(8) = 0.88;
+    // optimizedState(6) = -0.02;
+    // optimizedState(8) = 0.98;
     optimizedState.segment(6 + 6, jointDim_) = defalutJointPos_;
     plannedMode = 3;
     wbc_->setStanceMode(true);
@@ -238,8 +243,8 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   // std::cout<<"observation"<<std::endl;
   // std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
   // std::cout<<"period"<<period<<std::endl;
-  // std::cout<<"wbc_planned_torque"<<std::endl;
-  // std::cout<<wbc_planned_torque<<std::endl;
+  std::cout<<"wbc_planned_torque"<<std::endl;
+  std::cout<<wbc_planned_torque<<std::endl;
   // std::cout<<"wbc_planned_joint_acc"<<std::endl;
   // std::cout<<wbc_planned_joint_acc<<std::endl;
   // std::cout<<"wbc_planned_body_acc"<<std::endl;
@@ -297,7 +302,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       else if (j== 4 || j == 10)
       {
         hybridJointHandles_[j].setCommand(posDes_[j], velDes_[j],
-                                          cmdContactFlag[int(j / 6)] ? 30 : 20, kd_feet,
+                                          cmdContactFlag[int(j / 6)] ? kp_small_stance : kp_small_swing, kd_feet,
                                           wbc_planned_torque(j));
       }
       else if (j== 5 || j == 11)
@@ -375,7 +380,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
       mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time));
   if (!firstStartMpc_)
   {
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < cmdContactFlag.size(); ++i)
     {
       cmdContactFlag[i] = true;
     }
@@ -404,7 +409,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
   }
 
   stateEstimate_->updateJointStates(jointPos, jointVel);
-  stateEstimate_->updateContact(cmdContactFlag); // mlq: duplication?
+  stateEstimate_->updateContact(cmdContactFlag);
   stateEstimate_->updateImu(quat, angularVel, linearAccel, orientationCovariance, angularVelCovariance,
                             linearAccelCovariance);
   measuredRbdState_ = stateEstimate_->update(time, period);

@@ -128,17 +128,17 @@ public:
       cmdVelfilteredpub_.publish(filter_msg);
 
       auto trajectories = cmdVelToTargetTrajectories_(lastVel_, latestObservation_);
-      if(isStance_){
-        if(lastVel_.norm() < 0.01){
-          // for(int i = 0; i < trajectories.stateTrajectory.size(); i++){
-          //   trajectories.stateTrajectory[i].segment<3>(6) = stance_body_position;
-          // }
-          trajectories.stateTrajectory[1].segment<3>(6) = stance_body_position;
-        }
-        else{
-          isStance_ = false;
-        }
-      }
+      // if(isStance_){
+      //   if(lastVel_.norm() < 0.01){
+      //     // for(int i = 0; i < trajectories.stateTrajectory.size(); i++){
+      //     //   trajectories.stateTrajectory[i].segment<3>(6) = stance_body_position;
+      //     // }
+      //     trajectories.stateTrajectory[1].segment<3>(6) = stance_body_position;
+      //   }
+      //   else{
+      //     isStance_ = false;
+      //   }
+      // }
       targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);
     };
 

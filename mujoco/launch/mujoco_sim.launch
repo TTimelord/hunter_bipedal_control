@@ -2,7 +2,10 @@
     <!-- <arg name="robot_type" default="go1" doc="Robot type: [a1, aliengo, go1, laikago]"/>
      -->
     <!-- <arg name="legged_robot_scene" default="$(find mujoco)/model/hunter/hunter_scene.xml"/> -->
-    <arg name="legged_robot_scene" default="$(find gr1t1_description)/mjcf/scene.xml"/>
+    <arg name="legged_robot_scene" default="$(find gr1t2_description)/mjcf/scene.xml"/>
+    <!-- <arg name="legged_robot_scene" default="$(find humanoid_legged_description)/mjcf/scene.xml"/> -->
+    <!-- <arg name="legged_robot_scene" default="$(find high_torque_description)/mjcf/scene.xml"/> -->
+    <!-- <arg name="legged_robot_scene" default="$(find h1_description)/mjcf/scene.xml"/> -->
 
     <node name="mujoco" pkg="mujoco" type="mujoco_simulate" respawn="false"
         clear_params="true" args="$(arg legged_robot_scene)" output="screen"/>

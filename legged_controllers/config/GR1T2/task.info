@@ -335,6 +335,7 @@ weight
     swingLeg        100
     baseAccel       1
     contactForce    0.0
+    contactForceRegularization  0.0
 }
 
 ; State Estimation

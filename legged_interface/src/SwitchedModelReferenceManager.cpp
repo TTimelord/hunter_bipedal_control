@@ -49,7 +49,6 @@ at www.bridgedp.com.
 #include <iostream>
 #include <iomanip>
 
-#define JOINT_NUM 6  // Joint number per leg
 
 namespace ocs2
 {
@@ -59,7 +58,7 @@ std::vector<scalar_t> stance_times{ 0.0, 0.5 };
 std::vector<size_t> stance_modes{ 3 };
 ModeSequenceTemplate stance(stance_times, stance_modes);
 
-std::vector<scalar_t> trot_times{ 0.0, 0.3, 0.6 };
+std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.7 };
 std::vector<size_t> trot_modes{ 2, 1 };
 ModeSequenceTemplate trot(trot_times, trot_modes);
 
@@ -267,14 +266,14 @@ void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_
                                                       TargetTrajectories& targetTrajectories)
 {
   vector3_t euler_zyx = initState.segment<3>(6 + 3);
-  matrix3_t world2body_rotation = getRotationMatrixFromZyxEulerAngles(euler_zyx);
-  matrix3_t body2foot_rotation = getRotationMatrixFromZyxEulerAngles(vector3_t(0, 0, 0));
-  matrix3_t R_des = world2body_rotation * body2foot_rotation;
+  // matrix3_t world2body_rotation = getRotationMatrixFromZyxEulerAngles(euler_zyx);
+  // matrix3_t body2foot_rotation = getRotationMatrixFromZyxEulerAngles(vector3_t(0, 0, 0));
+  // matrix3_t R_des = world2body_rotation * body2foot_rotation;
   if (targetTrajectories.size() <= 1)
     return;
   auto q_ref = vector_t(info_.generalizedCoordinatesNum);
 
-  const scalar_t step = 0.15;
+  const scalar_t step = 0.05;
   int sample_size = floor((finalTime - initTime) / step) + 1;
   if (sample_size <= 2)
     return;
@@ -297,8 +296,9 @@ void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_
   const int feet_num = 2;
   for (int i = 0; i < sample_size; i++)
   {
-    q_ref.head<6>() = targetTrajectories.stateTrajectory[i].segment<JOINT_NUM>(6);
+    q_ref.head<6>() = targetTrajectories.stateTrajectory[i].segment<6>(6);
     q_ref.segment(6, joint_num) = targetTrajectories.stateTrajectory[std::max(i - 1, 0)].segment(6 + 6, joint_num);
+    matrix3_t R_des = getRotationMatrixFromZyxEulerAngles(vector3_t(q_ref(3), 0, 0));
     vector3_t des_foot_p;
     for (int leg = 0; leg < feet_num; leg++)
     {
@@ -307,7 +307,7 @@ void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_
       des_foot_p.y() = swingTrajectoryPtr_->getYpositionConstraint(leg, Ts[i]);
       des_foot_p.z() = swingTrajectoryPtr_->getZpositionConstraint(leg, Ts[i]);
       ikTimer_.startTimer();
-      targetTrajectories.stateTrajectory[i].segment<JOINT_NUM>(12 + index) =
+      targetTrajectories.stateTrajectory[i].segment<6>(12 + index) =
           inverseKinematics_.computeIK(q_ref, leg, des_foot_p, R_des);
       ikTimer_.endTimer();
     }

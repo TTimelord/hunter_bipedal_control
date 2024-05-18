@@ -67,13 +67,34 @@ vector_t WeightedWbc::update(const vector_t& stateDesired, const vector_t& input
 
 Task WeightedWbc::formulateConstraints()
 {
-  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask();
+  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() + formulateZeroContactForceTask();
 }
+
+Task WeightedWbc::formulateZeroContactForceTask()
+{
+  int num_constrained_contact = info_.numThreeDofContacts - 4;
+  int num_constrained_forces = 3 * num_constrained_contact;
+  matrix_t a(num_constrained_forces, numDecisionVars_);
+  a.setZero();
+  for(int i = 0; i < num_constrained_contact; i++){
+    a.block(0 + 3*i, 6 + info_.actuatedDofNum + 4*3 + 3*i, 3, 3).setIdentity();  // only constrain Z axis
+  }
+  // std::cout<<a.block(0, 6 + info_.actuatedDofNum + 4*3, num_constrained_forces, num_constrained_forces)<<std::endl;
+  // exit(0);
+  // a.block(0, 6 + info_.actuatedDofNum, num_constrained_forces, num_constrained_forces).setIdentity();
+
+  vector_t b(num_constrained_forces);
+  b.setZero();    
+
+  return { a, b, matrix_t(), vector_t() };
+}
+
 
 Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period)
 {
   if (stance_mode_)
     return formulateStanceBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_;
+            //+ formulateContactForceRegularizationTask() * weightContactForceRegularization_;
   else
     return formulateSwingLegTask() * weightSwingLeg_ +
            formulateBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_ +
@@ -83,40 +104,30 @@ Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vec
 Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
                                                scalar_t period)
 {
-  return formulateBaseAccelTask(stateDesired, inputDesired, period);
-//   matrix_t a(6, numDecisionVars_);
-//   a.setZero();
-//   a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
-//   // a.block(9, 9, 10, 10) = matrix_t::Identity(1, 1);
-//   // a.block(15, 15, 16, 16) = matrix_t::Identity(1, 1);
+  // return formulateBaseAccelTask(stateDesired, inputDesired, period);
 
-//   vector6_t b;
-//   vector6_t stance_q_desired;
-//   b.setZero();
+  matrix_t a(6, numDecisionVars_);
+  a.setZero();
+  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
 
-//   stance_q_desired.setZero();
-//   stance_q_desired(2) = 0.88;
-//   stance_q_desired(0) = -0.05;
+  vector6_t b;
+  b.setZero();
 
-//   vector3_t eulerAngles = qMeasured_.segment<3>(3);
+  return { a, b, matrix_t(), vector_t() };
+}
 
-//   // from derivative euler to angular
-//   vector3_t vMeasuredGlobal =
-//       getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<scalar_t>(eulerAngles, vMeasured_.segment<3>(3));
+Task WeightedWbc::formulateContactForceRegularizationTask()
+{
 
-//   // from euler to rotation
-//   vector3_t eulerAnglesDesired = stance_q_desired.tail<3>();
-//   matrix3_t rotationBaseMeasuredToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAngles);
-//   matrix3_t rotationBaseReferenceToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAnglesDesired);
+  matrix_t a(info_.numThreeDofContacts * 3, numDecisionVars_);
+  a.setZero();
+  a.block(0, 6 + info_.actuatedDofNum, info_.numThreeDofContacts * 3, info_.numThreeDofContacts * 3)
+           = matrix_t::Identity(info_.numThreeDofContacts * 3, info_.numThreeDofContacts * 3);
 
-//   vector3_t error = rotationErrorInWorld<scalar_t>(rotationBaseReferenceToWorld, rotationBaseMeasuredToWorld);
+  vector_t b(info_.numThreeDofContacts * 3);
+  b.setZero();
 
-//   b.block(0, 0, 2, 1) = com_kp_ * (stance_q_desired.segment<2>(0) - qMeasured_.segment<2>(0)) +
-//         com_kd_ * ( - vMeasured_.segment<2>(0));
-//   b(2) = baseHeightKp_*(stance_q_desired(2) - qMeasured_(2)) + baseHeightKd_*(0 - vMeasured_(2));
-//   b.block(3, 0, 3, 1) = baseAngularKp_ * error + baseAngularKd_ * ( - vMeasuredGlobal);
-
-//   return { a, b, matrix_t(), vector_t() };
+  return { a, b, matrix_t(), vector_t() };
 }
 
 void WeightedWbc::loadTasksSetting(const std::string& taskFile, bool verbose)
@@ -134,6 +145,7 @@ void WeightedWbc::loadTasksSetting(const std::string& taskFile, bool verbose)
   loadData::loadPtreeValue(pt, weightSwingLeg_, prefix + "swingLeg", verbose);
   loadData::loadPtreeValue(pt, weightBaseAccel_, prefix + "baseAccel", verbose);
   loadData::loadPtreeValue(pt, weightContactForce_, prefix + "contactForce", verbose);
+  loadData::loadPtreeValue(pt, weightContactForceRegularization_, prefix + "contactForceRegularization", verbose);
 }
 
 }  // namespace legged

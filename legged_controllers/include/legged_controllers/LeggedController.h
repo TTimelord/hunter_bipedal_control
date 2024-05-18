@@ -150,6 +150,7 @@ private:
   scalar_t stance_filter_max_duration;
   bool stance_flag = false;
   vector6_t stance_body_pose;
+  vector6_t stance_start_body_pose;
 
   vector_t defalutJointPos_;
 
