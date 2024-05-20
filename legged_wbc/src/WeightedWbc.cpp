@@ -67,7 +67,7 @@ vector_t WeightedWbc::update(const vector_t& stateDesired, const vector_t& input
 
 Task WeightedWbc::formulateConstraints()
 {
-  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() + formulateZeroContactForceTask();
+  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask();// + formulateZeroContactForceTask();
 }
 
 Task WeightedWbc::formulateZeroContactForceTask()
@@ -77,7 +77,7 @@ Task WeightedWbc::formulateZeroContactForceTask()
   matrix_t a(num_constrained_forces, numDecisionVars_);
   a.setZero();
   for(int i = 0; i < num_constrained_contact; i++){
-    a.block(0 + 3*i, 6 + info_.actuatedDofNum + 4*3 + 3*i, 3, 3).setIdentity();  // only constrain Z axis
+    a.block(0 + 3*i, 6 + info_.actuatedDofNum + 4*3 + 3*i, 2, 2).setIdentity();  // only constrain Z axis
   }
   // std::cout<<a.block(0, 6 + info_.actuatedDofNum + 4*3, num_constrained_forces, num_constrained_forces)<<std::endl;
   // exit(0);
@@ -93,12 +93,14 @@ Task WeightedWbc::formulateZeroContactForceTask()
 Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period)
 {
   if (stance_mode_)
-    return formulateStanceBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_;
+    return formulateStanceBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_ +
+            formulateNoContactMotionTask() * weightNoContactMotion_;
             //+ formulateContactForceRegularizationTask() * weightContactForceRegularization_;
   else
     return formulateSwingLegTask() * weightSwingLeg_ +
            formulateBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_ +
-           formulateContactForceTask(inputDesired) * weightContactForce_;
+          //  formulateContactForceTask(inputDesired) * weightContactForce_ +
+           formulateNoContactMotionTask() * weightNoContactMotion_;
 }
 
 Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
@@ -145,7 +147,8 @@ void WeightedWbc::loadTasksSetting(const std::string& taskFile, bool verbose)
   loadData::loadPtreeValue(pt, weightSwingLeg_, prefix + "swingLeg", verbose);
   loadData::loadPtreeValue(pt, weightBaseAccel_, prefix + "baseAccel", verbose);
   loadData::loadPtreeValue(pt, weightContactForce_, prefix + "contactForce", verbose);
-  loadData::loadPtreeValue(pt, weightContactForceRegularization_, prefix + "contactForceRegularization", verbose);
+  // loadData::loadPtreeValue(pt, weightContactForceRegularization_, prefix + "contactForceRegularization", verbose);
+  loadData::loadPtreeValue(pt, weightNoContactMotion_, prefix + "noContactMotion", verbose);
 }
 
 }  // namespace legged

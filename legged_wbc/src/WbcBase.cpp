@@ -168,6 +168,26 @@ Task WbcBase::formulateTorqueLimitsTask()
 
 Task WbcBase::formulateNoContactMotionTask()
 {
+  // eeKinematics_->setPinocchioInterface(pinocchioInterfaceMeasured_);
+  // std::vector<vector3_t> velMeasured = eeKinematics_->getVelocity(vector_t(), vector_t());
+
+  // matrix_t a(3 * numContacts_, numDecisionVars_);
+  // vector_t b(a.rows());
+
+  // a.setZero();
+  // b.setZero();
+  // size_t j = 0;
+  // for (size_t i = 0; i < info_.numThreeDofContacts; i++)
+  // {
+  //   if (contactFlag_[i])
+  //   {
+  //     vector3_t accel = noContactMotionKd_ * (- velMeasured[i]);
+  //     a.block(3 * j, 0, 3, info_.generalizedCoordinatesNum) = j_.block(3 * i, 0, 3, info_.generalizedCoordinatesNum);
+  //     b.segment(3 * j, 3) = accel - dj_.block(3 * i, 0, 3, info_.generalizedCoordinatesNum) * vMeasured_;
+  //     j++;
+  //   }
+  // }
+
   matrix_t a(3 * numContacts_, numDecisionVars_);
   vector_t b(a.rows());
 
@@ -383,6 +403,14 @@ void WbcBase::loadTasksSetting(const std::string& taskFile, bool verbose)
   }
   loadData::loadPtreeValue(pt, swingKp_, prefix + "kp", verbose);
   loadData::loadPtreeValue(pt, swingKd_, prefix + "kd", verbose);
+
+  prefix = "noContactMotionTask.";
+  if (verbose)
+  {
+    std::cerr << "\n #### No Motion Task:";
+    std::cerr << "\n #### =============================================================================\n";
+  }
+  loadData::loadPtreeValue(pt, noContactMotionKd_, prefix + "kd", verbose);
 
   prefix = "baseAccelTask.";
   if (verbose)

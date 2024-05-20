@@ -112,7 +112,7 @@ protected:
   size_t numContacts_{};
 
   vector_t torqueLimits_;
-  scalar_t frictionCoeff_{}, swingKp_{}, swingKd_{};
+  scalar_t frictionCoeff_{}, swingKp_{}, swingKd_{}, noContactMotionKd_{};
   scalar_t baseHeightKp_{}, baseHeightKd_{};
   scalar_t baseAngularKp_{}, baseAngularKd_{};
 

@@ -31,7 +31,7 @@ protected:
   Task formulateZeroContactForceTask();
 
 private:
-  scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_, weightContactForceRegularization_;
+  scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_, weightContactForceRegularization_, weightNoContactMotion_;
 
   vector_t last_qpSol;
 };

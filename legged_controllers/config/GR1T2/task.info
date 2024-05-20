@@ -25,10 +25,10 @@ swing_trajectory_config
   swingHeight                   0.06
   swingTimeScale                0.15
 
-  feet_bias_x1                  0.17
-  feet_bias_x2                 -0.07
-  feet_bias_y                   0.15
-  feet_bias_z                  -0.85
+  feet_bias_x1                  0.1
+  feet_bias_x2                  -0.05
+  feet_bias_y                   0.17
+  feet_bias_z                  -0.88
   
   next_stance_position_z        0.0
 }
@@ -239,21 +239,28 @@ R
   (9,9)   5.0    ; right_force
   (10,10) 5.0    ; right_force
   (11,11) 5.0    ; right_force
+  ;; Third Feet Contact Forces: [L, R]
+  (12,12)   5.0    ; left_force
+  (13,13)   5.0    ; left_force
+  (14,14)   5.0    ; left_force
+  (15,15)   5.0    ; right_force
+  (16,16)   5.0    ; right_force
+  (17,17)   5.0    ; right_force
 
   ;; left foot velocity relative to base: [linear(3), angular(3)] (uses the Jacobian at nominal configuration) ;;
-  (12,12)   2000.0   ; x
-  (13,13)   2000.0   ; y
-  (14,14)   2000.0   ; z
-  (15,15)   2000.0   ; x
-  (16,16)   2000.0   ; y
-  (17,17)   2000.0   ; z
-  ;; right f2000.0 velocity relative to base: [linear(3), angular(3)] (uses the Jacobian at nominal configuration) ;;
   (18,18)   2000.0   ; x
   (19,19)   2000.0   ; y
   (20,20)   2000.0   ; z
   (21,21)   2000.0   ; x
   (22,22)   2000.0   ; y
   (23,23)   2000.0   ; z
+  ;; right foot velocity relative to base: [linear(3), angular(3)] (uses the Jacobian at nominal configuration) ;;
+  (24,24)   2000.0   ; x
+  (25,25)   2000.0   ; y
+  (26,26)   2000.0   ; z
+  (27,27)   2000.0   ; x
+  (28,28)   2000.0   ; y
+  (29,29)   2000.0   ; z
 }
 
 frictionConeSoftConstraint
@@ -312,21 +319,26 @@ swingLegTask
     kd                   18   
 }
 
+noContactMotionTask
+{
+    kd                   100  
+}
+
 baseAccelTask
 {
-    kp                   200
+    kp                   100
     kd                   20
 }
 
 baseHeightTask
 {
-    kp                   200
+    kp                   100
     kd                   20
 }
 
 baseAngularTask 
 {
-    kp                   200
+    kp                   100
     kd                   20
 }
 
@@ -335,7 +347,7 @@ weight
     swingLeg        100
     baseAccel       1
     contactForce    0.0
-    contactForceRegularization  0.0
+    noContactMotion 1
 }
 
 ; State Estimation
@@ -354,25 +366,4 @@ contactForceEsimation
 {
    cutoffFrequency    250
    contactThreshold   75
-}
-
-loopShapingConfigs
-{
-    contactForce
-    {
-        A      0.0
-        B      1.0
-        C      100
-        D       10
-        R        1
-    }
-
-    jointVelocity
-    {
-        A      0.0
-        B      1.0
-        C      100
-        D       10
-        R        1
-    }
 }
