@@ -27,7 +27,7 @@ swing_trajectory_config
 
   feet_bias_x1                  0.1
   feet_bias_x2                  -0.05
-  feet_bias_y                   0.17
+  feet_bias_y                   0.18
   feet_bias_z                  -0.88
   
   next_stance_position_z        0.0
@@ -78,7 +78,7 @@ ddp
 ; Multiple_Shooting SQP settings
 sqp
 {
-  nThreads                              4
+  nThreads                              6
   dt                                    0.015
   sqpIteration                          1
   deltaTol                              1e-4
@@ -240,12 +240,12 @@ R
   (10,10) 5.0    ; right_force
   (11,11) 5.0    ; right_force
   ;; Third Feet Contact Forces: [L, R]
-  (12,12)   5.0    ; left_force
-  (13,13)   5.0    ; left_force
-  (14,14)   5.0    ; left_force
-  (15,15)   5.0    ; right_force
-  (16,16)   5.0    ; right_force
-  (17,17)   5.0    ; right_force
+  (12,12)   2.5    ; left_force
+  (13,13)   2.5    ; left_force
+  (14,14)   2.5    ; left_force
+  (15,15)   2.5    ; right_force
+  (16,16)   2.5    ; right_force
+  (17,17)   2.5    ; right_force
 
   ;; left foot velocity relative to base: [linear(3), angular(3)] (uses the Jacobian at nominal configuration) ;;
   (18,18)   2000.0   ; x

@@ -82,8 +82,8 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   setupStateEstimate(taskFile, verbose);
 
   // Whole body control
-  stance_filter_max_duration = 2.0;
-  stance_flag = false;
+  // stance_filter_max_duration = 2.0;
+  // stance_flag = false;
   wbc_ = std::make_shared<WeightedWbc>(leggedInterface_->getPinocchioInterface(),
                                        leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
   wbc_->loadTasksSetting(taskFile, verbose);
@@ -210,11 +210,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   {
     optimizedState.setZero();
     optimizedInput.setZero();
-    // optimizedState.segment(6, 6) = currentObservation_.state.segment<6>(6);
-    optimizedState(6) = -0.05;
     optimizedState(8) = 0.88;
-    // optimizedState(6) = -0.02;
-    // optimizedState(8) = 0.98;
     optimizedState.segment(6 + 6, jointDim_) = defalutJointPos_;
     plannedMode = 3;
     wbc_->setStanceMode(true);
@@ -243,14 +239,14 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   // std::cout<<"observation"<<std::endl;
   // std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
   // std::cout<<"period"<<period<<std::endl;
-  std::cout<<"wbc_planned_torque"<<std::endl;
-  std::cout<<wbc_planned_torque<<std::endl;
+  // std::cout<<"wbc_planned_torque"<<std::endl;
+  // std::cout<<wbc_planned_torque<<std::endl;
   // std::cout<<"wbc_planned_joint_acc"<<std::endl;
   // std::cout<<wbc_planned_joint_acc<<std::endl;
   // std::cout<<"wbc_planned_body_acc"<<std::endl;
   // std::cerr<<wbc_planned_body_acc<<std::endl;
-  // std::cout<<"wbc_planned_contact_force"<<std::endl;
-  // std::cout<<wbc_planned_contact_force<<std::endl;
+  std::cout<<"wbc_planned_contact_force"<<std::endl;
+  std::cout<<wbc_planned_contact_force<<std::endl;
   // std::cout<<"WBC end =========="<<std::endl;
 
   vector_t output_torque(jointDim_);

@@ -75,10 +75,10 @@ SwingTrajectoryPlanner::SwingTrajectoryPlanner(Config config)
 
   feet_bias_[0] << config.feet_bias_x1, config.feet_bias_y, config.feet_bias_z;
   feet_bias_[1] << config.feet_bias_x1, -config.feet_bias_y, config.feet_bias_z;
-  feet_bias_[2] << config.feet_bias_x2, config.feet_bias_y, config.feet_bias_z;
-  feet_bias_[3] << config.feet_bias_x2, -config.feet_bias_y, config.feet_bias_z;
-  feet_bias_[4] << config.feet_bias_x1, config.feet_bias_y - 0.04, config.feet_bias_z;
-  feet_bias_[5] << config.feet_bias_x1, -config.feet_bias_y + 0.04, config.feet_bias_z;
+  feet_bias_[2] << config.feet_bias_x2, config.feet_bias_y - 0.04, config.feet_bias_z;
+  feet_bias_[3] << config.feet_bias_x2, -config.feet_bias_y + 0.04, config.feet_bias_z;
+  feet_bias_[4] << config.feet_bias_x1, config.feet_bias_y - 0.08, config.feet_bias_z;
+  feet_bias_[5] << config.feet_bias_x1, -config.feet_bias_y + 0.08, config.feet_bias_z;
   // feet_bias_[6] << config.feet_bias_x2, config.feet_bias_y - 0.04, config.feet_bias_z;
   // feet_bias_[7] << config.feet_bias_x2, -config.feet_bias_y + 0.04, config.feet_bias_z;
 
@@ -203,7 +203,7 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, TargetTraj
   ball_position_(0) = 3;
   ball_position_(1) = -0.1;
 
-  bool enable_kick = false;
+  bool enable_kick = true;
 
   if(enable_kick){
     if(kick_stance_flag && kick_stance_middle_time > initTime){
@@ -263,10 +263,6 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, TargetTraj
     feetZTrajs_[j].reserve(modeSequence.size());
     startStopTime_[j].reserve(modeSequence.size());
 
-    vector3_t last_stance_point;
-    last_stance_point(0) = 0;
-    last_stance_point(1) = 0;
-    last_stance_point(2) = 0;
     for (int p = 0; p < modeSequence.size(); ++p)
     {
       if (!eesContactFlagStocks[j][p])

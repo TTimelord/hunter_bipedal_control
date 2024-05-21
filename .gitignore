@@ -1,2 +1,4 @@
 # Ignore Visual Studio Code files
 .vscode/
+
+__pycache__
