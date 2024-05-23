@@ -34,7 +34,44 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 
 void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    fsa_list[i].GetPVC(jointData_[i].pos_, jointData_[i].vel_, jointData_[i].tau_); // TODO: current to tau conversion required
+    fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // TODO: current to tau conversion required
+    read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
+  }
+
+  Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorTorq = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd anklePose = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleTorq = Eigen::VectorXd::Zero(4);
+
+  motorPos << read_joint_pos[4], read_joint_pos[5], read_joint_pos[10], read_joint_pos[11];
+  motorVel << read_joint_vel[4], read_joint_vel[5], read_joint_vel[10], read_joint_vel[11];
+  motorTorq << read_joint_torq[4], read_joint_torq[5], read_joint_torq[10], read_joint_torq[11];
+
+  funS2P.setEst(motorPos, motorVel, motorTorq);
+  funS2P.calcFK();
+  funS2P.getAnkleState(anklePose, ankleVel, ankleTorq);
+
+  read_joint_pos[4] = anklePose[0];
+  read_joint_pos[5] = anklePose[1];
+  read_joint_pos[10] = anklePose[2];
+  read_joint_pos[11] = anklePose[3];
+
+  read_joint_vel[4] = ankleVel[0];
+  read_joint_vel[5] = ankleVel[1];
+  read_joint_vel[10] = ankleVel[2];
+  read_joint_vel[11] = ankleVel[3];
+
+  read_joint_torq[4] = ankleTorq[0];
+  read_joint_torq[5] = ankleTorq[1];
+  read_joint_torq[10] = ankleTorq[2];
+  read_joint_torq[11] = ankleTorq[3];
+
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    jointData_[i].pos_ = read_joint_pos[i];
+    jointData_[i].vel_ = read_joint_vel[i];
+    jointData_[i].tau_ = read_joint_torq[i];
   }
 
   Eigen::Quaterniond quaternion = Eigen::AngleAxisd(imu.imudata(0), Eigen::Vector3d::UnitZ()) *
@@ -59,20 +96,55 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 }
 
 void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    write_joint_pos[i] = jointData_[i].posDes_;
+    write_joint_vel[i] = jointData_[i].velDes_;
+    write_joint_torq[i] = jointData_[i].ff_;
+  }
+
+  Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorTorq = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd anklePose = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleTorq = Eigen::VectorXd::Zero(4);
+
+  anklePose << write_joint_pos[4], write_joint_pos[5], write_joint_pos[10], write_joint_pos[11];
+  ankleVel << write_joint_vel[4], write_joint_vel[5], write_joint_vel[10], write_joint_vel[11];
+  ankleTorq << write_joint_torq[4], write_joint_torq[5], write_joint_torq[10], write_joint_torq[11];
+
+  funS2P.setRef(anklePose, ankleVel, ankleTorq);
+  funS2P.calcIK();
+  funS2P.getMotorCmd(motorPos, motorVel, motorTorq);
+
+  write_joint_pos[4] = motorPos[0];
+  write_joint_pos[5] = motorPos[1];
+  write_joint_pos[10] = motorPos[2];
+  write_joint_pos[11] = motorPos[3];
+
+  write_joint_vel[4] = motorVel[0];
+  write_joint_vel[5] = motorVel[1];
+  write_joint_vel[10] = motorVel[2];
+  write_joint_vel[11] = motorVel[3];
+
+  write_joint_torq[4] = motorTorq[0];
+  write_joint_torq[5] = motorTorq[1];
+  write_joint_torq[10] = motorTorq[2];
+  write_joint_torq[11] = motorTorq[3]; 
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    fsa_list[i].SetPosition(jointData_[i].posDes_, jointData_[i].velDes_, torque_to_current(i, jointData_[i].ff_));
-    // lowCmd_.joint_pos[i] = static_cast<double>(jointData_[i].posDes_);
-    // lowCmd_.joint_vel[i] = static_cast<double>(jointData_[i].velDes_);
-    // lowCmd_.kp[i] = static_cast<double>(jointData_[i].kp_);
-    // lowCmd_.kd[i] = static_cast<double>(jointData_[i].kd_);
-    // lowCmd_.ff_tau[i] = static_cast<double>(jointData_[i].ff_);
+    fsa_list[i].SetPosition(write_joint_pos[i], write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
   }
 }
 
 double GR1HW::torque_to_current(int index, double torque){
   double current = torque * dir[index]/(ratio[index]*scale[index]);
   return current;
+}
+
+double GR1HW::current_to_torque(int index, double current){
+  double torque = current * (ratio[index]*scale[index]) * dir[index];
+  return torque;
 }
 
 bool GR1HW::setupJoints() {

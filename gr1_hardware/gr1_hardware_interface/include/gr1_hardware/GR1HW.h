@@ -94,16 +94,25 @@ private:
   parallel_ankle funS2P;
 
   std::vector<FSA_CONNECT::FSA> fsa_list = std::vector<FSA_CONNECT::FSA>(TOTAL_JOINT_NUM);
-  std::vector<std::string> ip_list = {"", ""};
+  std::vector<std::string> ip_list = {"192.168.137.70", "192.168.137.71","192.168.137.72","192.168.137.73","192.168.137.74","192.168.137.75",
+                                    "192.168.137.50", "192.168.137.71","192.168.137.72","192.168.137.73","192.168.137.74","192.168.137.75"};
 
   double torque_to_current(int index, double torque);
+  double current_to_torque(int index, double torque);
 
   std::vector<double> ratio = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   std::vector<double> scale = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   std::vector<double> dir = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-                              1.0, 1.0, 1.0, 1.0, 1.0, 1.0};                                
+                              1.0, 1.0, 1.0, 1.0, 1.0, 1.0};   
+
+  std::vector<double> read_joint_pos = std::vector<double>(TOTAL_JOINT_NUM);  // for serial-parallel conversion
+  std::vector<double> read_joint_vel = std::vector<double>(TOTAL_JOINT_NUM);
+  std::vector<double> read_joint_torq = std::vector<double>(TOTAL_JOINT_NUM);
+  std::vector<double> write_joint_pos = std::vector<double>(TOTAL_JOINT_NUM); 
+  std::vector<double> write_joint_vel = std::vector<double>(TOTAL_JOINT_NUM); 
+  std::vector<double> write_joint_torq = std::vector<double>(TOTAL_JOINT_NUM);                         
 };
 
 
