@@ -1,0 +1,43 @@
+{
+    "Device": "FSE",
+    "Command": {
+        "comm_config_get": false,
+        "comm_config_set": false,
+        "ctrl_config_get": false,
+        "ctrl_config_set": false,
+        "ctrl_config_save": false,
+        "get_measured": true,
+        "get_home_offset": false,
+        "set_home_offset": false,
+        "set_home_position": false,
+        "lookup_absEncoder": false,
+        "lookup_ser": false,
+        "ota": false,
+        "ota_test": false,
+        "ota_cloud": false,
+        "reboot_fse": false,
+        "reboot_ser": false
+    },
+    "Param": {
+        "comm_config_set_param": {
+            "DHCP_enable": false,
+            "SSID": "fftai-12",
+            "password": "fftai2015",
+            "static_IP":[
+                [192,168,137,203],
+                [192,168,137,203],
+                [192,168,137,204]
+                ]
+        },
+        "ctrl_config_set_param": {
+            "home_offset": 1
+        },
+        "get_measure_num": {
+            "get_angel_num": 1
+        },
+        "home_offset_set_param": {
+            "home_offset": 4993.615724
+        }
+    }
+
+}

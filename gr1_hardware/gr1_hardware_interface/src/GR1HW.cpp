@@ -7,6 +7,9 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
     return false;
   }
 
+  rapidjson::Document msg_json;
+  char ser_msg[1024] = {0};
+
   setupJoints();
   setupImu();
   // setupContactSensor(robot_hw_nh);
@@ -28,6 +31,17 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       fsa_list[i].EnablePosControl();
   }
 
+  for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+    fse->demo_get_measured(ae_ip_list[i], NULL, ser_msg);
+    fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); 
+    if (msg_json.Parse(ser_msg).HasParseError())
+    {
+        Logger::get_instance()->print_trace_error("fi_decode() failed\n");
+        return 0;
+    }
+    double ae_current = msg_json["radian"].GetDouble();
+    pos_offset[i] = ae_current - absolute_pos_zero[i] - read_joint_pos[i]*PI/180;
+  }
   return true;
 }    
 
@@ -35,6 +49,8 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // TODO: current to tau conversion required
+    read_joint_pos[i] = dir[i] * (PI / 180 * read_joint_pos[i] + pos_offset[i]);
+    read_joint_vel[i] = dir[i] * PI / 180 * read_joint_vel[i];
     read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
   }
 
@@ -133,7 +149,9 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
   write_joint_torq[11] = motorTorq[3]; 
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    fsa_list[i].SetPosition(write_joint_pos[i], write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
+    write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI;
+    write_joint_vel[i] = write_joint_vel[i] * 180/PI;
+    fsa_list[i].SetPosition(dir[i] * write_joint_pos[i], dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
   }
 }
 
