@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>gr1_hardware_interface</name>
+    <version>0.0.0</version>
+    <description>hardware interface for gr1</description>
+    <maintainer email="liqian.ma.2001@gmail.com">mlq</maintainer>
+
+    <license>BSD</license>
+    <author email="liqian.ma.2001@gmail.com">mlq</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>cmake_clang_tools</build_depend>
+    <depend>roscpp</depend>
+    <depend>legged_hw</depend>
+    <depend>fsasdk</depend>
+    <!-- <depend>dynamic_reconfigure</depend> -->
+</package>
