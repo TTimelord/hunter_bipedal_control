@@ -32,11 +32,11 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   }
 
   for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
-    fse->demo_get_measured(ae_ip_list[i], NULL, ser_msg);
+    fse.demo_get_measured(ae_ip_list[i], NULL, ser_msg);
     fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); 
     if (msg_json.Parse(ser_msg).HasParseError())
     {
-        Logger::get_instance()->print_trace_error("fi_decode() failed\n");
+        std::cout<<"fi_decode()"<<i<<"failed\n";
         return 0;
     }
     double ae_current = msg_json["radian"].GetDouble();

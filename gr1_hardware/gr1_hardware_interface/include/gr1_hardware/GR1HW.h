@@ -112,8 +112,6 @@ private:
                                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   std::vector<double> dir = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
                               1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-  std::vector<double> dir = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-                              1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
   std::vector<double> read_joint_pos = std::vector<double>(TOTAL_JOINT_NUM);  // for serial-parallel conversion
   std::vector<double> read_joint_vel = std::vector<double>(TOTAL_JOINT_NUM);

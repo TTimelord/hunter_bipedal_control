@@ -8,6 +8,7 @@ find_package(catkin REQUIRED
         roscpp
         legged_hw
         fsasdk
+        fsesdk
         # dynamic_reconfigure
         )
 find_package(Threads REQUIRED)
@@ -26,6 +27,7 @@ catkin_package(
                 roscpp
                 legged_hw
                 fsasdk
+                fsesdk
                 # dynamic_reconfigure
 )
 
