@@ -9,8 +9,8 @@
     <!-- <param name="legged_robot_description" textfile="$(find h1_description)/urdf/h1.urdf"/> -->
 
 
-    <rosparam file="$(find gr1_hardware)/config/gr1.yaml" command="load"/>
+    <rosparam file="$(find gr1_hardware_interface)/config/gr1.yaml" command="load"/>
 
-    <node name="gr1_hardware" pkg="gr1_hardware" type="gr1_hardware" respawn="false"
+    <node name="gr1_hardware_interface" pkg="gr1_hardware_interface" type="gr1_hardware_interface" respawn="false"
           clear_params="true" output="screen"/>
 </launch>

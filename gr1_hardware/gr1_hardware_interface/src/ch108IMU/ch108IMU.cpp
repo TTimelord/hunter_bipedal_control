@@ -174,6 +174,7 @@ void ch108IMU::dump_data_packet(raw_t *raw)
 {
 
     Eigen::Vector3d vel;
+    Eigen::Vector3d zyx;
     Eigen::Matrix3d pos_under_ch108;
     Eigen::Matrix3d pos_under_vn;
 	Eigen::AngleAxisd x_Angle(Eigen::AngleAxisd(raw->imu[0].eul[1]*M_PI/180,Eigen::Vector3d::UnitX()));
@@ -185,20 +186,34 @@ void ch108IMU::dump_data_packet(raw_t *raw)
 	Eigen::AngleAxisd z_Angle_1(Eigen::AngleAxisd(M_PI/2,Eigen::Vector3d::UnitZ()));
 	Eigen::AngleAxisd x_Angle_1(Eigen::AngleAxisd(M_PI,Eigen::Vector3d::UnitX()));
     Eigen::AngleAxisd z_Angle_2(Eigen::AngleAxisd(-M_PI/2,Eigen::Vector3d::UnitZ()));
+    Eigen::AngleAxisd z_Angle_3(Eigen::AngleAxisd(M_PI,Eigen::Vector3d::UnitZ()));
 	pos_under_vn = z_Angle_2 * x_Angle_1 * pos_under_ch108 * x_Angle_1 * z_Angle_1;
+	pos_under_vn = z_Angle_3 * pos_under_vn * x_Angle_1;
 
+	// std::cout<<pos_under_ch108<<"==="<<std::endl;
+	// std::cout<<pos_under_ch108.block(0, 1, 3, 2)<<"==="<<std::endl;
+	// std::cout<<pos_under_ch108.block(0, 2, 3, 3)<<"==="<<std::endl;
+
+	// pos_under_vn.block(0, 0, 3, 1) = -pos_under_ch108.block(0, 0, 3, 1);
+	// pos_under_vn.block(0, 1, 3, 2) =  pos_under_ch108.block(0, 1, 3, 2);
+	// pos_under_vn.block(0, 2, 3, 3) = - pos_under_ch108.block(0, 2, 3, 3);
+	zyx = rotm2zyx(pos_under_vn);
 
     vel<<raw->imu[0].gyr[0], raw->imu[0].gyr[1], raw->imu[0].gyr[2];
     vel = z_Angle_2 * x_Angle_1 * vel;
+	std::cout<<vel<<"=====\n";
+
+
 	// std::cout<<"pos_under_ch108: "<<pos_under_ch108<<std::endl;
 	// std::cout<<"trans: "<<x_Angle_1 .toRotationMatrix()* z_Angle_1.toRotationMatrix()<<std::endl;
 	// std::cout<<"pos_under_vn: "<<pos_under_vn<<std::endl;
 
     // std::cout<<"ch108 : "<<rotm2zyx(pos_under_vn)(0) * 180/M_PI<<" "<<rotm2zyx(pos_under_vn)(1) * 180/M_PI<<" "<<rotm2zyx(pos_under_vn)(2) * 180/M_PI<<std::endl;
 
-    imudata<<rotm2zyx(pos_under_vn)(0), 
-            rotm2zyx(pos_under_vn)(1), 
-            rotm2zyx(pos_under_vn)(2),
+
+    imudata<<zyx(0), 
+            zyx(1), 
+            zyx(2),
             vel(0)*M_PI/180,
             vel(1)*M_PI/180,
             vel(2)*M_PI/180,

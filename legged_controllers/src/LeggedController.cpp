@@ -245,8 +245,8 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   // std::cout<<wbc_planned_joint_acc<<std::endl;
   // std::cout<<"wbc_planned_body_acc"<<std::endl;
   // std::cerr<<wbc_planned_body_acc<<std::endl;
-  std::cout<<"wbc_planned_contact_force"<<std::endl;
-  std::cout<<wbc_planned_contact_force<<std::endl;
+  // std::cout<<"wbc_planned_contact_force"<<std::endl;
+  // std::cout<<wbc_planned_contact_force<<std::endl;
   // std::cout<<"WBC end =========="<<std::endl;
 
   vector_t output_torque(jointDim_);

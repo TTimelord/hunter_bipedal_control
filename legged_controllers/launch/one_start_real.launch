@@ -5,7 +5,7 @@
     <arg name="rviz" default="true"/>
     <arg name="record_data" default="false"/>
 
-    <include file="$(find legged_bridge_hw)/launch/legged_bridge_hw.launch"/>
+    <include file="$(find gr1_hardware_interface)/launch/gr1_hardware_interface.launch"/>
 
     <node pkg="legged_controllers" type="timedelay_launch.sh" name="timedelay_launch" args="2 legged_controllers one_start.launch" output="screen"/>
 
@@ -14,7 +14,5 @@
     <group if="$(arg record_data)">
         <include file="$(find legged_controllers)/launch/record_data.launch"/>
     </group>
-
-    <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" output="screen"></node>
 
 </launch>

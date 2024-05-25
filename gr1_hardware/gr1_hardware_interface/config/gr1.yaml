@@ -1,6 +1,6 @@
-legged_mujoco:
+gr1_hardware_interface:
   loop_frequency: 1000
-  cycle_time_error_threshold: 0.002
+  cycle_time_error_threshold: 0.001
   thread_priority: 95
   power_limit: 6
   contact_threshold: 200

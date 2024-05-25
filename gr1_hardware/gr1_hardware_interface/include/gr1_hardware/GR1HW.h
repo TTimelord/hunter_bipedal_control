@@ -106,22 +106,32 @@ private:
   double torque_to_current(int index, double torque);
   double current_to_torque(int index, double torque);
 
-  std::vector<double> ratio = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-  std::vector<double> scale = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-                                1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-  std::vector<double> dir = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-                              1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+  std::vector<double> ratio = std::vector<double>(TOTAL_JOINT_NUM);
+  std::vector<double> scale = std::vector<double>(TOTAL_JOINT_NUM);
+  std::vector<double> absolute_pos_zero;                         
+  std::vector<double> absolute_pos_dir;
+  std::vector<double> absolute_pos_ratio;
+  std::vector<double> motor_dir; 
+  std::vector<double> pos_offset = std::vector<double>(TOTAL_JOINT_NUM);                         
 
-  std::vector<double> read_joint_pos = std::vector<double>(TOTAL_JOINT_NUM);  // for serial-parallel conversion
+//     std::vector<double> absolute_pos_zero = {4.77873373, 1.303500175, 5.828743458, 3.366704226, 0.043718453, 1.914024472,
+//                                          3.934277296, 0.458276749, 2.895388842, 5.370850086, 5.983292103, 2.836330414};
+
+// std::vector<double> absolute_pos_dir = { 1.0, 1.0, -1.0, 1.0, 1.0, -1.0,
+//                                         1.0, 1.0, 1.0, -1.0, -1.0, 1.0,};
+
+// std::vector<double> absolute_pos_ratio = { 2.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+//                                         2.0, 1.0, 1.0, 1.0, 1.0, 1.0,};
+
+// std::vector<double> motor_dir = {-1.0, 1.0, 1.0, -1.0, -1.0, 1.0,
+//                                 -1.0, 1.0, -1.0, 1.0, 1.0, -1.0,};
+
+  std::vector<double> read_joint_pos = std::vector<double>(TOTAL_JOINT_NUM);
   std::vector<double> read_joint_vel = std::vector<double>(TOTAL_JOINT_NUM);
   std::vector<double> read_joint_torq = std::vector<double>(TOTAL_JOINT_NUM);
   std::vector<double> write_joint_pos = std::vector<double>(TOTAL_JOINT_NUM); 
   std::vector<double> write_joint_vel = std::vector<double>(TOTAL_JOINT_NUM); 
   std::vector<double> write_joint_torq = std::vector<double>(TOTAL_JOINT_NUM);
-
-  std::vector<double> absolute_pos_zero = std::vector<double>(TOTAL_JOINT_NUM);                         
-  std::vector<double> pos_offset = std::vector<double>(TOTAL_JOINT_NUM);                         
 };
 
 

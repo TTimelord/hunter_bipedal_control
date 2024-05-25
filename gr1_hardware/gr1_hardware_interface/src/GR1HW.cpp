@@ -1,4 +1,7 @@
 #include "gr1_hardware/GR1HW.h"
+#include <string>
+#include <nlohmann/json.hpp>  // Include the JSON library header
+#include <fstream>            // For file operations
 
 namespace legged {
 
@@ -17,19 +20,45 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   // f = boost::bind(&GR1HW::ConfigCallback, this, _1);
   // server.setCallback(f);
 
+    ifstream ifs("/home/gr1p24ap0039/RoCS/bin/MotorList/sources/motorlist.json");
+
+    // Parse the JSON data
+    nlohmann::json j;
+    ifs >> j;
+
+    // Populate the vectors according to the order in ip_list
+    for (const string& ip : ip_list) {
+        if (j.find(ip) != j.end()) {
+            ratio.push_back(j[ip]["motor_gear_ratio"]);
+            scale.push_back(j[ip]["c_t_scale"]);
+            absolute_pos_zero.push_back(j[ip]["absolute_pos_zero"]);
+            absolute_pos_dir.push_back(j[ip]["absolute_pos_dir"]);
+            absolute_pos_ratio.push_back(j[ip]["absolute_pos_gear_ratio"]);
+            motor_dir.push_back(j[ip]["motorDir"]);
+        } else {
+            // If the IP is not found in the JSON
+            std::cerr << "An error occurred when reading motorlist.json." << std::endl;
+            exit(1);
+        }
+    }
+
   int ret = 0;
   for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
       fsa_list[i].init(ip_list[i]);
-      ret = fsa_list[i].Enable();
-      if (ret < 0) {
-          std::cout << "wrong" << std::endl;
-          exit(0);
-      }
   }
 
-  for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
-      fsa_list[i].EnablePosControl();
-  }
+  // for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+  //     ret = fsa_list[i].Enable();
+  //     if (ret < 0) {
+  //         std::cout << "wrong" << std::endl;
+  //         exit(0);
+  //     }
+  // }
+
+
+  // for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+  //     fsa_list[i].EnablePosControl();
+  // }
 
   for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
     fse.demo_get_measured(ae_ip_list[i], NULL, ser_msg);
@@ -40,7 +69,19 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
         return 0;
     }
     double ae_current = msg_json["radian"].GetDouble();
-    pos_offset[i] = ae_current - absolute_pos_zero[i] - read_joint_pos[i]*PI/180;
+    pos_offset[i] = ae_current - absolute_pos_zero[i];
+    std::cout<<i<<"======="<<std::endl;
+    std::cout<<ae_current<<std::endl;
+    std::cout<<absolute_pos_zero[i]<<std::endl;
+
+    while(pos_offset[i]<-PI){
+      pos_offset[i] += 2*PI;
+    }
+    while(pos_offset[i]>PI){
+      pos_offset[i] -= 2*PI;
+    }
+    std::cout<<pos_offset[i]<<std::endl;
+    pos_offset[i] = absolute_pos_dir[i]*pos_offset[i]/absolute_pos_ratio[i];// - motor_dir[i]*read_joint_pos[i]*PI/180;
   }
   return true;
 }    
@@ -49,9 +90,12 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
 void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // TODO: current to tau conversion required
-    read_joint_pos[i] = dir[i] * (PI / 180 * read_joint_pos[i] + pos_offset[i]);
-    read_joint_vel[i] = dir[i] * PI / 180 * read_joint_vel[i];
+
+    read_joint_pos[i] = motor_dir[i] * (PI / 180 * read_joint_pos[i]) + pos_offset[i];
+    read_joint_vel[i] = motor_dir[i] * PI / 180 * read_joint_vel[i];
     read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
+    // std::cout<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
+
   }
 
   Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
@@ -88,6 +132,7 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
     jointData_[i].pos_ = read_joint_pos[i];
     jointData_[i].vel_ = read_joint_vel[i];
     jointData_[i].tau_ = read_joint_torq[i];
+    // std::cout<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
 
   Eigen::Quaterniond quaternion = Eigen::AngleAxisd(imu.imudata(0), Eigen::Vector3d::UnitZ()) *
@@ -108,6 +153,13 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   // for (int i = 0; i < 4; ++i) {
   //   contactState_[i] = lowState_.foot_force[i] > contactThreshold_;
   // }
+
+  // std::cout<<imu.imudata(0)<<" "<<imu.imudata(1)<<" "<<imu.imudata(2)<<std::endl;
+  // std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
+  // std::cout<<imuData_.angularVel_[0]<<" "<<imuData_.angularVel_[1]<<" "<<imuData_.angularVel_[2]<<std::endl;
+  // std::cout<<imuData_.linearAcc_[0]<<" "<<imuData_.linearAcc_[1]<<" "<<imuData_.linearAcc_[2]<<std::endl;
+  // std::cout<<"===============\n";
+
 
 }
 
@@ -149,19 +201,21 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
   write_joint_torq[11] = motorTorq[3]; 
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI;
-    write_joint_vel[i] = write_joint_vel[i] * 180/PI;
-    fsa_list[i].SetPosition(dir[i] * write_joint_pos[i], dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
+    write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
+    write_joint_vel[i] = write_joint_vel[i] * 180/PI * motor_dir[i];
+    double torque = torque_to_current(i, write_joint_torq[i]);
+    // fsa_list[i].SetPosition(motor_dir[i] * write_joint_pos[i], motor_dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
+    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i] << "torq:" << write_joint_torq[i] <<"\n";
   }
 }
 
 double GR1HW::torque_to_current(int index, double torque){
-  double current = torque * dir[index]/(ratio[index]*scale[index]);
+  double current = torque * motor_dir[index]/(ratio[index]*scale[index]);
   return current;
 }
 
 double GR1HW::current_to_torque(int index, double current){
-  double torque = current * (ratio[index]*scale[index]) * dir[index];
+  double torque = current * (ratio[index]*scale[index]) * motor_dir[index];
   return torque;
 }
 
