@@ -135,8 +135,8 @@ void LeggedController::starting(const ros::Time& time)
   f = boost::bind(&LeggedController::dynamicParamCallback, this, _1, _2);
   serverPtr_->setCallback(f);
 
-  loadControllerFlag_ = true;
-  mpcRunning_ = true;
+  loadControllerFlag_ = false;
+  mpcRunning_ = false;
 }
 
 void LeggedController::update(const ros::Time& time, const ros::Duration& period)
@@ -221,7 +221,11 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
 
   // WBC
   wbcTimer_.startTimer();
-  vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+  vector_t x;
+  x.setZero(6+jointDim_+6*3+jointDim_);
+  if(loadControllerFlag_){
+    x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+  }
   const vector_t& wbc_planned_torque = x.tail(jointDim_);
   const vector_t& wbc_planned_joint_acc = x.segment(6, jointDim_);
   const vector_t& wbc_planned_body_acc = x.head(6);

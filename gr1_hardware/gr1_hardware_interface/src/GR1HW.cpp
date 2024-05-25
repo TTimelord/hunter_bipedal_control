@@ -2,6 +2,9 @@
 #include <string>
 #include <nlohmann/json.hpp>  // Include the JSON library header
 #include <fstream>            // For file operations
+#include <ocs2_core/misc/LoadData.h>
+#include <chrono>
+#include <thread>
 
 namespace legged {
 
@@ -10,8 +13,11 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
     return false;
   }
 
-  rapidjson::Document msg_json;
-  char ser_msg[1024] = {0};
+  root_nh.getParam("/referenceFile", referenceFile);
+  root_nh.getParam("/motorlistFile", motorlistFile);
+
+  default_joint_pos.setZero(TOTAL_JOINT_NUM+3); // leg + waist
+  ocs2::loadData::loadEigenMatrix(referenceFile, "defaultJointState", default_joint_pos);
 
   setupJoints();
   setupImu();
@@ -20,31 +26,31 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   // f = boost::bind(&GR1HW::ConfigCallback, this, _1);
   // server.setCallback(f);
 
-    ifstream ifs("/home/gr1p24ap0039/RoCS/bin/MotorList/sources/motorlist.json");
+  ifstream ifs(motorlistFile);
+  // Parse the JSON data
+  nlohmann::json j;
+  ifs >> j;
 
-    // Parse the JSON data
-    nlohmann::json j;
-    ifs >> j;
-
-    // Populate the vectors according to the order in ip_list
-    for (const string& ip : ip_list) {
-        if (j.find(ip) != j.end()) {
-            ratio.push_back(j[ip]["motor_gear_ratio"]);
-            scale.push_back(j[ip]["c_t_scale"]);
-            absolute_pos_zero.push_back(j[ip]["absolute_pos_zero"]);
-            absolute_pos_dir.push_back(j[ip]["absolute_pos_dir"]);
-            absolute_pos_ratio.push_back(j[ip]["absolute_pos_gear_ratio"]);
-            motor_dir.push_back(j[ip]["motorDir"]);
-        } else {
-            // If the IP is not found in the JSON
-            std::cerr << "An error occurred when reading motorlist.json." << std::endl;
-            exit(1);
-        }
-    }
+  // Populate the vectors according to the order in ip_list
+  for (const string& ip : ip_list) {
+      if (j.find(ip) != j.end()) {
+          ratio.push_back(j[ip]["motor_gear_ratio"]);
+          scale.push_back(j[ip]["c_t_scale"]);
+          absolute_pos_zero.push_back(j[ip]["absolute_pos_zero"]);
+          absolute_pos_dir.push_back(j[ip]["absolute_pos_dir"]);
+          absolute_pos_ratio.push_back(j[ip]["absolute_pos_gear_ratio"]);
+          motor_dir.push_back(j[ip]["motorDir"]);
+      } else {
+          // If the IP is not found in the JSON
+          ROS_ERROR("An error occurred when reading motorlist.json.");
+          exit(1);
+      }
+  }
 
   int ret = 0;
-  for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+  for (int i = 0; i < TOTAL_JOINT_NUM + 3; i++) { //consider legs + waist
       fsa_list[i].init(ip_list[i]);
+      fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // read PVC for the first time to get rid of errors
   }
 
   // for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
@@ -60,7 +66,27 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   //     fsa_list[i].EnablePosControl();
   // }
 
-  for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+  fsa_list[4].Enable();
+  fsa_list[4].EnablePosControl();
+  fsa_list[5].Enable();
+  fsa_list[5].EnablePosControl();
+
+  if(!calculate_offset()){
+    ROS_ERROR("calculate_offset() failed");
+    exit(1);
+  }
+  if(!go_to_default_pos()){
+    ROS_ERROR("go_to_default_pos() failed");
+    exit(1);
+  }
+
+  return true;
+}    
+
+bool GR1HW::calculate_offset(){
+  rapidjson::Document msg_json;
+  char ser_msg[1024] = {0};
+  for (int i = 0; i < TOTAL_JOINT_NUM + 3; i++) {   // consider waist joints;
     fse.demo_get_measured(ae_ip_list[i], NULL, ser_msg);
     fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); 
     if (msg_json.Parse(ser_msg).HasParseError())
@@ -81,11 +107,69 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       pos_offset[i] -= 2*PI;
     }
     std::cout<<pos_offset[i]<<std::endl;
-    pos_offset[i] = absolute_pos_dir[i]*pos_offset[i]/absolute_pos_ratio[i];// - motor_dir[i]*read_joint_pos[i]*PI/180;
+    pos_offset[i] = absolute_pos_dir[i]*pos_offset[i]/absolute_pos_ratio[i] - motor_dir[i]*read_joint_pos[i]*PI/180;
   }
   return true;
-}    
+}
 
+bool GR1HW::go_to_default_pos(){    
+  const double frequency = 500; // Hz
+  const double period = 1.0 / frequency;
+  const double duration = 5;
+  using clock = std::chrono::steady_clock;
+  using milliseconds = std::chrono::milliseconds;
+
+  const double max_velocity = 15.0; //degrees per second
+  const double max_degrees_per_period = max_velocity/frequency;
+  double velocity;
+
+  auto start_time = clock::now();
+  auto next_time = clock::now() + milliseconds(static_cast<int>(1000 / frequency));
+
+  while (true) {
+      auto now = clock::now();
+      if(now > start_time + milliseconds(int(1000*duration))){
+        break;
+      }
+      if (now < next_time) {
+          now = clock::now();
+          continue;
+      }
+
+      // Your loop code here
+      for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
+        fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]);
+        write_joint_pos[i] = default_joint_pos[i];
+      }
+
+      serial_to_parallel();
+
+      // for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
+      for (int i = 4; i < 6; ++i) {
+        write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
+        if (write_joint_pos[i] > read_joint_pos[i] + 1.0){
+          velocity = 1 * max_velocity;
+        }
+        else if(write_joint_pos[i] < read_joint_pos[i] - 1.0){
+          velocity = - 1 * max_velocity;
+        }
+        else{
+          velocity = 0;
+        }
+        write_joint_pos[i] = std::min(write_joint_pos[i], read_joint_pos[i] + max_degrees_per_period);
+        write_joint_pos[i] = std::max(write_joint_pos[i], read_joint_pos[i] - max_degrees_per_period);
+
+        // std::cout<<write_joint_pos[i]<<" "<<read_joint_pos[i]<<std::endl;
+        fsa_list[i].SetPosition(write_joint_pos[i], velocity, 0);
+      }
+
+      // Update the time for the next iteration
+      next_time += milliseconds(static_cast<int>(period * 1000));
+      // std::cout<<std::chrono::duration_cast<milliseconds>(next_time.time_since_epoch()).count()<<std::endl;
+  }
+
+  return false;
+}
 
 void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
@@ -94,39 +178,10 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
     read_joint_pos[i] = motor_dir[i] * (PI / 180 * read_joint_pos[i]) + pos_offset[i];
     read_joint_vel[i] = motor_dir[i] * PI / 180 * read_joint_vel[i];
     read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
-    // std::cout<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
-
+    // std::cerr<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
 
-  Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
-  Eigen::VectorXd motorVel = Eigen::VectorXd::Zero(4);
-  Eigen::VectorXd motorTorq = Eigen::VectorXd::Zero(4);
-  Eigen::VectorXd anklePose = Eigen::VectorXd::Zero(4);
-  Eigen::VectorXd ankleVel = Eigen::VectorXd::Zero(4);
-  Eigen::VectorXd ankleTorq = Eigen::VectorXd::Zero(4);
-
-  motorPos << read_joint_pos[4], read_joint_pos[5], read_joint_pos[10], read_joint_pos[11];
-  motorVel << read_joint_vel[4], read_joint_vel[5], read_joint_vel[10], read_joint_vel[11];
-  motorTorq << read_joint_torq[4], read_joint_torq[5], read_joint_torq[10], read_joint_torq[11];
-
-  funS2P.setEst(motorPos, motorVel, motorTorq);
-  funS2P.calcFK();
-  funS2P.getAnkleState(anklePose, ankleVel, ankleTorq);
-
-  read_joint_pos[4] = anklePose[0];
-  read_joint_pos[5] = anklePose[1];
-  read_joint_pos[10] = anklePose[2];
-  read_joint_pos[11] = anklePose[3];
-
-  read_joint_vel[4] = ankleVel[0];
-  read_joint_vel[5] = ankleVel[1];
-  read_joint_vel[10] = ankleVel[2];
-  read_joint_vel[11] = ankleVel[3];
-
-  read_joint_torq[4] = ankleTorq[0];
-  read_joint_torq[5] = ankleTorq[1];
-  read_joint_torq[10] = ankleTorq[2];
-  read_joint_torq[11] = ankleTorq[3];
+  parallel_to_serial();
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     jointData_[i].pos_ = read_joint_pos[i];
@@ -165,11 +220,66 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 
 void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    jointData_[i].posDes_ = jointData_[i].pos_;
+    jointData_[i].velDes_ = 0;
+    jointData_[i].ff_ = 0;
+  }
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     write_joint_pos[i] = jointData_[i].posDes_;
     write_joint_vel[i] = jointData_[i].velDes_;
     write_joint_torq[i] = jointData_[i].ff_;
   }
 
+  serial_to_parallel();
+
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
+    write_joint_vel[i] = write_joint_vel[i] * 180/PI * motor_dir[i];
+    double torque = torque_to_current(i, write_joint_torq[i]);
+    // fsa_list[i].SetPosition(motor_dir[i] * write_joint_pos[i], motor_dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
+    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i] << "torq:" << write_joint_torq[i] <<"\n";
+  }
+  // fsa_list[11].SetPosition(write_joint_pos[11], 0, 0);
+  // fsa_list[11].GetPVC(read_joint_pos[11], read_joint_vel[11], read_joint_torq[11]); // TODO: current to tau conversion required
+  // std::cout<<"read: "<<read_joint_pos[11]<<"write: "<<write_joint_pos[11]<<std::endl;
+
+}
+
+bool GR1HW::parallel_to_serial(){
+  Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd motorTorq = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd anklePose = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleVel = Eigen::VectorXd::Zero(4);
+  Eigen::VectorXd ankleTorq = Eigen::VectorXd::Zero(4);
+
+  motorPos << read_joint_pos[4], read_joint_pos[5], read_joint_pos[10], read_joint_pos[11];
+  motorVel << read_joint_vel[4], read_joint_vel[5], read_joint_vel[10], read_joint_vel[11];
+  motorTorq << read_joint_torq[4], read_joint_torq[5], read_joint_torq[10], read_joint_torq[11];
+
+  funS2P.setEst(motorPos, motorVel, motorTorq);
+  funS2P.calcFK();
+  funS2P.getAnkleState(anklePose, ankleVel, ankleTorq);
+
+  read_joint_pos[4] = anklePose[0];
+  read_joint_pos[5] = anklePose[1];
+  read_joint_pos[10] = anklePose[2];
+  read_joint_pos[11] = anklePose[3];
+
+  read_joint_vel[4] = ankleVel[0];
+  read_joint_vel[5] = ankleVel[1];
+  read_joint_vel[10] = ankleVel[2];
+  read_joint_vel[11] = ankleVel[3];
+
+  read_joint_torq[4] = ankleTorq[0];
+  read_joint_torq[5] = ankleTorq[1];
+  read_joint_torq[10] = ankleTorq[2];
+  read_joint_torq[11] = ankleTorq[3];
+
+  return true;
+}
+
+bool GR1HW::serial_to_parallel(){
   Eigen::VectorXd motorPos = Eigen::VectorXd::Zero(4);
   Eigen::VectorXd motorVel = Eigen::VectorXd::Zero(4);
   Eigen::VectorXd motorTorq = Eigen::VectorXd::Zero(4);
@@ -199,14 +309,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
   write_joint_torq[5] = motorTorq[1];
   write_joint_torq[10] = motorTorq[2];
   write_joint_torq[11] = motorTorq[3]; 
-
-  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
-    write_joint_vel[i] = write_joint_vel[i] * 180/PI * motor_dir[i];
-    double torque = torque_to_current(i, write_joint_torq[i]);
-    // fsa_list[i].SetPosition(motor_dir[i] * write_joint_pos[i], motor_dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
-    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i] << "torq:" << write_joint_torq[i] <<"\n";
-  }
+  return true;
 }
 
 double GR1HW::torque_to_current(int index, double torque){

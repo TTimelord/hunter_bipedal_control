@@ -8,6 +8,8 @@
     <!-- <param name="legged_robot_description" textfile="$(find high_torque_description)/urdf/high_torque_long_leg.urdf"/> -->
     <!-- <param name="legged_robot_description" textfile="$(find h1_description)/urdf/h1.urdf"/> -->
 
+    <param name="referenceFile" value="$(find legged_controllers)/config/GR1T2_hardware/reference.info"/>
+    <param name="motorlistFile" value="/home/gr1p24ap0039/RoCS/bin/MotorList/sources/motorlist.json"/>
 
     <rosparam file="$(find gr1_hardware_interface)/config/gr1.yaml" command="load"/>
 

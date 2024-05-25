@@ -15,5 +15,6 @@
     <depend>legged_hw</depend>
     <depend>fsasdk</depend>
     <depend>fsesdk</depend>
+    <depend>ocs2_core</depend>
     <!-- <depend>dynamic_reconfigure</depend> -->
 </package>

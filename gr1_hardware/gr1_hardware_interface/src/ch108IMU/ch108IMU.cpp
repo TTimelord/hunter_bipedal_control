@@ -189,6 +189,8 @@ void ch108IMU::dump_data_packet(raw_t *raw)
     Eigen::AngleAxisd z_Angle_3(Eigen::AngleAxisd(M_PI,Eigen::Vector3d::UnitZ()));
 	pos_under_vn = z_Angle_2 * x_Angle_1 * pos_under_ch108 * x_Angle_1 * z_Angle_1;
 	pos_under_vn = z_Angle_3 * pos_under_vn * x_Angle_1;
+	// pos_under_vn = pos_under_ch108 * x_Angle_1 * z_Angle_1;
+
 
 	// std::cout<<pos_under_ch108<<"==="<<std::endl;
 	// std::cout<<pos_under_ch108.block(0, 1, 3, 2)<<"==="<<std::endl;
@@ -201,7 +203,6 @@ void ch108IMU::dump_data_packet(raw_t *raw)
 
     vel<<raw->imu[0].gyr[0], raw->imu[0].gyr[1], raw->imu[0].gyr[2];
     vel = z_Angle_2 * x_Angle_1 * vel;
-	std::cout<<vel<<"=====\n";
 
 
 	// std::cout<<"pos_under_ch108: "<<pos_under_ch108<<std::endl;
