@@ -278,11 +278,11 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       }
       else if(j==3 || j==9) // knee
       {
-        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position, -34);
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_position, 0);
       }
       else if (j == 4 || j == 10) //ankle_pitch
       {
-        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 6);
+        hybridJointHandles_[j].setCommand(mpc_planned_joint_pos[j], mpc_planned_joint_vel[j], kp_position, kd_feet, 0);
       }
       else
       {

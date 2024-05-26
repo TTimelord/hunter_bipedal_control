@@ -16,6 +16,15 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   root_nh.getParam("/referenceFile", referenceFile);
   root_nh.getParam("/motorlistFile", motorlistFile);
 
+  // add joint states publisher
+  debug_joint_pub = root_nh.advertise<sensor_msgs::JointState>("debug_joint_states", 1);
+  joint_state_gr1.name.resize(TOTAL_JOINT_NUM);
+  joint_state_gr1.effort.resize(TOTAL_JOINT_NUM);
+  joint_state_gr1.velocity.resize(TOTAL_JOINT_NUM);
+  for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
+      joint_state_gr1.name[i] = ip_list[i];
+  }
+
   default_joint_pos.setZero(TOTAL_JOINT_NUM+3); // leg + waist
   ocs2::loadData::loadEigenMatrix(referenceFile, "defaultJointState", default_joint_pos);
 
@@ -78,6 +87,10 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   if(!go_to_default_pos()){
     ROS_ERROR("go_to_default_pos() failed");
     exit(1);
+  }
+
+  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    jointData_[i].posDes_ = default_joint_pos[i];
   }
 
   return true;
@@ -178,9 +191,12 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 
     read_joint_pos[i] = motor_dir[i] * (PI / 180 * read_joint_pos[i]) + pos_offset[i];
     read_joint_vel[i] = motor_dir[i] * PI / 180 * read_joint_vel[i];
-    read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
+    // read_joint_torq[i] = current_to_torque(i, read_joint_torq[i]);
+    joint_state_gr1.header.stamp = ros::Time::now();
+    joint_state_gr1.velocity[i] = read_joint_torq[i];
     // std::cerr<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
+  debug_joint_pub.publish(joint_state_gr1);
 
   parallel_to_serial();
 
@@ -221,25 +237,25 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 
 void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    jointData_[i].posDes_ = jointData_[i].pos_;
-    jointData_[i].velDes_ = 0;
-    jointData_[i].ff_ = 0;
-  }
-  for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
     write_joint_pos[i] = jointData_[i].posDes_;
     write_joint_vel[i] = jointData_[i].velDes_;
     write_joint_torq[i] = jointData_[i].ff_;
+    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "torq:" << write_joint_torq[i] <<"\n";
   }
 
   serial_to_parallel();
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
+    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "torq:" << write_joint_torq[i] <<"\n";
     write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
     write_joint_vel[i] = write_joint_vel[i] * 180/PI * motor_dir[i];
-    double torque = torque_to_current(i, write_joint_torq[i]);
-    // fsa_list[i].SetPosition(motor_dir[i] * write_joint_pos[i], motor_dir[i] * write_joint_vel[i], torque_to_current(i, write_joint_torq[i]));
-    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i] << "torq:" << write_joint_torq[i] <<"\n";
+    double current = torque_to_current(i, write_joint_torq[i]);
+    // joint_state_gr1.effort[i] = write_joint_torq[i];
+    // joint_state_gr1.velocity[i] = current;
+    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
+    fsa_list[i].SetPosition(write_joint_pos[i], write_joint_vel[i], current);
   }
+  // debug_joint_pub.publish(joint_state_gr1);
   // fsa_list[11].SetPosition(write_joint_pos[11], 0, 0);
   // fsa_list[11].GetPVC(read_joint_pos[11], read_joint_vel[11], read_joint_torq[11]); // TODO: current to tau conversion required
   // std::cout<<"read: "<<read_joint_pos[11]<<"write: "<<write_joint_pos[11]<<std::endl;
@@ -315,6 +331,8 @@ bool GR1HW::serial_to_parallel(){
 
 double GR1HW::torque_to_current(int index, double torque){
   double current = torque * motor_dir[index]/(ratio[index]*scale[index]);
+  current = std::min(current, current_bound[index]);
+  current = std::max(current, -current_bound[index]);
   return current;
 }
 

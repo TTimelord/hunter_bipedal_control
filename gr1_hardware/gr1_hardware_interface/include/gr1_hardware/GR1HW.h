@@ -7,6 +7,7 @@
 #include <Fsa.h>
 #include <main.h>
 #include <Eigen/Dense>
+#include <sensor_msgs/JointState.h>
 
 #define TOTAL_JOINT_NUM 12  // total number of joints for legs
 #define JOINT_NUM 6 // number of joints per leg
@@ -128,8 +129,8 @@ private:
                                     "192.168.137.190", "192.168.137.191", "192.168.137.192"};  
 
 
-  std::vector<double> ratio = std::vector<double>(TOTAL_JOINT_NUM+3);
-  std::vector<double> scale = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> ratio;
+  std::vector<double> scale;
   std::vector<double> absolute_pos_zero;                         
   std::vector<double> absolute_pos_dir;
   std::vector<double> absolute_pos_ratio;
@@ -142,6 +143,11 @@ private:
   std::vector<double> write_joint_pos = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_vel = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_torq = std::vector<double>(TOTAL_JOINT_NUM+3);
+
+  std::vector<double> current_bound = {7, 9, 45, 45, 2.4, 2.4, 7, 9, 45, 45, 2.4, 2.4};
+
+  ros::Publisher debug_joint_pub;
+  sensor_msgs::JointState joint_state_gr1;
 };
 
 
