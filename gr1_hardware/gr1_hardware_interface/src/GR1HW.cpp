@@ -53,23 +53,23 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // read PVC for the first time to get rid of errors
   }
 
-  // for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
-  //     ret = fsa_list[i].Enable();
-  //     if (ret < 0) {
-  //         std::cout << "wrong" << std::endl;
-  //         exit(0);
-  //     }
-  // }
+  for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
+      ret = fsa_list[i].Enable();
+      if (ret < 0) {
+          std::cout << "wrong" << std::endl;
+          exit(0);
+      }
+  }
 
 
-  // for (int i = 0; i < TOTAL_JOINT_NUM; i++) {
-  //     fsa_list[i].EnablePosControl();
-  // }
+  for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
+      fsa_list[i].EnablePosControl();
+  }
 
-  fsa_list[4].Enable();
-  fsa_list[4].EnablePosControl();
-  fsa_list[5].Enable();
-  fsa_list[5].EnablePosControl();
+  // fsa_list[4].Enable();
+  // fsa_list[4].EnablePosControl();
+  // fsa_list[5].Enable();
+  // fsa_list[5].EnablePosControl();
 
   if(!calculate_offset()){
     ROS_ERROR("calculate_offset() failed");
@@ -119,12 +119,24 @@ bool GR1HW::go_to_default_pos(){
   using clock = std::chrono::steady_clock;
   using milliseconds = std::chrono::milliseconds;
 
-  const double max_velocity = 15.0; //degrees per second
-  const double max_degrees_per_period = max_velocity/frequency;
-  double velocity;
-
   auto start_time = clock::now();
   auto next_time = clock::now() + milliseconds(static_cast<int>(1000 / frequency));
+
+  for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
+    fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]);
+    write_joint_pos[i] = default_joint_pos[i];
+  }
+
+  serial_to_parallel();
+  std::vector<double> velocity(write_joint_pos.size());
+  std::vector<double> delta_pos(write_joint_pos.size());
+  std::vector<double> target_pos(write_joint_pos.size());
+  for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
+    target_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
+    velocity[i] = (target_pos[i] - read_joint_pos[i])/duration;
+    delta_pos[i] = (target_pos[i] - read_joint_pos[i])/(frequency*duration);
+    write_joint_pos[i] = read_joint_pos[i];
+  }
 
   while (true) {
       auto now = clock::now();
@@ -139,28 +151,17 @@ bool GR1HW::go_to_default_pos(){
       // Your loop code here
       for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
         fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]);
-        write_joint_pos[i] = default_joint_pos[i];
       }
 
-      serial_to_parallel();
+      // serial_to_parallel();
 
-      // for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
-      for (int i = 4; i < 6; ++i) {
-        write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
-        if (write_joint_pos[i] > read_joint_pos[i] + 1.0){
-          velocity = 1 * max_velocity;
-        }
-        else if(write_joint_pos[i] < read_joint_pos[i] - 1.0){
-          velocity = - 1 * max_velocity;
-        }
-        else{
-          velocity = 0;
-        }
-        write_joint_pos[i] = std::min(write_joint_pos[i], read_joint_pos[i] + max_degrees_per_period);
-        write_joint_pos[i] = std::max(write_joint_pos[i], read_joint_pos[i] - max_degrees_per_period);
+      for (int i = 0; i < TOTAL_JOINT_NUM+3; ++i) {
+        // write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
 
-        // std::cout<<write_joint_pos[i]<<" "<<read_joint_pos[i]<<std::endl;
-        fsa_list[i].SetPosition(write_joint_pos[i], velocity, 0);
+        write_joint_pos[i] += delta_pos[i];
+        // std::cout<<write_joint_pos[i]<<" "<<velocity[i]<<std::endl;
+        std::cout<<read_joint_pos[i]<<std::endl;
+        fsa_list[i].SetPosition(write_joint_pos[i], 0, 0);
       }
 
       // Update the time for the next iteration
