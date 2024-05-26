@@ -66,10 +66,10 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       fsa_list[i].EnablePosControl();
   }
 
-  // fsa_list[4].Enable();
-  // fsa_list[4].EnablePosControl();
-  // fsa_list[5].Enable();
-  // fsa_list[5].EnablePosControl();
+  for (int i = 0; i<arm_and_head_ip_list.size(); i++) {
+    arm_and_head_fsa_list[i].init(arm_and_head_ip_list[i]);
+    arm_and_head_fsa_list[i].Enable();
+  }
 
   if(!calculate_offset()){
     ROS_ERROR("calculate_offset() failed");
@@ -96,9 +96,9 @@ bool GR1HW::calculate_offset(){
     }
     double ae_current = msg_json["radian"].GetDouble();
     pos_offset[i] = ae_current - absolute_pos_zero[i];
-    std::cout<<i<<"======="<<std::endl;
-    std::cout<<ae_current<<std::endl;
-    std::cout<<absolute_pos_zero[i]<<std::endl;
+    // std::cout<<i<<"======="<<std::endl;
+    // std::cout<<ae_current<<std::endl;
+    // std::cout<<absolute_pos_zero[i]<<std::endl;
 
     while(pos_offset[i]<-PI){
       pos_offset[i] += 2*PI;
@@ -106,7 +106,7 @@ bool GR1HW::calculate_offset(){
     while(pos_offset[i]>PI){
       pos_offset[i] -= 2*PI;
     }
-    std::cout<<pos_offset[i]<<std::endl;
+    // std::cout<<pos_offset[i]<<std::endl;
     pos_offset[i] = absolute_pos_dir[i]*pos_offset[i]/absolute_pos_ratio[i] - motor_dir[i]*read_joint_pos[i]*PI/180;
   }
   return true;
@@ -160,7 +160,7 @@ bool GR1HW::go_to_default_pos(){
 
         write_joint_pos[i] += delta_pos[i];
         // std::cout<<write_joint_pos[i]<<" "<<velocity[i]<<std::endl;
-        std::cout<<read_joint_pos[i]<<std::endl;
+        // std::cout<<read_joint_pos[i]<<std::endl;
         fsa_list[i].SetPosition(write_joint_pos[i], 0, 0);
       }
 
@@ -169,7 +169,7 @@ bool GR1HW::go_to_default_pos(){
       // std::cout<<std::chrono::duration_cast<milliseconds>(next_time.time_since_epoch()).count()<<std::endl;
   }
 
-  return false;
+  return true;
 }
 
 void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
