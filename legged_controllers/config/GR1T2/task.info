@@ -310,7 +310,7 @@ torqueLimitsTask
 
 frictionConeTask
 {
-  frictionCoefficient    0.5
+  frictionCoefficient    0.7
 }
 
 swingLegTask
@@ -346,7 +346,7 @@ weight
 {
     swingLeg        100
     baseAccel       1
-    contactForce    0.0
+    contactForce    0.01
     noContactMotion 1
 }
 

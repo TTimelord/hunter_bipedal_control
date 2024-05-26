@@ -67,7 +67,7 @@ vector_t WeightedWbc::update(const vector_t& stateDesired, const vector_t& input
 
 Task WeightedWbc::formulateConstraints()
 {
-  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask();// + formulateZeroContactForceTask();
+  return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask(); //formulateNoContactMotionTask();
 }
 
 Task WeightedWbc::formulateZeroContactForceTask()
@@ -95,27 +95,11 @@ Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vec
   if (stance_mode_)
     return formulateStanceBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_ +
             formulateNoContactMotionTask() * weightNoContactMotion_;
-            //+ formulateContactForceRegularizationTask() * weightContactForceRegularization_;
   else
     return formulateSwingLegTask() * weightSwingLeg_ +
            formulateBaseAccelTask(stateDesired, inputDesired, period) * weightBaseAccel_ +
-          //  formulateContactForceTask(inputDesired) * weightContactForce_ +
+           formulateContactForceTask(inputDesired) * weightContactForce_ +
            formulateNoContactMotionTask() * weightNoContactMotion_;
-}
-
-Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
-                                               scalar_t period)
-{
-  // return formulateBaseAccelTask(stateDesired, inputDesired, period);
-
-  matrix_t a(6, numDecisionVars_);
-  a.setZero();
-  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
-
-  vector6_t b;
-  b.setZero();
-
-  return { a, b, matrix_t(), vector_t() };
 }
 
 Task WeightedWbc::formulateContactForceRegularizationTask()

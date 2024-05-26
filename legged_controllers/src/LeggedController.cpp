@@ -31,6 +31,7 @@ at www.bridgedp.com.
 #include <legged_estimation/FromTopiceEstimate.h>
 #include <legged_estimation/LinearKalmanFilter.h>
 #include <legged_wbc/WeightedWbc.h>
+#include <legged_wbc/HierarchicalWbc.h>
 #include <pluginlib/class_list_macros.hpp>
 #include "std_msgs/Float64MultiArray.h"
 #include "legged_controllers/utilities.h"
@@ -82,11 +83,13 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   setupStateEstimate(taskFile, verbose);
 
   // Whole body control
-  // stance_filter_max_duration = 2.0;
-  // stance_flag = false;
   wbc_ = std::make_shared<WeightedWbc>(leggedInterface_->getPinocchioInterface(),
                                        leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
   wbc_->loadTasksSetting(taskFile, verbose);
+
+  // wbc_ = std::make_shared<HierarchicalWbc>(leggedInterface_->getPinocchioInterface(),
+  //                                     leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
+
   wbc_->setStanceMode(true);
 
   // Safety Checker

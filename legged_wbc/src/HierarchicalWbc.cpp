@@ -20,13 +20,22 @@ vector_t HierarchicalWbc::update(const vector_t& stateDesired, const vector_t& i
 {
   WbcBase::update(stateDesired, inputDesired, rbdStateMeasured, mode, period);
 
-  Task task0 = formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() +
-               formulateNoContactMotionTask();
-  Task task1 = formulateBaseAccelTask(stateDesired, inputDesired, period);
-  Task task2 = formulateContactForceTask(inputDesired) * 0.1 + formulateSwingLegTask() * 1;
-  HoQp hoQp(task2, std::make_shared<HoQp>(task1, std::make_shared<HoQp>(task0)));
+  if(!stance_mode_){
+    Task task0 = formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() +
+                formulateNoContactMotionTask();
+    Task task1 = formulateBaseAccelTask(stateDesired, inputDesired, period);
+    Task task2 = formulateContactForceTask(inputDesired) * 0.1 + formulateSwingLegTask() * 1;
+    HoQp hoQp(task2, std::make_shared<HoQp>(task1, std::make_shared<HoQp>(task0)));
+    return hoQp.getSolutions();
+  }
+  else{
+    Task task0 = formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask();// +
+                // formulateNoContactMotionTask();
+    Task task1 = formulateStanceBaseAccelTask(stateDesired, inputDesired, period);
+    HoQp hoQp(task1, std::make_shared<HoQp>(task0));
+    return hoQp.getSolutions();    
+  }
 
-  return hoQp.getSolutions();
 }
 
 }  // namespace legged
