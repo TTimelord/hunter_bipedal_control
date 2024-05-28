@@ -135,6 +135,9 @@ private:
   std::vector<double> absolute_pos_dir;
   std::vector<double> absolute_pos_ratio;
   std::vector<double> motor_dir; 
+  std::vector<double> pos_gain; 
+  std::vector<double> vel_gain; 
+  std::vector<double> vel_integrator_gain; 
   std::vector<double> pos_offset = std::vector<double>(TOTAL_JOINT_NUM+3);                         
 
   std::vector<double> read_joint_pos = std::vector<double>(TOTAL_JOINT_NUM+3);

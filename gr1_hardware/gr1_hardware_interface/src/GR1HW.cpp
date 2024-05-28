@@ -5,6 +5,9 @@
 #include <ocs2_core/misc/LoadData.h>
 #include <chrono>
 #include <thread>
+#include <FsaConfig.h>
+
+// #define ESTIMATION_ONLY
 
 namespace legged {
 
@@ -49,6 +52,9 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
           absolute_pos_dir.push_back(j[ip]["absolute_pos_dir"]);
           absolute_pos_ratio.push_back(j[ip]["absolute_pos_gear_ratio"]);
           motor_dir.push_back(j[ip]["motorDir"]);
+          pos_gain.push_back(j[ip]["controlConfig"]["pos_gain"]);
+          vel_gain.push_back(j[ip]["controlConfig"]["vel_gain"]);
+          vel_integrator_gain.push_back(j[ip]["controlConfig"]["vel_integrator_gain"]);
       } else {
           // If the IP is not found in the JSON
           ROS_ERROR("An error occurred when reading motorlist.json.");
@@ -56,42 +62,50 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       }
   }
 
+  FSA_CONNECT::FSAConfig::FSAPIDParams pid_params;
+
   int ret = 0;
   for (int i = 0; i < TOTAL_JOINT_NUM + 3; i++) { //consider legs + waist
       fsa_list[i].init(ip_list[i]);
+      pid_params.control_position_kp = pos_gain[i];
+      pid_params.control_velocity_kp = vel_gain[i];
+      fsa_list[i].SetPIDParams(pid_params);
       fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // read PVC for the first time to get rid of errors
-  }
-
-  for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
-      ret = fsa_list[i].Enable();
-      if (ret < 0) {
-          std::cout << "wrong" << std::endl;
-          exit(0);
-      }
-  }
-
-
-  for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
-      fsa_list[i].EnablePosControl();
-  }
-
-  for (int i = 0; i<arm_and_head_ip_list.size(); i++) {
-    arm_and_head_fsa_list[i].init(arm_and_head_ip_list[i]);
-    arm_and_head_fsa_list[i].Enable();
   }
 
   if(!calculate_offset()){
     ROS_ERROR("calculate_offset() failed");
     exit(1);
   }
-  if(!go_to_default_pos()){
-    ROS_ERROR("go_to_default_pos() failed");
-    exit(1);
-  }
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    jointData_[i].posDes_ = default_joint_pos[i];
+    jointData_[i].posDes_ = default_joint_pos[i];  // initialize jointData_[i].posDes_ to avoid jumping
   }
+
+  #ifndef ESTIMATION_ONLY
+  // for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
+  //     ret = fsa_list[i].Enable();
+  //     if (ret < 0) {
+  //         std::cout << "wrong" << std::endl;
+  //         exit(0);
+  //     }
+  // }
+
+
+  // for (int i = 0; i < TOTAL_JOINT_NUM+3; i++) {
+  //     fsa_list[i].EnablePosControl();
+  // }
+
+  // for (int i = 0; i<arm_and_head_ip_list.size(); i++) {
+  //   arm_and_head_fsa_list[i].init(arm_and_head_ip_list[i]);
+  //   arm_and_head_fsa_list[i].Enable();
+  // }
+
+  // if(!go_to_default_pos()){
+  //   ROS_ERROR("go_to_default_pos() failed");
+  //   exit(1);
+  // }
+  #endif
 
   return true;
 }    
@@ -240,7 +254,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     write_joint_pos[i] = jointData_[i].posDes_;
     write_joint_vel[i] = jointData_[i].velDes_;
     write_joint_torq[i] = jointData_[i].ff_;
-    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "torq:" << write_joint_torq[i] <<"\n";
+    std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "torq:" << write_joint_torq[i] <<"\n";
   }
 
   serial_to_parallel();
@@ -253,7 +267,9 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     // joint_state_gr1.effort[i] = write_joint_torq[i];
     // joint_state_gr1.velocity[i] = current;
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
-    fsa_list[i].SetPosition(write_joint_pos[i], write_joint_vel[i], current);
+    #ifndef ESTIMATION_ONLY
+    // fsa_list[i].SetPosition(write_joint_pos[i], write_joint_vel[i], current);
+    #endif
   }
   // debug_joint_pub.publish(joint_state_gr1);
   // fsa_list[11].SetPosition(write_joint_pos[11], 0, 0);
@@ -331,8 +347,8 @@ bool GR1HW::serial_to_parallel(){
 
 double GR1HW::torque_to_current(int index, double torque){
   double current = torque * motor_dir[index]/(ratio[index]*scale[index]);
-  current = std::min(current, current_bound[index]);
-  current = std::max(current, -current_bound[index]);
+  // current = std::min(current, current_bound[index]);
+  // current = std::max(current, -current_bound[index]);
   return current;
 }
 
