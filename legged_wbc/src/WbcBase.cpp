@@ -247,17 +247,17 @@ Task WbcBase::formulateFrictionConeTask()
 Task WbcBase::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
                                                scalar_t period)
 {
-  return formulateZeroPositionAccelTask(stateDesired, inputDesired, period)
-         + formulateBaseAngularMotionTask();
+  // return formulateZeroAccelTask(stateDesired, inputDesired, period);
+        //  + formulateBaseAngularMotionTask();
 
-  // matrix_t a(6, numDecisionVars_);
-  // a.setZero();
-  // a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
+  matrix_t a(6, numDecisionVars_);
+  a.setZero();
+  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
 
-  // vector6_t b;
-  // b.setZero();
+  vector6_t b;
+  b.setZero();
 
-  // return { a, b, matrix_t(), vector_t() };
+  return { a, b, matrix_t(), vector_t() };
 }
 
 Task WbcBase::formulateZeroPositionAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
