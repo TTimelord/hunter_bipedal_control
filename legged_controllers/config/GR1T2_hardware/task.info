@@ -27,7 +27,7 @@ swing_trajectory_config
 
   feet_bias_x1                  0.1
   feet_bias_x2                  -0.05
-  feet_bias_y                   0.18
+  feet_bias_y                   0.2
   feet_bias_z                  -0.88
   
   next_stance_position_z        0.0
@@ -164,7 +164,7 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.87    ; p_base_z
+   (8,0)  0.88    ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
