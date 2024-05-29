@@ -86,6 +86,7 @@ private:
   double torque_to_current(int index, double torque);
   double current_to_torque(int index, double torque);
 
+  bool disable_all_motors();
 
   // bool setupContactSensor(ros::NodeHandle& nh);
 
@@ -146,6 +147,10 @@ private:
   std::vector<double> write_joint_pos = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_vel = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_torq = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> current_motor_pos = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> current_motor_vel = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> current_motor_cur = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> last_cmd_pos = std::vector<double>(TOTAL_JOINT_NUM+3);
 
   std::vector<double> current_bound = {7, 9, 45, 45, 2.4, 2.4, 7, 9, 45, 45, 2.4, 2.4};
 

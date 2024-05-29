@@ -234,6 +234,10 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   const vector_t& wbc_planned_body_acc = x.head(6);
   const vector_t& wbc_planned_contact_force = x.segment(6 + jointDim_, wbc_->getContactForceSize());
   wbcTimer_.endTimer();
+  const scalar_t wbc_time = wbcTimer_.getLastIntervalInMilliseconds();
+  if (wbc_time > 1){
+    std::cout<<wbc_time<<std::endl;
+  }
 
   posDes_ = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
   velDes_ = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
