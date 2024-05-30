@@ -215,7 +215,7 @@ void SwitchedModelReferenceManager::walkGait(scalar_t body_height, scalar_t init
     {
       printf("start to trot\n");
       auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
-      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer, finalTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer + 0.2, finalTime);
       gaitLevel_ = 1;
     }
   }

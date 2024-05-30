@@ -201,9 +201,9 @@ Q
   (6,6)   500.0    ; p_base_x
   (7,7)   500.0    ; p_base_y
   (8,8)   500.0    ; p_base_z
-  (9,9)   100.0    ; theta_base_z
-  (10,10) 500.0    ; theta_base_y
-  (11,11) 500.0    ; theta_base_x
+  (9,9)   1000.0    ; theta_base_z
+  (10,10) 1000.0    ; theta_base_y
+  (11,11) 1500.0    ; theta_base_x
  
   ;; Leg Joint Positions: [L, R] ;;
   (12,12)  10.0     ; leg_l1_joint
@@ -326,20 +326,20 @@ noContactMotionTask
 
 baseAccelTask
 {
-    kp                   100
-    kd                   20
+    kp                   30
+    kd                   10
 }
 
 baseHeightTask
 {
-    kp                   100
-    kd                   20
+    kp                   30
+    kd                   10
 }
 
 baseAngularTask 
 {
-    kp                   100
-    kd                   20
+    kp                   30
+    kd                   10
 }
 
 weight
@@ -348,6 +348,12 @@ weight
     baseAccel       1
     contactForce    0.0
     noContactMotion 1
+}
+
+stanceModeParams
+{
+  stanceFilterDuration  3.0
+  stancePosOffset       -0.03
 }
 
 ; State Estimation

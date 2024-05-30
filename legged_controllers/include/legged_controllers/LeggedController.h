@@ -146,13 +146,14 @@ private:
   std::atomic<scalar_t> kp_feet_swing{ 0 };
   std::atomic<scalar_t> kd_feet{ 0 };
 
-  // scalar_t stance_start_time;
-  // scalar_t stance_filter_max_duration;
-  // bool stance_flag = false;
-  // vector6_t stance_body_pose;
-  // vector6_t stance_start_body_pose;
+  scalar_t stance_start_time, stance_filter_max_duration, stance_pos_offset;
+  bool should_start_stance = false;
+  bool stance_flag = false;
+  vector6_t stance_body_pose, stance_start_body_pose;
+  feet_array_t<vector3_t> stance_start_feet_positions;
 
   vector_t defalutJointPos_;
+  scalar_t comHeight_;
 
   InverseKinematics inverseKinematics_;
 };

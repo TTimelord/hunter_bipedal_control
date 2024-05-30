@@ -47,7 +47,8 @@ TargetTrajectories targetPoseToTargetTrajectories(const vector_t& targetPose, co
   vector_t currentPose = observation.state.segment<6>(6);
   scalar_t dz = COM_HEIGHT - currentPose(2);
   dz = dz > 0 ? fmin(dz, changeLimit_[2]) : fmax(dz, -changeLimit_[2]);
-  currentPose(2) = currentPose(2) + dz;
+  // currentPose(2) = currentPose(2) + dz;
+  currentPose(2) = COM_HEIGHT;
   currentPose(4) = 0;
   currentPose(5) = 0;
   vector_array_t stateTrajectory(2, vector_t::Zero(observation.state.size()));
