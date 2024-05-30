@@ -65,8 +65,10 @@ void MujocoLcm::SetSend(const mjData * d) {
 
     for (size_t i = 0; i < 12; i++)
     {
-        sendState_.joint_pos[i] = d->qpos[7+i];
-        sendState_.joint_vel[i] = d->qvel[6+i];
+        // sendState_.joint_pos[i] = d->qpos[7+i];
+        // sendState_.joint_vel[i] = d->qvel[6+i];
+        sendState_.joint_pos[i] = d->sensordata[6+i];
+        sendState_.joint_vel[i] = d->sensordata[18+i];
         sendState_.joint_torque[i] = d->qfrc_applied[i];
     }
 
