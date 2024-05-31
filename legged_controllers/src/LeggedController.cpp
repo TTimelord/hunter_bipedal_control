@@ -186,7 +186,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       else{
         if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3){
           if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.4) == 3){
-            // should_start_stance = true;
+            should_start_stance = true;
           }
         }
       }
@@ -194,33 +194,22 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     else{
       if(!stance_flag){
         should_start_stance = true;
-        plannedMode = 3;
       }
     }
 
     if(should_start_stance && (!stance_flag)){
       stance_flag = true;
       should_start_stance = false;
-      wbc_->setStanceMode(true);
 
       //update stance start time
       stance_start_time = currentObservation_.time;
       stance_start_body_pose = currentObservation_.state.segment<6>(6);
-      stance_start_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
-    }
-
-    if(stance_flag){  //if stance then modify optimized state
-      if(!setWalkFlag_){
-        wbc_->setStanceMode(true);
-      }
-
+    
       const auto& model = leggedInterface_->getPinocchioInterface().getModel();
       auto& data = leggedInterface_->getPinocchioInterface().getData();
       const vector_t& init_q = optimizedState.tail(gencoordDim_);
       pinocchio::framesForwardKinematics(model, data, init_q);
-      feet_array_t<vector3_t> feet_pos;
-      feet_array_t<matrix3_t> feet_R;
-      for (int leg = 0; leg < feet_pos.size(); leg++)
+      for (int leg = 0; leg < 4; leg++)
       {
         auto FRAME_ID = leggedInterface_->getCentroidalModelInfo().endEffectorFrameIndices[leg];
         // int index = leg2index(leg);
@@ -228,12 +217,18 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
         feet_R[leg] = data.oMf[FRAME_ID].rotation();
       }
 
-      // calculate stance body pose according to current feet positions.
+      // calculate stance body pose according to feet positions.
       stance_body_pose.segment<3>(0) = (feet_pos[0] + feet_pos[1] + feet_pos[2] + feet_pos[3]) / 4;
       stance_body_pose(3) = stance_start_body_pose(3);
       stance_body_pose(0) += stance_pos_offset*cos(stance_body_pose(3));
       stance_body_pose(1) += stance_pos_offset*sin(stance_body_pose(3));
       stance_body_pose(2) = comHeight_;
+            
+    }
+
+    if(stance_flag){  //if stance then modify optimized state
+      wbc_->setStanceMode(true);
+      plannedMode = 3;
 
       scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
       // scalar_t filter_ratio = 1.0;
@@ -241,10 +236,10 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       optimizedState.setZero();
       optimizedInput.setZero();
 
-      optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*currentObservation_.state.segment<3>(6);;
+      optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);;
       optimizedState(9) = stance_start_body_pose(3);
-      optimizedState.segment<12>(12) = defalutJointPos_;
-      
+      optimizedState.tail<12>() = defalutJointPos_;
+
       for (int leg = 0; leg < 2; leg++)
       {
         int index = InverseKinematics::leg2index(leg);
@@ -338,6 +333,8 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   velDes_ = velDes_ + wbc_planned_joint_acc * dt;
 
   // std::cout<<"WBC start =========="<<std::endl;
+  // std::cout<<"stance body pose"<<stance_body_pose<<std::endl;
+  // std::cout<<posDes_<<std::endl;
   // std::cout<<"observation"<<std::endl;
   // std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
   // std::cout<<"period"<<period<<std::endl;

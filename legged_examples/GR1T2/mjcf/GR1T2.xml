@@ -231,13 +231,13 @@
     <motor name="l_hip_yaw" joint="l_hip_yaw" ctrlrange="-66 66" user="160"/>
     <motor name="l_hip_pitch" joint="l_hip_pitch" ctrlrange="-225 225" user="357"/>
     <motor name="l_knee_pitch" joint="l_knee_pitch" ctrlrange="-225 225" user="357"/>
-    <motor name="l_ankle_pitch" joint="l_ankle_pitch" ctrlrange="-30 30" user="194"/>
+    <motor name="l_ankle_pitch" joint="l_ankle_pitch" ctrlrange="-15 15" user="194"/>
     <motor name="l_ankle_roll" joint="l_ankle_roll" ctrlrange="-30 30" user="194"/>
     <motor name="r_hip_roll" joint="r_hip_roll" ctrlrange="-48 48" user="116"/>
     <motor name="r_hip_yaw" joint="r_hip_yaw" ctrlrange="-66 66" user="160"/>
     <motor name="r_hip_pitch" joint="r_hip_pitch" ctrlrange="-225 225" user="357"/>
     <motor name="r_knee_pitch" joint="r_knee_pitch" ctrlrange="-225 225" user="357"/>
-    <motor name="r_ankle_pitch" joint="r_ankle_pitch" ctrlrange="-30 30" user="194"/>
+    <motor name="r_ankle_pitch" joint="r_ankle_pitch" ctrlrange="-15 15" user="194"/>
     <motor name="r_ankle_roll" joint="r_ankle_roll" ctrlrange="-30 30" user="194"/>
 
 <!-- 

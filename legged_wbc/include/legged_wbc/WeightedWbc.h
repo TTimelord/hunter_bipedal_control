@@ -28,6 +28,8 @@ protected:
   virtual Task formulateWeightedTasks(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
   Task formulateContactForceRegularizationTask();
   Task formulateZeroContactForceTask();
+  // Task formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
+  Task formulateMinimizeTorqueTask();
 
 private:
   scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_, weightContactForceRegularization_, weightNoContactMotion_;

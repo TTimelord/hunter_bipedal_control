@@ -150,7 +150,8 @@ private:
   bool should_start_stance = false;
   bool stance_flag = false;
   vector6_t stance_body_pose, stance_start_body_pose;
-  feet_array_t<vector3_t> stance_start_feet_positions;
+  feet_array_t<vector3_t> feet_pos;
+  feet_array_t<matrix3_t> feet_R;
 
   vector_t defalutJointPos_;
   scalar_t comHeight_;
