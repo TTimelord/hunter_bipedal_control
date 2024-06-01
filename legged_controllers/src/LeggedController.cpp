@@ -172,137 +172,146 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     mpc_updated_ = true;
   }
 
-  if(loadControllerFlag_){
-    // state switch
-    if (setWalkFlag_){
-      if(stance_flag){
-        if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) != 3
-          || mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.2) != 3
-          || mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.4) != 3
-        ){
-          stance_flag = false;
-        }
-      }
-      else{
-        if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3){
-          if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.4) == 3){
-            should_start_stance = true;
-          }
-        }
-      }
-    }
-    else{
-      if(!stance_flag){
-        should_start_stance = true;
-      }
-    }
+  // if(loadControllerFlag_){
+  //   // state switch
+  //   if (setWalkFlag_){
+  //     if(stance_flag){
+  //       if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) != 3
+  //         || mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.2) != 3
+  //         || mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.4) != 3
+  //       ){
+  //         stance_flag = false;
+  //       }
+  //     }
+  //     else{
+  //       if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3){
+  //         if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.4) == 3){
+  //           should_start_stance = true;
+  //         }
+  //       }
+  //     }
+  //   }
+  //   else{
+  //     if(!stance_flag){
+  //       should_start_stance = true;
+  //     }
+  //   }
 
-    if(should_start_stance && (!stance_flag)){
-      stance_flag = true;
-      should_start_stance = false;
+  //   if(should_start_stance && (!stance_flag)){
+  //     stance_flag = true;
+  //     should_start_stance = false;
 
-      //update stance start time
-      stance_start_time = currentObservation_.time;
-      stance_start_body_pose = currentObservation_.state.segment<6>(6);
+  //     //update stance start time
+  //     stance_start_time = currentObservation_.time;
+  //     stance_start_body_pose = currentObservation_.state.segment<6>(6);
     
-      const auto& model = leggedInterface_->getPinocchioInterface().getModel();
-      auto& data = leggedInterface_->getPinocchioInterface().getData();
-      const vector_t& init_q = optimizedState.tail(gencoordDim_);
-      pinocchio::framesForwardKinematics(model, data, init_q);
-      for (int leg = 0; leg < 4; leg++)
-      {
-        auto FRAME_ID = leggedInterface_->getCentroidalModelInfo().endEffectorFrameIndices[leg];
-        // int index = leg2index(leg);
-        feet_pos[leg] = data.oMf[FRAME_ID].translation();
-        feet_R[leg] = data.oMf[FRAME_ID].rotation();
-      }
+  //     const auto& model = leggedInterface_->getPinocchioInterface().getModel();
+  //     auto& data = leggedInterface_->getPinocchioInterface().getData();
+  //     const vector_t& init_q = optimizedState.tail(gencoordDim_);
+  //     pinocchio::framesForwardKinematics(model, data, init_q);
+  //     for (int leg = 0; leg < 4; leg++)
+  //     {
+  //       auto FRAME_ID = leggedInterface_->getCentroidalModelInfo().endEffectorFrameIndices[leg];
+  //       // int index = leg2index(leg);
+  //       feet_pos[leg] = data.oMf[FRAME_ID].translation();
+  //       feet_R[leg] = data.oMf[FRAME_ID].rotation();
+  //     }
 
-      // calculate stance body pose according to feet positions.
-      stance_body_pose.segment<3>(0) = (feet_pos[0] + feet_pos[1] + feet_pos[2] + feet_pos[3]) / 4;
-      stance_body_pose(3) = stance_start_body_pose(3);
-      stance_body_pose(0) += stance_pos_offset*cos(stance_body_pose(3));
-      stance_body_pose(1) += stance_pos_offset*sin(stance_body_pose(3));
-      stance_body_pose(2) = comHeight_;
+  //     // calculate stance body pose according to feet positions.
+  //     stance_body_pose.segment<3>(0) = (feet_pos[0] + feet_pos[1] + feet_pos[2] + feet_pos[3]) / 4;
+  //     stance_body_pose(3) = stance_start_body_pose(3);
+  //     stance_body_pose(0) += stance_pos_offset*cos(stance_body_pose(3));
+  //     stance_body_pose(1) += stance_pos_offset*sin(stance_body_pose(3));
+  //     stance_body_pose(2) = comHeight_;
             
-    }
+  //   }
 
-    if(stance_flag){  //if stance then modify optimized state
-      wbc_->setStanceMode(true);
-      plannedMode = 3;
+  //   if(stance_flag){  //if stance then modify optimized state
+  //     wbc_->setStanceMode(true);
+  //     plannedMode = 3;
 
-      scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
-      // scalar_t filter_ratio = 1.0;
+  //     scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
+  //     // scalar_t filter_ratio = 1.0;
       
+  //     optimizedState.setZero();
+  //     optimizedInput.setZero();
+
+  //     optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);;
+  //     optimizedState(9) = stance_start_body_pose(3);
+  //     optimizedState.tail<12>() = defalutJointPos_;
+
+  //     if(filter_ratio < 1.0)
+  //     for (int leg = 0; leg < 2; leg++)
+  //     {
+  //       int index = InverseKinematics::leg2index(leg);
+  //       optimizedState.segment<6>(12 + index) = 
+  //           inverseKinematics_.computeIK(optimizedState.tail<18>(), leg, feet_pos[leg], feet_R[leg]);
+  //     }
+  //   }
+  //   else{
+  //     wbc_->setStanceMode(false);
+  //   }
+
+    if (setWalkFlag_)
+    {
+      wbc_->setStanceMode(false);
+  //     if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3 && 
+  //         mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.2) == 3){
+  //           //stance
+  //       if(!stance_flag){
+  //         stance_flag = true;
+  //         stance_start_time = currentObservation_.time;
+  //         stance_start_body_pose = currentObservation_.state.segment<6>(6);
+  //         stance_body_pose.setZero();
+  //         feet_array_t<vector3_t> current_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
+  //         stance_body_pose.segment<3>(0) = (current_feet_positions[0] + current_feet_positions[1] + current_feet_positions[2] + current_feet_positions[3]) / 4;
+  //         stance_body_pose(3) = currentObservation_.state(9);
+  //         stance_body_pose(0) -= 0.05*cos(stance_body_pose(3));
+  //         stance_body_pose(1) -= 0.05*sin(stance_body_pose(3));
+  //         stance_body_pose(2) = 0.88;
+  //       }
+  //       // geometry_msgs::Point msg;
+  //       // msg.x = stance_body_pose(0);
+  //       // msg.y = stance_body_pose(1);
+  //       // msg.z = stance_body_pose(2);
+  //       // stanceBodyPositionPublisher_.publish(msg);
+
+  //       // scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
+  //       scalar_t filter_ratio = 1.0;
+        
+  //       optimizedState.setZero();
+  //       optimizedInput.setZero();
+
+  //       optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);
+  //       optimizedState(9) = stance_body_pose(3);
+  //       optimizedState.segment<12>(12) = defalutJointPos_;
+  //       // std::cout<<"stance_body_pose:\n"<<stance_body_pose<<"\n";
+  //       // std::cout<<"currentObservation_:\n"<<currentObservation_.state.segment<3>(6)<<"\n=========\n";
+  //     }
+  //     else{
+  //       if(stance_flag){
+  //         stance_flag = false;
+  //       }
+  //     }
+    }
+    else
+    {
       optimizedState.setZero();
       optimizedInput.setZero();
-
-      optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);;
-      optimizedState(9) = stance_start_body_pose(3);
-      optimizedState.tail<12>() = defalutJointPos_;
-
-      for (int leg = 0; leg < 2; leg++)
-      {
-        int index = InverseKinematics::leg2index(leg);
-        optimizedState.segment<6>(12 + index) = 
-            inverseKinematics_.computeIK(optimizedState.tail<18>(), leg, feet_pos[leg], feet_R[leg]);
-      }
+      optimizedState(8) = 0.88;
+      optimizedState.segment(6 + 6, jointDim_) = defalutJointPos_;
+      plannedMode = 3;
+      wbc_->setStanceMode(true);
     }
-    else{
-      wbc_->setStanceMode(false);
-    }
-
-  //   if (setWalkFlag_)
-  //   {
-  //     wbc_->setStanceMode(false);
-  // //     if(mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time) == 3 && 
-  // //         mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time + 0.2) == 3){
-  // //           //stance
-  // //       if(!stance_flag){
-  // //         stance_flag = true;
-  // //         stance_start_time = currentObservation_.time;
-  // //         stance_start_body_pose = currentObservation_.state.segment<6>(6);
-  // //         stance_body_pose.setZero();
-  // //         feet_array_t<vector3_t> current_feet_positions = leggedInterface_->getSwitchedModelReferenceManagerPtr()->getSwingTrajectoryPlanner()->getCurrentFeetPosition();
-  // //         stance_body_pose.segment<3>(0) = (current_feet_positions[0] + current_feet_positions[1] + current_feet_positions[2] + current_feet_positions[3]) / 4;
-  // //         stance_body_pose(3) = currentObservation_.state(9);
-  // //         stance_body_pose(0) -= 0.05*cos(stance_body_pose(3));
-  // //         stance_body_pose(1) -= 0.05*sin(stance_body_pose(3));
-  // //         stance_body_pose(2) = 0.88;
-  // //       }
-  // //       // geometry_msgs::Point msg;
-  // //       // msg.x = stance_body_pose(0);
-  // //       // msg.y = stance_body_pose(1);
-  // //       // msg.z = stance_body_pose(2);
-  // //       // stanceBodyPositionPublisher_.publish(msg);
-
-  // //       // scalar_t filter_ratio = std::min(currentObservation_.time - stance_start_time, stance_filter_max_duration)/stance_filter_max_duration;
-  // //       scalar_t filter_ratio = 1.0;
-        
-  // //       optimizedState.setZero();
-  // //       optimizedInput.setZero();
-
-  // //       optimizedState.segment<3>(6) = filter_ratio*stance_body_pose.segment<3>(0) + (1-filter_ratio)*stance_start_body_pose.segment<3>(0);
-  // //       optimizedState(9) = stance_body_pose(3);
-  // //       optimizedState.segment<12>(12) = defalutJointPos_;
-  // //       // std::cout<<"stance_body_pose:\n"<<stance_body_pose<<"\n";
-  // //       // std::cout<<"currentObservation_:\n"<<currentObservation_.state.segment<3>(6)<<"\n=========\n";
-  // //     }
-  // //     else{
-  // //       if(stance_flag){
-  // //         stance_flag = false;
-  // //       }
-  // //     }
-  //   }
-  //   else
-  //   {
+  // }
+  // else{
   //     optimizedState.setZero();
   //     optimizedInput.setZero();
   //     optimizedState(8) = 0.88;
   //     optimizedState.segment(6 + 6, jointDim_) = defalutJointPos_;
   //     plannedMode = 3;
   //     wbc_->setStanceMode(true);
-  //   }
-  }
+  // }
   
   const vector_t& mpc_planned_body_pos = optimizedState.segment(6, 6);
   const vector_t& mpc_planned_joint_pos = optimizedState.segment(6 + 6, jointDim_);
@@ -329,15 +338,16 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   velDes_ = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
 
   scalar_t dt = period.toSec();
-  posDes_ = posDes_ + 0.5 * wbc_planned_joint_acc * dt * dt;
-  velDes_ = velDes_ + wbc_planned_joint_acc * dt;
+  // posDes_ = posDes_ + 0.5 * wbc_planned_joint_acc * dt * dt;
+  // velDes_ = velDes_ + wbc_planned_joint_acc * dt;
 
   // std::cout<<"WBC start =========="<<std::endl;
   // std::cout<<"stance body pose"<<stance_body_pose<<std::endl;
   // std::cout<<posDes_<<std::endl;
   // std::cout<<"observation"<<std::endl;
   // std::cout<<currentObservation_.state.segment<6>(6)<<std::endl;
-  // std::cout<<"period"<<period<<std::endl;
+  // std::cout<<"optimized state\n";
+  // std::cout<<optimizedState.segment<6>(6)<<std::endl;
   // std::cout<<"wbc_planned_torque"<<std::endl;
   // std::cout<<wbc_planned_torque<<std::endl;
   // std::cout<<"wbc_planned_joint_acc"<<std::endl;

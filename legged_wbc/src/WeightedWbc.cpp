@@ -102,16 +102,16 @@ Task WeightedWbc::formulateWeightedTasks(const vector_t& stateDesired, const vec
            formulateNoContactMotionTask() * weightNoContactMotion_;
 }
 
-// Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period)
-// {
-//   matrix_t a(6, numDecisionVars_);
-//   a.setZero();
-//   a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
+Task WeightedWbc::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period)
+{
+  matrix_t a(6, numDecisionVars_);
+  a.setZero();
+  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
 
-//   vector6_t b;
-//   b.setZero();
-//   return { a, b, matrix_t(), vector_t() };
-// }
+  vector6_t b;
+  b.setZero();
+  return { a, b, matrix_t(), vector_t() };
+}
 
 Task WeightedWbc::formulateMinimizeTorqueTask()
 {

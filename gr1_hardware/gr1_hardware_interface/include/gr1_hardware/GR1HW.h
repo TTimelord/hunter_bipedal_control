@@ -114,18 +114,18 @@ private:
   std::vector<FSA_CONNECT::FSA> fsa_list = std::vector<FSA_CONNECT::FSA>(TOTAL_JOINT_NUM+3);
   std::vector<FSA_CONNECT::FSA> arm_and_head_fsa_list = std::vector<FSA_CONNECT::FSA>(3+7+7);
 
-  std::vector<std::string> ip_list = {"192.168.137.70", "192.168.137.71","192.168.137.72","192.168.137.73","192.168.137.74","192.168.137.75",
+  const std::vector<std::string> ip_list = {"192.168.137.70", "192.168.137.71","192.168.137.72","192.168.137.73","192.168.137.74","192.168.137.75",
                                     "192.168.137.50", "192.168.137.51","192.168.137.52","192.168.137.53","192.168.137.54","192.168.137.55",
                                     "192.168.137.90", "192.168.137.91", "192.168.137.92"};  // L_leg, R_leg, waist
   
-  std::vector<std::string> arm_and_head_ip_list = {"192.168.137.93", "192.168.137.94","192.168.137.95",
+  const std::vector<std::string> arm_and_head_ip_list = {"192.168.137.93", "192.168.137.94","192.168.137.95",
                                                     "192.168.137.10", "192.168.137.11","192.168.137.12","192.168.137.13","192.168.137.14","192.168.137.15","192.168.137.16",
                                                     "192.168.137.30", "192.168.137.31","192.168.137.32","192.168.137.33","192.168.137.34","192.168.137.35","192.168.137.36",};
 
   Eigen::VectorXd default_joint_pos;
 
   Sensor::FSE fse;
-  std::vector<std::string> ae_ip_list = {"192.168.137.170", "192.168.137.171","192.168.137.172","192.168.137.173","192.168.137.174","192.168.137.175",
+  const std::vector<std::string> ae_ip_list = {"192.168.137.170", "192.168.137.171","192.168.137.172","192.168.137.173","192.168.137.174","192.168.137.175",
                                     "192.168.137.150", "192.168.137.151","192.168.137.152","192.168.137.153","192.168.137.154","192.168.137.155",
                                     "192.168.137.190", "192.168.137.191", "192.168.137.192"};  
 
@@ -147,12 +147,16 @@ private:
   std::vector<double> write_joint_pos = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_vel = std::vector<double>(TOTAL_JOINT_NUM+3); 
   std::vector<double> write_joint_torq = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> write_joint_current = std::vector<double>(TOTAL_JOINT_NUM+3);
   std::vector<double> current_motor_pos = std::vector<double>(TOTAL_JOINT_NUM+3);
   std::vector<double> current_motor_vel = std::vector<double>(TOTAL_JOINT_NUM+3);
   std::vector<double> current_motor_cur = std::vector<double>(TOTAL_JOINT_NUM+3);
   std::vector<double> last_cmd_pos = std::vector<double>(TOTAL_JOINT_NUM+3);
+  std::vector<double> last_cmd_cur = std::vector<double>(TOTAL_JOINT_NUM+3);
 
-  std::vector<double> current_bound = {7, 9, 45, 45, 2.4, 2.4, 7, 9, 45, 45, 2.4, 2.4};
+  const double cur_lpf_ratio = 0.2;
+
+  const std::vector<double> current_bound = {7, 9, 45, 45, 2.4, 2.4, 7, 9, 45, 45, 2.4, 2.4};
 
   ros::Publisher debug_joint_pub;
   sensor_msgs::JointState joint_state_gr1;

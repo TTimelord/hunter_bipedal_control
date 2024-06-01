@@ -79,6 +79,7 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       fsa_list[i].GetPIDParams(get_pid_params);
       std::cout<<"read kp: "<<get_pid_params.control_position_kp << "kd:" << get_pid_params.control_velocity_kp << std::endl;
       last_cmd_pos[i] = read_joint_pos[i];
+      last_cmd_cur[i] = 0;
   }
 
   if(!calculate_offset()){
@@ -193,7 +194,7 @@ bool GR1HW::go_to_default_pos(){
         // write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
 
         write_joint_pos[i] += delta_pos[i];
-        // std::cout<<write_joint_pos[i]<<" "<<velocity[i]<<std::endl;
+        // std::cout<<i<<" "<<write_joint_pos[i]<<" "<<velocity[i]<<std::endl;
         // std::cout<<read_joint_pos[i]<<std::endl;
         last_cmd_pos[i] = write_joint_pos[i];
         fsa_list[i].SetPosition(write_joint_pos[i], 0, 0);
@@ -213,21 +214,18 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   #endif
 
   for (int i = 0; i < TOTAL_JOINT_NUM; ++i) {
-    fsa_list[i].GetPVC(read_joint_pos[i], read_joint_vel[i], read_joint_torq[i]); // TODO: current to tau conversion required
-    current_motor_pos[i] = read_joint_pos[i];
-    current_motor_vel[i] = read_joint_vel[i];
-    current_motor_cur[i] = read_joint_torq[i];
-    read_joint_pos[i] = motor_dir[i] * (PI / 180 * read_joint_pos[i]) + pos_offset[i];
-    read_joint_vel[i] = motor_dir[i] * PI / 180 * read_joint_vel[i];
+    fsa_list[i].GetPVC(current_motor_pos[i], current_motor_vel[i], current_motor_cur[i]); // TODO: current to tau conversion required
+    read_joint_pos[i] = motor_dir[i] * (PI / 180 * current_motor_pos[i]) + pos_offset[i];
+    read_joint_vel[i] = motor_dir[i] * PI / 180 * current_motor_vel[i];
 
-    joint_state_gr1.header.stamp = ros::Time::now();
-    joint_state_gr1.position[i] = current_motor_pos[i];
-    joint_state_gr1.velocity[i] = current_motor_vel[i];
-    joint_state_gr1.effort[i] = current_motor_cur[i];
+    // joint_state_gr1.header.stamp = ros::Time::now();
+    // joint_state_gr1.position[i] = current_motor_pos[i];
+    // joint_state_gr1.velocity[i] = current_motor_vel[i];
+    // joint_state_gr1.effort[i] = current_motor_cur[i];
 
-    // std::cerr<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
+    std::cerr<<"read motor "<<i<<" pos: "<< current_motor_pos[i] << "vel: "<< current_motor_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
-  debug_joint_pub.publish(joint_state_gr1);
+  // debug_joint_pub.publish(joint_state_gr1);
 
   parallel_to_serial();
 
@@ -253,9 +251,11 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   imuData_.linearAcc_[1] = imu.imudata(7);
   imuData_.linearAcc_[2] = imu.imudata(8);
 
-  // for (int i = 0; i < 4; ++i) {
-  //   contactState_[i] = lowState_.foot_force[i] > contactThreshold_;
-  // }
+  // joint_state_gr1.header.stamp = ros::Time::now();
+  // joint_state_gr1.position[0] = imuData_.angularVel_[0];
+  // joint_state_gr1.position[1] =  imuData_.angularVel_[1];
+  // joint_state_gr1.position[2] =  imuData_.angularVel_[2];
+  // debug_joint_pub.publish(joint_state_gr1);
 
   // std::cout<<imu.imudata(0)<<" "<<imu.imudata(1)<<" "<<imu.imudata(2)<<std::endl;
   // std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
@@ -288,18 +288,22 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "torq:" << write_joint_torq[i] <<"\n";
     write_joint_pos[i] = (write_joint_pos[i] - pos_offset[i]) * 180/PI * motor_dir[i];
     write_joint_vel[i] = write_joint_vel[i] * 180/PI * motor_dir[i];
-    double current = torque_to_current(i, write_joint_torq[i]);
+    write_joint_current[i] = torque_to_current(i, write_joint_torq[i]);
+
+    double filtered_current = (1 - cur_lpf_ratio) * last_cmd_cur[i] + cur_lpf_ratio * write_joint_current[i];
+    last_cmd_cur[i] = filtered_current;
+
+    std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "current:" << filtered_current <<"\n";
 
     #ifndef ESTIMATION_ONLY
-    // if (write_joint_pos[i] - last_cmd_pos[i] > 10 || write_joint_pos[i] - last_cmd_pos[i] < - 10){
-    //   disable_all_motors();
-    //   ROS_ERROR("pos command jump!!!! =========");
-    //   exit(1);
-    // }
-    //   fsa_list[i].SetPosition(write_joint_pos[i], 0, current);
+    if (write_joint_pos[i] - current_motor_pos[i] > 50 || write_joint_pos[i] - current_motor_pos[i] < - 50){
+      disable_all_motors();
+      ROS_ERROR("pos command jump!!!! =========");
+      exit(1);
+    }
+      fsa_list[i].SetPosition(write_joint_pos[i], 0, filtered_current);
     #endif
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
-    // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "current:" << current <<"\n";
     // std::cout<<i<<" pos: "<< write_joint_pos[i] - current_motor_pos[i] << 
     //         "vel: "<< write_joint_vel[i] - current_motor_vel[i]<< "current:" << current - current_motor_cur[i] <<"\n";
 

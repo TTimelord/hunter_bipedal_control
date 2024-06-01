@@ -203,7 +203,8 @@ void ch108IMU::dump_data_packet(raw_t *raw)
 
     vel<<raw->imu[0].gyr[0], raw->imu[0].gyr[1], raw->imu[0].gyr[2];
     vel = z_Angle_2 * x_Angle_1 * vel;
-
+	vel(0) = -vel(0);
+	vel(1) = -vel(1);
 
 	// std::cout<<"pos_under_ch108: "<<pos_under_ch108<<std::endl;
 	// std::cout<<"trans: "<<x_Angle_1 .toRotationMatrix()* z_Angle_1.toRotationMatrix()<<std::endl;
@@ -218,9 +219,9 @@ void ch108IMU::dump_data_packet(raw_t *raw)
             vel(0)*M_PI/180,
             vel(1)*M_PI/180,
             vel(2)*M_PI/180,
-            raw->imu[0].acc[1]*(-10), 
-            raw->imu[0].acc[0]*(-10), 
-            raw->imu[0].acc[2]*(-10);
+            raw->imu[0].acc[1]*(-9.81), 
+            raw->imu[0].acc[0]*(-9.81), 
+            raw->imu[0].acc[2]*(-9.81);
     
 }
 }	

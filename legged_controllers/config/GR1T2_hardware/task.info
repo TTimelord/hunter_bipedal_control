@@ -326,45 +326,45 @@ noContactMotionTask
 
 baseAccelTask
 {
-    kp                   30
-    kd                   10
+    kp                   10
+    kd                   8
 }
 
 baseHeightTask
 {
-    kp                   30
-    kd                   10
+    kp                   5
+    kd                   3
 }
 
 baseAngularTask 
 {
-    kp                   30
-    kd                   10
+    kp                   5
+    kd                   3
 }
 
 weight
 {
     swingLeg        100
     baseAccel       1
-    contactForce    0.0
+    contactForce    0.01
     noContactMotion 1
 }
 
 stanceModeParams
 {
-  stanceFilterDuration  3.0
+  stanceFilterDuration  2.0
   stancePosOffset       -0.03
 }
 
 ; State Estimation
 kalmanFilter
 {
-    footRadius                  0.01
+    footRadius                  0.0
     imuProcessNoisePosition     0.02
     imuProcessNoiseVelocity     0.02
-    footProcessNoisePosition    0.5
-    footSensorNoisePosition     0.5
-    footSensorNoiseVelocity     0.1
+    footProcessNoisePosition    0.05
+    footSensorNoisePosition     0.01
+    footSensorNoiseVelocity     0.01
     footHeightSensorNoise       0.01
 }
 
