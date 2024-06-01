@@ -80,6 +80,7 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       std::cout<<"read kp: "<<get_pid_params.control_position_kp << "kd:" << get_pid_params.control_velocity_kp << std::endl;
       last_cmd_pos[i] = read_joint_pos[i];
       last_cmd_cur[i] = 0;
+      last_cmd_vel[i] = 0;
   }
 
   if(!calculate_offset()){
@@ -292,16 +293,21 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
 
     double filtered_current = (1 - cur_lpf_ratio) * last_cmd_cur[i] + cur_lpf_ratio * write_joint_current[i];
     last_cmd_cur[i] = filtered_current;
+    double filtered_pos = (1 - pos_lpf_ratio) * last_cmd_pos[i] + pos_lpf_ratio * write_joint_pos[i];
+    last_cmd_pos[i] = filtered_pos;
+    double filtered_vel = (1 - vel_lpf_ratio) * last_cmd_vel[i] + vel_lpf_ratio * write_joint_vel[i];
+    last_cmd_vel[i] = filtered_vel;
+    
 
-    std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "vel: "<< write_joint_vel[i]<< "current:" << filtered_current <<"\n";
+    std::cout<<"write joint "<<i<<" pos: "<< filtered_pos << "vel: "<< filtered_vel<< "current:" << filtered_current <<"\n";
 
     #ifndef ESTIMATION_ONLY
-    if (write_joint_pos[i] - current_motor_pos[i] > 50 || write_joint_pos[i] - current_motor_pos[i] < - 50){
+    if (filtered_pos - current_motor_pos[i] > 30 || filtered_pos - current_motor_pos[i] < - 30){
       disable_all_motors();
       ROS_ERROR("pos command jump!!!! =========");
       exit(1);
     }
-      fsa_list[i].SetPosition(write_joint_pos[i], 0, filtered_current);
+      fsa_list[i].SetPosition(filtered_pos, filtered_vel*0.5, filtered_current);
     #endif
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
     // std::cout<<i<<" pos: "<< write_joint_pos[i] - current_motor_pos[i] << 
