@@ -67,7 +67,7 @@ public:
   scalar_t supportPolygonLineWidth_ = 0.005;  // LineThickness for the support polygon
   scalar_t trajectoryLineWidth_ = 0.01;       // LineThickness for trajectories
   std::vector<Color> feetColorMap_ = { Color::blue, Color::blue, Color::orange,
-                                       Color::orange };  // Colors for markers per feet
+                                       Color::orange, Color::yellow, Color::yellow};  // Colors for markers per feet
 
   /**
    *

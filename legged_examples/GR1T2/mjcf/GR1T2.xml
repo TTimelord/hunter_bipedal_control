@@ -42,6 +42,7 @@
     <body name="base_link">
       <inertial pos="-0.0485352 -0.000893041 -0.0328649" quat="0.358994 0.355193 -0.612215 0.608403" mass="4.9869" diaginertia="0.0502276 0.0443441 0.0167764"/>
       <freejoint/>
+      <camera name="track" pos="0 -3 1" zaxis="0 -1 0.5" mode="track"/>
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.75294 0.75294 0.75294 1" mesh="base"/>
       <site name="imu" pos="-0.0645 0 -0.102"/>
       <body name="l_thigh_roll" pos="-0.048 0.105 -0.0575">

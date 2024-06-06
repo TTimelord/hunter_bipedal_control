@@ -147,6 +147,8 @@ private:
 
   void genSwingTrajs(int feet, scalar_t current_time, scalar_t start_time, scalar_t stop_time,
                      const vector3_t& start_pos, const vector3_t& stop_pos);
+  void genSwingTrajsWalkKick(int feet, scalar_t current_time, scalar_t start_time, scalar_t stop_time,
+                    const vector3_t& start_pos, const vector3_t& stop_pos, const vector3_t& contact_position, const vector3_t& kick_velocity);
 
   void genSwingTrajsJoyControl(int feet, scalar_t start_time, scalar_t stop_time,
                                const vector3_t& current_feet_position, const vector3_t& swing_cmd);
