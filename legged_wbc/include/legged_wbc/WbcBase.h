@@ -94,6 +94,8 @@ protected:
   Task formulateBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
   Task formulateSwingLegTask();
   Task formulateContactForceTask(const vector_t& inputDesired) const;
+  Task formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
+  Task formulateZeroPositionAccelTask(const vector_t& stateDesired, const vector_t& inputDesired, scalar_t period);
 
   void compensateFriction(vector_t& x);
 

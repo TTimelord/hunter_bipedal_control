@@ -266,6 +266,30 @@
   <sensor>
     <accelerometer name="accel" site="imu"/>
     <gyro name="gyro" site="imu"/>
+    <jointpos name="l_hip_roll_pos" joint="l_hip_roll" noise="0.5"/>
+    <jointpos name="l_hip_yaw_pos" joint="l_hip_yaw" noise="0.5"/>
+    <jointpos name="l_hip_pitch_pos" joint="l_hip_pitch" noise="0.5"/>
+    <jointpos name="l_knee_pitch_pos" joint="l_knee_pitch" noise="0.5"/>
+    <jointpos name="l_ankle_pitch_pos" joint="l_ankle_pitch" noise="0.5"/>
+    <jointpos name="l_ankle_roll_pos" joint="l_ankle_roll" noise="0.5"/>
+    <jointpos name="r_hip_roll_pos" joint="r_hip_roll" noise="0.5"/>
+    <jointpos name="r_hip_yaw_pos" joint="r_hip_yaw" noise="0.5"/>
+    <jointpos name="r_hip_pitch_pos" joint="r_hip_pitch" noise="0.5"/>
+    <jointpos name="r_knee_pitch_pos" joint="r_knee_pitch" noise="0.5"/>
+    <jointpos name="r_ankle_pitch_pos" joint="r_ankle_pitch" noise="0.5"/>
+    <jointpos name="r_ankle_roll_pos" joint="r_ankle_roll" noise="0.5"/>
+    <jointvel name="l_hip_roll_vel" joint="l_hip_roll" noise="0.5"/>
+    <jointvel name="l_hip_yaw_vel" joint="l_hip_yaw" noise="0.5"/>
+    <jointvel name="l_hip_pitch_vel" joint="l_hip_pitch" noise="0.5"/>
+    <jointvel name="l_knee_pitch_vel" joint="l_knee_pitch" noise="0.5"/>
+    <jointvel name="l_ankle_pitch_vel" joint="l_ankle_pitch" noise="0.5"/>
+    <jointvel name="l_ankle_roll_vel" joint="l_ankle_roll" noise="0.5"/>
+    <jointvel name="r_hip_roll_vel" joint="r_hip_roll" noise="0.5"/>
+    <jointvel name="r_hip_yaw_vel" joint="r_hip_yaw" noise="0.5"/>
+    <jointvel name="r_hip_pitch_vel" joint="r_hip_pitch" noise="0.5"/>
+    <jointvel name="lr_knee_pitch_vel" joint="r_knee_pitch" noise="0.5"/>
+    <jointvel name="r_ankle_pitch_vel" joint="r_ankle_pitch" noise="0.5"/>
+    <jointvel name="r_ankle_roll_vel" joint="r_ankle_roll" noise="0.5"/>
   </sensor>
 
 </mujoco>

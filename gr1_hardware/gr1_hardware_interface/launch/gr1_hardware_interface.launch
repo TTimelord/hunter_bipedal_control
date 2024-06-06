@@ -1,0 +1,18 @@
+<launch>
+
+    <!-- <param name="legged_robot_description" textfile="$(find gr1t1_description)/urdf/GR1T1.urdf"/> -->
+    <param name="legged_robot_description" textfile="$(find gr1t2_description)/urdf/GR1T2.urdf"/>
+    <!-- <param name="legged_robot_description" textfile="$(find gr1t1_description)/urdf/GR1T1_remove_body.urdf"/> -->
+    <!-- <param name="legged_robot_description" textfile="$(find humanoid_legged_description)/urdf/humanoid_legged_origin.urdf"/> -->
+    <!-- <param name="legged_robot_description" textfile="$(find high_torque_description)/urdf/high_torque.urdf"/> -->
+    <!-- <param name="legged_robot_description" textfile="$(find high_torque_description)/urdf/high_torque_long_leg.urdf"/> -->
+    <!-- <param name="legged_robot_description" textfile="$(find h1_description)/urdf/h1.urdf"/> -->
+
+    <param name="referenceFile" value="$(find legged_controllers)/config/GR1T2_hardware/reference.info"/>
+    <param name="motorlistFile" value="/home/gr1p24ap0039/RoCS/bin/MotorList/sources/motorlist.json"/>
+
+    <rosparam file="$(find gr1_hardware_interface)/config/gr1.yaml" command="load"/>
+
+    <node name="gr1_hardware_interface" pkg="gr1_hardware_interface" type="gr1_hardware_interface" respawn="false"
+          clear_params="true" output="screen"/>
+</launch>

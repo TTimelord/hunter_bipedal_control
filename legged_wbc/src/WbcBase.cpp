@@ -244,6 +244,58 @@ Task WbcBase::formulateFrictionConeTask()
   return { a, b, d, f };
 }
 
+Task WbcBase::formulateStanceBaseAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
+                                               scalar_t period)
+{
+  // return formulateBaseAccelTask(stateDesired, inputDesired, period);
+
+  matrix_t a(6, numDecisionVars_);
+  a.setZero();
+  a.block(0, 0, 6, 6) = matrix_t::Identity(6, 6);
+
+  vector6_t b;
+  b.setZero();
+  b.segment<2>(0) = com_kp_ * (basePoseDes_.segment<2>(0) - qMeasured_.segment<2>(0)) +
+         com_kd_ * (baseVelocityDes_.segment<2>(0) - vMeasured_.segment<2>(0));
+  b(2) = baseHeightKp_ * (basePoseDes_[2] - qMeasured_[2]) +
+         baseHeightKd_ * (baseVelocityDes_[2] - vMeasured_[2]);
+
+  // angular
+  a.block(3, 0, 3, info_.generalizedCoordinatesNum) = base_j_.block(3, 0, 3, info_.generalizedCoordinatesNum);
+  vector3_t eulerAngles = qMeasured_.segment<3>(3);
+
+  // from derivative euler to angular
+  vector3_t vMeasuredGlobal =
+      getGlobalAngularVelocityFromEulerAnglesZyxDerivatives<scalar_t>(eulerAngles, vMeasured_.segment<3>(3));
+  vector3_t vDesiredGlobal = baseVelocityDes_.tail<3>();
+
+  // from euler to rotation
+  vector3_t eulerAnglesDesired = basePoseDes_.tail<3>();
+  matrix3_t rotationBaseMeasuredToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAngles);
+  matrix3_t rotationBaseReferenceToWorld = getRotationMatrixFromZyxEulerAngles<scalar_t>(eulerAnglesDesired);
+
+  vector3_t error = rotationErrorInWorld<scalar_t>(rotationBaseReferenceToWorld, rotationBaseMeasuredToWorld);
+  
+  b.segment<3>(3) = baseAngularKp_ * error + baseAngularKd_ * (vDesiredGlobal - vMeasuredGlobal) -
+      base_dj_.block(3, 0, 3, info_.generalizedCoordinatesNum) * vMeasured_;
+  return { a, b, matrix_t(), vector_t() };
+}
+
+Task WbcBase::formulateZeroPositionAccelTask(const vector_t& stateDesired, const vector_t& inputDesired,
+                                               scalar_t period)
+{
+  // return formulateBaseAccelTask(stateDesired, inputDesired, period);
+
+  matrix_t a(3, numDecisionVars_);
+  a.setZero();
+  a.block(0, 0, 3, 3) = matrix_t::Identity(3, 3);
+
+  vector3_t b;
+  b.setZero();
+
+  return { a, b, matrix_t(), vector_t() };
+}
+
 // Tracking base xy linear motion task
 Task WbcBase::formulateBaseXYLinearAccelTask()
 {

@@ -58,8 +58,10 @@ std::vector<scalar_t> stance_times{ 0.0, 0.5 };
 std::vector<size_t> stance_modes{ 3 };
 ModeSequenceTemplate stance(stance_times, stance_modes);
 
-std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.7 };
-std::vector<size_t> trot_modes{ 2, 1 };
+// std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.7 };
+// std::vector<size_t> trot_modes{ 2, 1 };
+std::vector<scalar_t> trot_times{ 0.0, 0.32, 0.4, 0.72, 0.8};
+std::vector<size_t> trot_modes{ 2, 3, 1, 3 };
 ModeSequenceTemplate trot(trot_times, trot_modes);
 
 
@@ -215,7 +217,7 @@ void SwitchedModelReferenceManager::walkGait(scalar_t body_height, scalar_t init
     {
       printf("start to trot\n");
       auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
-      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer, finalTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer + 0.2, finalTime);
       gaitLevel_ = 1;
     }
   }
