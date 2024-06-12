@@ -30,9 +30,13 @@ git clone https://github.com/leggedrobotics/ocs2_robotic_assets.git
 
 cd ..
 catkin init
+catkin config --extend /opt/ros/noetic
+catkin config -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 catkin build legged_controllers gr1t2_description gr1_hardware_interface 
 ```
+
+5. set thread priority according to https://leggedrobotics.github.io/ocs2/faq.html
 
 # For simulation
 1. Install lcm
