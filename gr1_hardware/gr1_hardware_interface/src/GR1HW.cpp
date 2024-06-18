@@ -40,6 +40,7 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   // f = boost::bind(&GR1HW::ConfigCallback, this, _1);
   // server.setCallback(f);
 
+  // ================== set PID params ======================
   ifstream ifs(motorlistFile);
   // Parse the JSON data
   nlohmann::json j;
@@ -57,6 +58,20 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
           pos_gain.push_back(j[ip]["controlConfig"]["pos_gain"]);
           vel_gain.push_back(j[ip]["controlConfig"]["vel_gain"]);
           vel_integrator_gain.push_back(j[ip]["controlConfig"]["vel_integrator_gain"]);
+      } else {
+          // If the IP is not found in the JSON
+          ROS_ERROR("An error occurred when reading motorlist.json.");
+          exit(1);
+      }
+  }
+
+  std::vector<double> arm_head_pos_gain; 
+  std::vector<double> arm_head_vel_gain;
+  // get pid for arm and head
+  for (const string& ip : arm_and_head_ip_list) {
+      if (j.find(ip) != j.end()) {
+          arm_head_pos_gain.push_back(j[ip]["controlConfig"]["pos_gain"]);
+          arm_head_vel_gain.push_back(j[ip]["controlConfig"]["vel_gain"]);
       } else {
           // If the IP is not found in the JSON
           ROS_ERROR("An error occurred when reading motorlist.json.");
@@ -83,6 +98,19 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       last_cmd_vel[i] = 0;
   }
 
+  for (int i = 0; i < arm_and_head_ip_list.size(); i++) { // arm and head
+      arm_and_head_fsa_list[i].init(arm_and_head_ip_list[i]);
+      pid_params.control_position_kp = arm_head_pos_gain[i];
+      pid_params.control_velocity_kp = arm_head_vel_gain[i];
+      std::cout<<"write kp: "<<pid_params.control_position_kp << "kd:" << pid_params.control_velocity_kp << std::endl;
+      arm_and_head_fsa_list[i].SetPIDParams(pid_params);
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      arm_and_head_fsa_list[i].GetPIDParams(get_pid_params);
+      std::cout<<"read kp: "<<get_pid_params.control_position_kp << "kd:" << get_pid_params.control_velocity_kp << std::endl;
+  }
+  // ================== END set PID params ======================
+
+
   if(!calculate_offset()){
     ROS_ERROR("calculate_offset() failed");
     exit(1);
@@ -106,15 +134,19 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   }
 
   for (int i = 0; i<arm_and_head_ip_list.size(); i++) {
-    arm_and_head_fsa_list[i].init(arm_and_head_ip_list[i]);
     arm_and_head_fsa_list[i].Enable();
+    arm_and_head_fsa_list[i].EnablePosControl();
   }
+
+  std::this_thread::sleep_for(std::chrono::seconds(3));
 
   if(!go_to_default_pos()){
     ROS_ERROR("go_to_default_pos() failed");
     exit(1);
   }
   #endif
+
+  // exit(0);
 
   return true;
 }    
@@ -299,7 +331,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     last_cmd_vel[i] = filtered_vel;
     
 
-    std::cout<<"write joint "<<i<<" pos: "<< filtered_pos << "vel: "<< filtered_vel<< "current:" << filtered_current <<"\n";
+    // std::cout<<"write joint "<<i<<" pos: "<< filtered_pos << "vel: "<< filtered_vel<< "current:" << filtered_current <<"\n";
 
     #ifndef ESTIMATION_ONLY
     if (filtered_pos - current_motor_pos[i] > 30 || filtered_pos - current_motor_pos[i] < - 30){
@@ -313,7 +345,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     // std::cout<<i<<" pos: "<< write_joint_pos[i] - current_motor_pos[i] << 
     //         "vel: "<< write_joint_vel[i] - current_motor_vel[i]<< "current:" << current - current_motor_cur[i] <<"\n";
 
-    last_cmd_pos[i] = write_joint_pos[i];
+    // last_cmd_pos[i] = write_joint_pos[i];
   }
   #ifdef TIMER
   auto write_end_time = std::chrono::steady_clock::now();
