@@ -114,6 +114,12 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   inverseKinematics_.setParam(std::make_shared<PinocchioInterface>(leggedInterface_->getPinocchioInterface()),
                               std::make_shared<CentroidalModelInfo>(leggedInterface_->getCentroidalModelInfo()));
 
+  debug_joint_pub = controller_nh.advertise<sensor_msgs::JointState>("/debug_joint_states", 1);
+  joint_state_gr1.name.resize(jointDim_);
+  joint_state_gr1.effort.resize(jointDim_);
+  joint_state_gr1.velocity.resize(jointDim_);
+  joint_state_gr1.position.resize(jointDim_);
+
   return true;
 }
 
@@ -340,6 +346,15 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   scalar_t dt = period.toSec();
   // posDes_ = posDes_ + 0.5 * wbc_planned_joint_acc * dt * dt;
   // velDes_ = velDes_ + wbc_planned_joint_acc * dt;
+
+
+  // joint_state_gr1.header.stamp = ros::Time::now();
+  // for(int i=0; i<jointDim_;i++){
+  //   joint_state_gr1.effort[i] = wbc_planned_torque(i);
+  // }
+  // // joint_state_gr1.position[0] = currentObservation_.state(7);
+  // // joint_state_gr1.position[1] = currentObservation_.state(8);
+  // debug_joint_pub.publish(joint_state_gr1);
 
   // std::cout<<"WBC start =========="<<std::endl;
   // std::cout<<"stance body pose"<<stance_body_pose<<std::endl;

@@ -33,6 +33,8 @@ at www.bridgedp.com.
 #include <ocs2_robotic_tools/common/LoopshapingRobotInterface.h>
 #include "legged_interface/foot_planner/InverseKinematics.h"
 
+#include <sensor_msgs/JointState.h>
+
 namespace legged
 {
 using namespace ocs2;
@@ -109,6 +111,9 @@ protected:
   ros::Duration startingTime_;
 
   std::unique_ptr<dynamic_reconfigure::Server<legged_controllers::TutorialsConfig>> serverPtr_;
+
+  ros::Publisher debug_joint_pub;
+  sensor_msgs::JointState joint_state_gr1;
 
 private:
   std::thread mpcThread_;
