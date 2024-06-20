@@ -205,7 +205,7 @@ void SwingTrajectoryPlanner::update(const ModeSchedule& modeSchedule, TargetTraj
   ball_position_(0) = 2.5;
   ball_position_(1) = -0;
 
-  const bool enable_kick = true;
+  const bool enable_kick = false;
 
   if(enable_kick){
     if(kick_stance_flag && kick_stance_middle_time > initTime){

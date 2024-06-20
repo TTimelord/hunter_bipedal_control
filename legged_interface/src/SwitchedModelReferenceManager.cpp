@@ -58,10 +58,10 @@ std::vector<scalar_t> stance_times{ 0.0, 0.5 };
 std::vector<size_t> stance_modes{ 3 };
 ModeSequenceTemplate stance(stance_times, stance_modes);
 
-std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.7 };
-std::vector<size_t> trot_modes{ 2, 1 };
-// std::vector<scalar_t> trot_times{ 0.0, 0.32, 0.4, 0.72, 0.8};
-// std::vector<size_t> trot_modes{ 2, 3, 1, 3 };
+// std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.7 };
+// std::vector<size_t> trot_modes{ 2, 1 };
+std::vector<scalar_t> trot_times{ 0.0, 0.32, 0.4, 0.72, 0.8};
+std::vector<size_t> trot_modes{ 2, 3, 1, 3 };
 ModeSequenceTemplate trot(trot_times, trot_modes);
 
 
@@ -106,6 +106,11 @@ SwitchedModelReferenceManager::SwitchedModelReferenceManager(std::shared_ptr<Gai
 
   auto gait_type_callback = [this](const std_msgs::Int32::ConstPtr& msg) { gaitType_ = msg->data; };
   gaitTypeSub_ = nh.subscribe<std_msgs::Int32>("/gait_type", 1, gait_type_callback);
+
+  auto switch_to_stance_callback = [this](const std_msgs::Int32::ConstPtr& msg) { switch_to_stance_flag = true; };
+  auto switch_to_walk_callback = [this](const std_msgs::Int32::ConstPtr& msg) { switch_to_walk_flag = true; };
+  switchToStanceSub_ = nh.subscribe<std_msgs::Int32>("/switch_to_stance", 1, switch_to_stance_callback);
+  switchToWalkSub_ = nh.subscribe<std_msgs::Int32>("/switch_to_walk", 1, switch_to_walk_callback);
 
   // ball position subscriber
   auto ballPosCallback = [this](const geometry_msgs::Point::ConstPtr& msg) {
@@ -166,14 +171,16 @@ void SwitchedModelReferenceManager::modifyReferences(scalar_t initTime, scalar_t
 
   calculateVelAbs(targetTrajectories);
 
-  if (gaitType_ == 0)
-  {
-    walkGait(body_height, initTime, finalTime, modeSchedule);
-  }
-  else if (gaitType_ == 2)
-  {
-    trotGait(body_height, initTime, finalTime);
-  }
+  // if (gaitType_ == 0)
+  // {
+  //   walkGait(body_height, initTime, finalTime, modeSchedule);
+  // }
+  // else if (gaitType_ == 2)
+  // {
+  //   trotGait(body_height, initTime, finalTime);
+  // }
+
+  SwitchGait(initTime,finalTime, modeSchedule);
 
   swingTrajectoryPtr_->setGaitLevel(gaitLevel_);
   swingTrajectoryPtr_->setBodyVelCmd(velCmdInBuf_.get());
@@ -242,26 +249,71 @@ void SwitchedModelReferenceManager::trotGait(scalar_t body_height, scalar_t init
   }
 }
 
+void SwitchedModelReferenceManager::SwitchGait(scalar_t initTime, scalar_t finalTime, ModeSchedule& modeSchedule)
+{
+  if(!switch_to_stance_flag && switch_to_walk_flag){
+    if(stance_flag){
+      printf("start to trot\n");
+      auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer+0.8, finalTime);
+      stance_flag = false;
+    }
+  }
+  else if (switch_to_stance_flag && !switch_to_walk_flag)
+  {
+    if (-0.1 < velAvgX_ || velAvgX_ < 0.1)
+    {
+      ROS_INFO("start to stance");
+      auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(stance, inserTimer+0.8, finalTime);
+      stance_flag = true;
+    }
+    else{
+      ROS_INFO("Can not stance because velAvgX = %f", velAvgX_);
+    }
+  }
+  else if (switch_to_stance_flag && switch_to_walk_flag){
+    ROS_INFO("can not switch to walk and stance at the same time!");
+  }
+  else{
+    if(stance_flag){
+      auto vel_cmd = velCmdInBuf_.get();
+      if(vel_cmd.norm() > 0.05){
+        ROS_INFO("start to walk because vel_cmd.norm() = %f", vel_cmd.norm());
+        auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
+        gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer + 0.4, finalTime);
+        stance_flag = false;
+      }
+    }
+  }
+  switch_to_stance_flag = false;
+  switch_to_walk_flag = false;
+}
+
 void SwitchedModelReferenceManager::calculateVelAbs(TargetTrajectories& targetTrajectories)
 {
   velCmdInBuf_.updateFromBuffer();
   auto vel_cmd = velCmdInBuf_.get();
   auto vel_est = swingTrajectoryPtr_->getBodyVelWorld();
-  vel_est = targetTrajectories.stateTrajectory[0].segment(0, 6);
+  // vel_est = targetTrajectories.stateTrajectory[0].segment(0, 6);
   vector3_t angular = targetTrajectories.stateTrajectory[0].segment(9, 3);
-  vel_cmd.head(3) = getRotationMatrixFromZyxEulerAngles(angular) * vel_cmd.head(3);
+  // vel_cmd.head(3) = getRotationMatrixFromZyxEulerAngles(angular) * vel_cmd.head(3);
   vel_cmd(2) = 0;
-  vel_cmd(3) = vel_cmd(3) / 3.0;
-  auto vel_cmd_abs = vel_cmd.head(4).norm();
+  // auto vel_cmd_abs = vel_cmd.head(4).norm();
+  vel_est.head(3) = getRotationMatrixFromZyxEulerAngles(angular).inverse() * vel_est.head(3);
   vel_est(2) = 0;
-  vel_est(3) = vel_est(3) / 3.0;
-  auto vel_est_abs = vel_est.head(4).norm();
-  velAbs_ = (0.5 * vel_cmd.head(4) + 0.5 * vel_est.head(4)).norm();  // vel_est has great error
-  velAbsHistory_.push_front(velAbs_);
-  while (velAbsHistory_.size() > 50)
-    velAbsHistory_.pop_back();
-  velAvg_ = std::accumulate(velAbsHistory_.begin(), velAbsHistory_.end(), 0.0) / velAbsHistory_.size();
-  stanceTime_ = std::max(0.225 / velAvg_, 0.15);
+  // auto vel_est_abs = vel_est.head(4).norm();
+  auto velMergeLinear_ = (0 * vel_cmd.head(2) + 1 * vel_est.head(2));  // vel_est has great error
+  velXHistory_.push_front(velMergeLinear_(0));
+  velYHistory_.push_front(velMergeLinear_(1));
+  while (velXHistory_.size() > 80) // a period
+    velXHistory_.pop_back();
+  while (velYHistory_.size() > 80)
+    velYHistory_.pop_back();
+  velAvgX_ = std::accumulate(velXHistory_.begin(), velXHistory_.end(), 0.0) / velXHistory_.size();
+  velAvgY_ = std::accumulate(velYHistory_.begin(), velYHistory_.end(), 0.0) / velYHistory_.size();
+  ROS_INFO("vel_x = %f, vel_y = %f", velAvgX_, velAvgY_);
+  // stanceTime_ = std::max(0.225 / velAvg_, 0.15);
 }
 
 void SwitchedModelReferenceManager::calculateJointRef(scalar_t initTime, scalar_t finalTime, const vector_t& initState,

@@ -126,6 +126,8 @@ protected:
 
   void trotGait(scalar_t body_height, scalar_t initTime, scalar_t finalTime);
 
+  void SwitchGait(scalar_t initTime, scalar_t finalTime, ModeSchedule& modeSchedule);
+
   void calculateJointRef(scalar_t initTime, scalar_t finalTime, const vector_t& initState,
                          TargetTrajectories& targetTrajectories);
 
@@ -147,6 +149,8 @@ protected:
   ros::Subscriber velCmdSub_;
   ros::Subscriber gaitTypeSub_;
   ros::Subscriber ballPositionSub_;
+  ros::Subscriber switchToStanceSub_;
+  ros::Subscriber switchToWalkSub_;
 
   std_msgs::Float64MultiArray earlyLateContactMsg_;
 
@@ -156,11 +160,18 @@ protected:
   std::atomic_int32_t gaitType_{ 0 };
   int gaitLevel_{ 0 };
   vector3_t ballPosition_;
+  bool switch_to_stance_flag = false;
+  bool switch_to_walk_flag = false;
+  bool stance_flag = true;
 
   std::deque<scalar_t> velAbsHistory_;
+  std::deque<scalar_t> velXHistory_;
+  std::deque<scalar_t> velYHistory_;
 
   scalar_t stanceTime_;
   scalar_t velAvg_;
+  scalar_t velAvgX_;
+  scalar_t velAvgY_;
   scalar_t velAbs_;
 
   PinocchioInterface pinocchioInterface_;
