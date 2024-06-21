@@ -312,7 +312,7 @@ void SwitchedModelReferenceManager::calculateVelAbs(TargetTrajectories& targetTr
     velYHistory_.pop_back();
   velAvgX_ = std::accumulate(velXHistory_.begin(), velXHistory_.end(), 0.0) / velXHistory_.size();
   velAvgY_ = std::accumulate(velYHistory_.begin(), velYHistory_.end(), 0.0) / velYHistory_.size();
-  ROS_INFO("vel_x = %f, vel_y = %f", velAvgX_, velAvgY_);
+  // ROS_INFO("vel_x = %f, vel_y = %f", velAvgX_, velAvgY_);
   // stanceTime_ = std::max(0.225 / velAvg_, 0.15);
 }
 

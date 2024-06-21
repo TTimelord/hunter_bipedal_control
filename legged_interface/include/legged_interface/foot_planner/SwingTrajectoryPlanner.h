@@ -149,6 +149,8 @@ private:
                      const vector3_t& start_pos, const vector3_t& stop_pos);
   void genSwingTrajsWalkKick(int feet, scalar_t current_time, scalar_t start_time, scalar_t stop_time,
                     const vector3_t& start_pos, const vector3_t& stop_pos, const vector3_t& contact_position, const vector3_t& kick_velocity);
+  void genSwingTrajsKick(int feet, scalar_t current_time, scalar_t start_time, scalar_t stop_time,
+                    const vector3_t& start_pos, const vector3_t& stop_pos, const scalar_t& kick_direction_yaw);
 
   void genSwingTrajsJoyControl(int feet, scalar_t start_time, scalar_t stop_time,
                                const vector3_t& current_feet_position, const vector3_t& swing_cmd);
@@ -216,13 +218,23 @@ private:
   vector_t body_vel_cmd_;
 
   vector3_t ball_position_;
-  vector3_t kick_stance_position;
-  bool kick_stance_flag = false;
-  int kick_stance_leg;
-  scalar_t kick_stance_middle_time;
+  vector3_t walk_kick_stance_position;
+  bool walk_kick_stance_flag = false;
+  int walk_kick_stance_leg;
+  scalar_t walk_kick_stance_middle_time;
   scalar_t body_accelerate_start_time;
 
-  ros::Subscriber swing_cmd_sub_;
+  // ros::Subscriber swing_cmd_sub_;
+
+  // kick subscriber
+  ros::Subscriber kick_sub;
+  scalar_t last_kick_request_time = -10000.0;
+  bool kick_requested = false;
+  bool kick_planned = false;
+  scalar_t planned_kick_swing_middle_time = -10000.0;
+  bool kick_leg; // 0 for left and 1 for right
+
+
   BufferedValue<vector3_t> swing_cmd_buf_;
   int gaitLevel_ = 0;
 
