@@ -1,0 +1,8 @@
+<launch>
+    <param name="motorlistFile" value="/home/gr1p24ap0039/RoCS/bin/MotorList/sources/motorlist.json"/>
+
+    <rosparam file="$(find gr1_hardware_interface)/config/gr1.yaml" command="load"/>
+
+    <node name="gr1_head_controller" pkg="gr1_hardware_interface" type="HeadController" respawn="false"
+          clear_params="true" output="screen"/>
+</launch>

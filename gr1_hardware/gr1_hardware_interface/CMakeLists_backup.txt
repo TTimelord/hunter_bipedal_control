@@ -56,15 +56,6 @@ target_link_libraries(${PROJECT_NAME}
         ${Threads_LIBRARIES}
         ${CMAKE_CURRENT_SOURCE_DIR}/lib/parallel_ankle/libParallelAnkle.so
         )
-        
-add_executable(HeadController
-        src/HeadController.cpp
-        )
-                
-target_link_libraries(HeadController
-        ${catkin_LIBRARIES}
-        ${Threads_LIBRARIES}
-        )
 
 #########################
 ###   CLANG TOOLING   ###
@@ -95,11 +86,4 @@ install(TARGETS ${PROJECT_NAME}
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
         FILES_MATCHING PATTERN "*.h"
-        )
-        
-# Mark executables and/or libraries for installation
-install(TARGETS HeadController
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         )
