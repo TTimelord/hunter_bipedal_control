@@ -142,7 +142,7 @@ private:
     std::vector<double> min_angles = { -50.0,  0.0, -45.0};  // degree
     std::vector<double> max_angles = { 0.0, 50.0, 45.0}; // degree
     std::vector<FSA_CONNECT::FSA> head_fsa_motor_controllers = std::vector<FSA_CONNECT::FSA>(3);
-    const double max_velocity = 15.0;
+    const double max_velocity = 30.0;
     const double frequency = 500; // Hz
     const double period = 1.0 / frequency;
     std::string motorlistFile;

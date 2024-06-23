@@ -13,6 +13,8 @@
 
     <rosparam file="$(find gr1_hardware_interface)/config/gr1.yaml" command="load"/>
 
+    <node name="gr1_head_controller" pkg="gr1_hardware_interface" type="HeadController" respawn="false" output="screen"/>
+
     <node name="gr1_hardware_interface" pkg="gr1_hardware_interface" type="gr1_hardware_interface" respawn="false"
           clear_params="true" output="screen"/>
 </launch>
