@@ -203,7 +203,7 @@ Q
   (8,8)   1500.0    ; p_base_z
   (9,9)   100.0    ; theta_base_z
   (10,10) 500.0    ; theta_base_y
-  (11,11) 500.0    ; theta_base_x
+  (11,11) 3000.0    ; theta_base_x
  
   ;; Leg Joint Positions: [L, R] ;;
   (12,12)  10.0     ; leg_l1_joint
