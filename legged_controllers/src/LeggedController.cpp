@@ -346,11 +346,13 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   x.setZero(6+jointDim_+6*3+jointDim_);
   if(loadControllerFlag_){
     x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+    if(setWalkFlag_){
     csvFile << currentObservation_.time << ",";
     for (int i=0;i<currentObservation_.state.size();i++){
       csvFile << currentObservation_.state(i)<< ",";
     }
     csvFile << std::endl;
+    }
   }
   const vector_t& wbc_planned_torque = x.tail(jointDim_);
   const vector_t& wbc_planned_joint_acc = x.segment(6, jointDim_);
