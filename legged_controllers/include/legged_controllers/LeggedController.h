@@ -162,6 +162,10 @@ private:
   scalar_t comHeight_;
 
   InverseKinematics inverseKinematics_;
+
+  std::ofstream csvFile;
+  std::string filename;
+
 };
 
 }  // namespace legged

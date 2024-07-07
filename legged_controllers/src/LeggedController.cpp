@@ -120,6 +120,23 @@ bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHand
   joint_state_gr1.velocity.resize(jointDim_);
   joint_state_gr1.position.resize(jointDim_);
 
+  // csv log file
+  std::time_t now = std::time(nullptr);
+  std::tm* timeInfo = std::localtime(&now);
+  char timeStr[20];
+  std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d_%H-%M-%S", timeInfo);
+  const char* homeDir = getenv("HOME");
+  if (homeDir == nullptr) {
+      std::cerr << "Failed to get home directory." << std::endl;
+      std::exit(EXIT_FAILURE);
+  }
+  filename = std::string(homeDir) + "/mpc_log/output_" + std::string(timeStr) + ".csv";
+  csvFile.open(filename, std::ios::out);
+  if (!csvFile.is_open()) {
+    std::cerr << "Failed to open the file for writing: " << filename << std::endl;
+    // throw std::runtime_error("Unable to open file for writing.");
+    std::exit(EXIT_FAILURE);
+  }
   return true;
 }
 
@@ -329,6 +346,11 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   x.setZero(6+jointDim_+6*3+jointDim_);
   if(loadControllerFlag_){
     x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+    csvFile << currentObservation_.time << ",";
+    for (int i=0;i<currentObservation_.state.size();i++){
+      csvFile << currentObservation_.state(i)<< ",";
+    }
+    csvFile << std::endl;
   }
   const vector_t& wbc_planned_torque = x.tail(jointDim_);
   const vector_t& wbc_planned_joint_acc = x.segment(6, jointDim_);
@@ -567,6 +589,11 @@ LeggedController::~LeggedController()
   std::cerr << "\n### WBC Benchmarking";
   std::cerr << "\n###   Maximum : " << wbcTimer_.getMaxIntervalInMilliseconds() << "[ms].";
   std::cerr << "\n###   Average : " << wbcTimer_.getAverageInMilliseconds() << "[ms].";
+
+  if (csvFile.is_open()) {
+      csvFile.close();
+      ROS_INFO("log file saved");
+  }
 }
 
 void LeggedController::setupLeggedInterface(const std::string& taskFile, const std::string& urdfFile,
