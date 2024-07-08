@@ -87,6 +87,8 @@ protected:
   vector_t measuredRbdState_;
   std::shared_ptr<StateEstimateBase> stateEstimate_;
   std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
+  vector3_t last_linear_velocity;
+  scalar_t linear_velocity_lpf_ratio;
 
   // Whole Body Control
   std::shared_ptr<WbcBase> wbc_;

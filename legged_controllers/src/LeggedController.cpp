@@ -574,6 +574,9 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
   currentObservation_.time = time.toSec();
   scalar_t yawLast = currentObservation_.state(9);
   currentObservation_.state.head(stateDim_) = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+  currentObservation_.state.segment<3>(3) = linear_velocity_lpf_ratio*currentObservation_.state.segment<3>(3) + (1-linear_velocity_lpf_ratio)*last_linear_velocity;
+  last_linear_velocity = currentObservation_.state.segment<3>(3);
+
   currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
   currentObservation_.mode = stateEstimate_->getMode();
 
@@ -674,6 +677,8 @@ void LeggedController::setupStateEstimate(const std::string& taskFile, bool verb
   stateEstimate_->loadSettings(taskFile, verbose);
   dynamic_cast<KalmanFilterEstimate&>(*stateEstimate_).loadSettings(taskFile, verbose);
   currentObservation_.time = 0;
+  last_linear_velocity.setZero();
+  linear_velocity_lpf_ratio = 0.5;
 }
 
 void LeggedController::dynamicParamCallback(legged_controllers::TutorialsConfig& config, uint32_t level)
