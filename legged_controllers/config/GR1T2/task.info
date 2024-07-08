@@ -30,7 +30,7 @@ swing_trajectory_config
   feet_bias_y                   0.2
   feet_bias_z                  -0.88
   
-  next_stance_position_z        0.0
+  next_position_z               0
 }
 
 ; DDP settings
