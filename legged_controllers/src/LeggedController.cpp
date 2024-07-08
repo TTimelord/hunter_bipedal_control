@@ -509,7 +509,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
   vector_t jointPos(hybridJointHandles_.size()), jointVel(hybridJointHandles_.size()),
       jointTor(hybridJointHandles_.size());
   Eigen::Quaternion<scalar_t> quat;
-  contact_flag_t cmdContactFlag;
+  contact_flag_t cmdContactFlag, cmdContactFlagBefore, delayedContactFlag;
   vector3_t angularVel, linearAccel;
   matrix3_t orientationCovariance, angularVelCovariance, linearAccelCovariance;
 
@@ -522,6 +522,19 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
 
   cmdContactFlag = modeNumber2StanceLeg(
       mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time));
+
+  cmdContactFlagBefore = modeNumber2StanceLeg(
+    mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time - 0.05));
+
+  for(size_t i = 0; i < cmdContactFlag.size(); ++i){
+    if(cmdContactFlag[i] && cmdContactFlagBefore[i]){
+      delayedContactFlag[i] = true;
+    }
+    else{
+      delayedContactFlag[i] = false;
+    }
+  }
+
   if (!firstStartMpc_)
   {
     for (size_t i = 0; i < cmdContactFlag.size(); ++i)
@@ -553,7 +566,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
   }
 
   stateEstimate_->updateJointStates(jointPos, jointVel);
-  stateEstimate_->updateContact(cmdContactFlag);
+  stateEstimate_->updateContact(delayedContactFlag);
   stateEstimate_->updateImu(quat, angularVel, linearAccel, orientationCovariance, angularVelCovariance,
                             linearAccelCovariance);
   measuredRbdState_ = stateEstimate_->update(time, period);

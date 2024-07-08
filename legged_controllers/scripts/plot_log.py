@@ -30,10 +30,10 @@ def main():
     file_path = os.path.join(log_dir, file_name)
 
     # indices = [7, 8, 9, 10, 11, 12]
-    # column_names = ['x', 'y', 'z', 'theta_x', 'theta_y', 'theta_z']
+    # column_names = ['x', 'y', 'z', 'theta_z', 'theta_y', 'theta_x']
 
     indices = [1,2,3,4,5,6]
-    column_names = ['v_x', 'y', 'z', 'theta_x', 'theta_y', 'theta_z']
+    column_names = ['v_x', 'y', 'z', 'theta_z', 'theta_y', 'theta_x']
 
     start_time = 0.0
     end_time = 60.0
