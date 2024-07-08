@@ -333,6 +333,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
 
     // std::cout<<"write joint "<<i<<" pos: "<< filtered_pos << "vel: "<< filtered_vel<< "current:" << filtered_current <<"\n";
 
+    #ifndef ESTIMATION_ONLY
     if (filtered_pos - current_motor_pos[i] > 30 || filtered_pos - current_motor_pos[i] < - 30){
       disable_all_motors();
       ROS_ERROR("pos command jump!!!! =========");
@@ -344,6 +345,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
     //         "vel: "<< write_joint_vel[i] - current_motor_vel[i]<< "current:" << current - current_motor_cur[i] <<"\n";
 
     // last_cmd_pos[i] = write_joint_pos[i];
+    #endif
   }
   #ifdef TIMER
   auto write_end_time = std::chrono::steady_clock::now();
