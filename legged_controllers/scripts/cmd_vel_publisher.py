@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import numpy as np
 
 import rospy
@@ -60,6 +60,28 @@ class cmdVelController:
         rospy.spin()
 
 
+class cmdVelContinuousPublisher:
+    def __init__(self) -> None:
+        rospy.init_node('cmd_vel_publisher', anonymous=True)
+        rospy.Subscriber('cmd_vel', Twist, self.callback)
+        self.cmd_vel_pub = rospy.Publisher('cmd_vel_continuous', Twist, queue_size=1)
+        self.cmd_vel = [0.0, 0.0, 0.0] # vx, vy, vtheta
+
+        rate = rospy.Rate(10)
+
+        while not rospy.is_shutdown():
+            vel_msg = Twist()
+            vel_msg.linear.x = self.cmd_vel[0]
+            vel_msg.linear.y = self.cmd_vel[1]
+            vel_msg.angular.z = self.cmd_vel[2]
+            self.cmd_vel_pub.publish(vel_msg)
+            rate.sleep()
+
+    def callback(self, data: Twist):
+        self.cmd_vel[0] = data.linear.x
+        self.cmd_vel[1] = data.linear.y
+        self.cmd_vel[2] = data.angular.z
+
+
 if __name__ == '__main__':
-    controller = cmdVelController()
-    controller.spin()
+    publisher = cmdVelContinuousPublisher()

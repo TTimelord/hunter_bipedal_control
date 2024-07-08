@@ -36,6 +36,8 @@
 
     <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target"
           output="screen"/>
-          
+
+    <node pkg="legged_controllers" type="cmd_vel_publisher.py" name="cmd_vel_publisher"
+          output="screen"/>
 
 </launch>

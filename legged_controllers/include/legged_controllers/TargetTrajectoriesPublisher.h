@@ -143,31 +143,31 @@ public:
     };
 
     goalSub_ = nh.subscribe<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1, goalCallback);
-    cmdVelSub_ = nh.subscribe<geometry_msgs::Twist>("/cmd_vel", 1, cmdVelCallback);
+    cmdVelSub_ = nh.subscribe<geometry_msgs::Twist>("/cmd_vel_continuous", 1, cmdVelCallback);
 
-    auto stance_switch_callback = [this](const std_msgs::Float32::ConstPtr& msg) {
-      if (deadTimeforswitch_ <= 0)
-      {
-        if (!isRunning_)
-        {
-          isAutostance_ = !isAutostance_;
-          std_msgs::Int32 gaitType_;
-          gaitType_.data = isAutostance_ ? 0 : 2;
-          gaitTypepub_.publish(gaitType_);
-        }
-      }
-      deadTimeforswitch_ = 100;
-    };
+    // auto stance_switch_callback = [this](const std_msgs::Float32::ConstPtr& msg) {
+    //   if (deadTimeforswitch_ <= 0)
+    //   {
+    //     if (!isRunning_)
+    //     {
+    //       isAutostance_ = !isAutostance_;
+    //       std_msgs::Int32 gaitType_;
+    //       gaitType_.data = isAutostance_ ? 0 : 2;
+    //       gaitTypepub_.publish(gaitType_);
+    //     }
+    //   }
+    //   deadTimeforswitch_ = 100;
+    // };
 
-    auto start_stance_callback = [this](const geometry_msgs::Point::ConstPtr& msg) {
-      if(!isStance_){
-        isStance_ = true;
-        stance_body_position << msg->x, msg->y, msg->z;
-      }
-    };
+    // auto start_stance_callback = [this](const geometry_msgs::Point::ConstPtr& msg) {
+    //   if(!isStance_){
+    //     isStance_ = true;
+    //     stance_body_position << msg->x, msg->y, msg->z;
+    //   }
+    // };
 
-    stanceSwitchsub_ = nh.subscribe<std_msgs::Float32>("/stance_switch", 1, stance_switch_callback);
-    stanceBodyPositionSub_ = nh.subscribe<geometry_msgs::Point>("/stance_body_position", 1, start_stance_callback);
+    // stanceSwitchsub_ = nh.subscribe<std_msgs::Float32>("/stance_switch", 1, stance_switch_callback);
+    // stanceBodyPositionSub_ = nh.subscribe<geometry_msgs::Point>("/stance_body_position", 1, start_stance_callback);
   }
 
 private:
