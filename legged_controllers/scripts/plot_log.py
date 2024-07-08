@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 
 def read_csv_numpy(file_path):
-    data = np.genfromtxt(file_path, delimiter=',', skip_header=1)
+    data = np.genfromtxt(file_path, delimiter=',', skip_header=1, skip_footer=1)
     return data
 
 def plot_data(data, indices, column_names):
@@ -41,6 +41,7 @@ def main():
     data = read_csv_numpy(file_path)
 
     selected_data = data[:-400, :]
+    # selected_data = selected_data[7000:, :]
 
     plot_data(selected_data, indices, column_names)
 
