@@ -32,16 +32,24 @@ def main():
     # indices = [7, 8, 9, 10, 11, 12]
     # column_names = ['x', 'y', 'z', 'theta_z', 'theta_y', 'theta_x']
 
-    indices = [1,2,3,4,5,6]
-    column_names = ['v_x', 'y', 'z', 'theta_z', 'theta_y', 'theta_x']
+    # indices = [1,2,3,4,5,6]
+    # column_names = ['v_x', 'y', 'z', 'theta_z', 'theta_y', 'theta_x']
+
+    # indices = [13,14,15,16,17,18]
+    # column_names = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6']
+
+    indices = [19,20,21,22,23,24]
+    column_names = ['v_l1', 'l2', 'l3', 'l4', 'l5', 'l6']
 
     start_time = 0.0
     end_time = 60.0
 
     data = read_csv_numpy(file_path)
 
-    selected_data = data[:-400, :]
-    # selected_data = selected_data[7000:, :]
+    selected_start_time = 0
+    selected_end_time = 20
+    frequency = 400
+    selected_data = data[selected_start_time*frequency:selected_end_time*frequency, :]
 
     plot_data(selected_data, indices, column_names)
 

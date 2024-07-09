@@ -183,7 +183,7 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
   // Evaluate the current policy
   vector_t optimizedState(stateDim_), optimizedInput(inputDim_);
 
-  size_t plannedMode = 0;
+  size_t plannedMode = 3;
   bool mpc_updated_ = false;
   if (firstStartMpc_)
   {
@@ -350,6 +350,9 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
     csvFile << currentObservation_.time << ",";
     for (int i=0;i<currentObservation_.state.size();i++){
       csvFile << currentObservation_.state(i)<< ",";
+    }
+    for (int i=0; i<hybridJointHandles_.size();i++){
+      csvFile << hybridJointHandles_[i].getVelocity()<< ",";;
     }
     csvFile << std::endl;
     }
