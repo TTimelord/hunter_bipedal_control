@@ -256,7 +256,7 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
     // joint_state_gr1.velocity[i] = current_motor_vel[i];
     // joint_state_gr1.effort[i] = current_motor_cur[i];
 
-    std::cerr<<"read motor "<<i<<" pos: "<< current_motor_pos[i] << "vel: "<< current_motor_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
+    // std::cerr<<"read motor "<<i<<" pos: "<< current_motor_pos[i] << "vel: "<< current_motor_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
   // debug_joint_pub.publish(joint_state_gr1);
 

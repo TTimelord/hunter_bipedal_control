@@ -219,8 +219,8 @@ void ch108IMU::dump_data_packet(raw_t *raw)
             vel(0)*M_PI/180,
             vel(1)*M_PI/180,
             vel(2)*M_PI/180,
-            raw->imu[0].acc[1]*(-9.81), 
-            raw->imu[0].acc[0]*(-9.81), 
+            -raw->imu[0].acc[1]*(-9.81), 
+            -raw->imu[0].acc[0]*(-9.81), 
             raw->imu[0].acc[2]*(-9.81);
     
 }
