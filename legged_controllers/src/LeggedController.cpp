@@ -737,13 +737,18 @@ void LeggedController::EmergencyStopCallback(const std_msgs::Float32::ConstPtr& 
 
 void LeggedController::setWalkCallback(const std_msgs::Float32::ConstPtr& msg)
 {
-  setWalkFlag_ = true;
-  ROS_INFO("Set WALK Mode");
+  if(mpcRunning_){
+    loadControllerFlag_ = true;
+    setWalkFlag_ = true;
+    ROS_INFO("Set WALK Mode");
+  }
+  else{
+    ROS_WARN("Load controller first!!");
+  }
 }
 
 void LeggedController::loadControllerCallback(const std_msgs::Float32::ConstPtr& msg)
 {
-  loadControllerFlag_ = true;
   mpcRunning_ = true;
   ROS_INFO("Successfully load the controller");
 }
