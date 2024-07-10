@@ -79,7 +79,7 @@ ddp
 sqp
 {
   nThreads                              8
-  dt                                    0.015
+  dt                                    0.01
   sqpIteration                          1
   deltaTol                              1e-4
   g_max                                 1e-2
@@ -141,7 +141,7 @@ rollout
 
 mpc
 {
-  timeHorizon                     1.0  ; [s]
+  timeHorizon                     1.2  ; [s]
   solutionTimeWindow              -1   ; maximum [s]
   coldStart                       false
 
@@ -172,15 +172,15 @@ initialState
    ;; Leg Joint Positions: [LF, LH, RF, RH] ;
    (12,0)   0.00   ; leg_l1_joint
    (13,0)   0.00   ; leg_l2_joint
-   (14,0)  -0.5   ; leg_l3_joint
-   (15,0)   1.0   ; leg_l4_joint
-   (16,0)  -0.5   ; leg_l5_joint
+   (14,0)  -0.35   ; leg_l3_joint
+   (15,0)   0.7    ; leg_l4_joint
+   (16,0)  -0.35   ; leg_l5_joint
    (17,0)   0.00   ; leg_l6_joint
    (18,0)   0.00   ; leg_r1_joint
    (19,0)   0.00   ; leg_r2_joint
-   (20,0)  -0.5   ; leg_r3_joint
-   (21,0)   1.0   ; leg_r4_joint
-   (22,0)  -0.5   ; leg_r5_joint
+   (20,0)  -0.35   ; leg_r3_joint
+   (21,0)   0.7    ; leg_r4_joint
+   (22,0)  -0.35   ; leg_r5_joint
    (23,0)   0.00   ; leg_r6_joint
 }
 
@@ -240,12 +240,12 @@ R
   (10,10) 5.0    ; right_force
   (11,11) 5.0    ; right_force
   ;; Third Feet Contact Forces: [L, R]
-  (12,12)   2.5    ; left_force
-  (13,13)   2.5    ; left_force
-  (14,14)   2.5    ; left_force
-  (15,15)   2.5    ; right_force
-  (16,16)   2.5    ; right_force
-  (17,17)   2.5    ; right_force
+  (12,12)   5.0    ; left_force
+  (13,13)   5.0    ; left_force
+  (14,14)   5.0    ; left_force
+  (15,15)   5.0    ; right_force
+  (16,16)   5.0    ; right_force
+  (17,17)   5.0    ; right_force
 
   ;; left foot velocity relative to base: [linear(3), angular(3)] (uses the Jacobian at nominal configuration) ;;
   (18,18)   2000.0   ; x
@@ -360,12 +360,12 @@ stanceModeParams
 ; State Estimation
 kalmanFilter
 {
-    footRadius                  0.01
-    imuProcessNoisePosition     0.02
-    imuProcessNoiseVelocity     0.02
-    footProcessNoisePosition    0.5
-    footSensorNoisePosition     0.5
-    footSensorNoiseVelocity     0.1
+    footRadius                  0.0
+    imuProcessNoisePosition     0.2
+    imuProcessNoiseVelocity     0.2
+    footProcessNoisePosition    0.05
+    footSensorNoisePosition     0.02
+    footSensorNoiseVelocity     0.05
     footHeightSensorNoise       0.01
 }
 
