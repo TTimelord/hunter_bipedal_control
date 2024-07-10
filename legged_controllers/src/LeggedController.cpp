@@ -527,7 +527,7 @@ void LeggedController::updateStateEstimation(const ros::Time& time, const ros::D
       mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time));
 
   cmdContactFlagBefore = modeNumber2StanceLeg(
-    mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time - 0.07));
+    mpcMrtInterface_->getReferenceManager().getModeSchedule().modeAtTime(currentObservation_.time - 0.05));
 
   for(size_t i = 0; i < cmdContactFlag.size(); ++i){
     if(cmdContactFlag[i] && cmdContactFlagBefore[i]){
@@ -681,7 +681,7 @@ void LeggedController::setupStateEstimate(const std::string& taskFile, bool verb
   dynamic_cast<KalmanFilterEstimate&>(*stateEstimate_).loadSettings(taskFile, verbose);
   currentObservation_.time = 0;
   last_linear_velocity.setZero();
-  linear_velocity_lpf_ratio = 0.3;
+  linear_velocity_lpf_ratio = 1.0;
 }
 
 void LeggedController::dynamicParamCallback(legged_controllers::TutorialsConfig& config, uint32_t level)

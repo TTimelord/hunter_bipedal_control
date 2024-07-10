@@ -158,8 +158,8 @@ private:
   std::vector<double> last_cmd_cur = std::vector<double>(TOTAL_JOINT_NUM+3);
 
   const double cur_lpf_ratio = 0.1;
-  const double pos_lpf_ratio = 0.3;
-  const double vel_lpf_ratio = 0.05;
+  const double pos_lpf_ratio = 1.0;
+  const double vel_lpf_ratio = 0.1;
 
   const std::vector<double> current_bound = {7, 9, 45, 45, 2.4, 2.4, 7, 9, 45, 45, 2.4, 2.4};
 
