@@ -78,8 +78,8 @@ ddp
 ; Multiple_Shooting SQP settings
 sqp
 {
-  nThreads                              6
-  dt                                    0.015
+  nThreads                              8
+  dt                                    0.01
   sqpIteration                          1
   deltaTol                              1e-4
   g_max                                 1e-2
@@ -141,7 +141,7 @@ rollout
 
 mpc
 {
-  timeHorizon                     1.0  ; [s]
+  timeHorizon                     1.2  ; [s]
   solutionTimeWindow              -1   ; maximum [s]
   coldStart                       false
 
@@ -164,7 +164,7 @@ initialState
    ;; Base Pose: [position, orientation] ;;
    (6,0)  0.0     ; p_base_x
    (7,0)  0.0     ; p_base_y
-   (8,0)  0.88    ; p_base_z
+   (8,0)  0.94    ; p_base_z
    (9,0)  0.0     ; theta_base_z
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
@@ -172,15 +172,15 @@ initialState
    ;; Leg Joint Positions: [LF, LH, RF, RH] ;
    (12,0)   0.00   ; leg_l1_joint
    (13,0)   0.00   ; leg_l2_joint
-   (14,0)  -0.5   ; leg_l3_joint
-   (15,0)   1.0   ; leg_l4_joint
-   (16,0)  -0.5   ; leg_l5_joint
+   (14,0)  -0.35   ; leg_l3_joint
+   (15,0)   0.7    ; leg_l4_joint
+   (16,0)  -0.35   ; leg_l5_joint
    (17,0)   0.00   ; leg_l6_joint
    (18,0)   0.00   ; leg_r1_joint
    (19,0)   0.00   ; leg_r2_joint
-   (20,0)  -0.5   ; leg_r3_joint
-   (21,0)   1.0   ; leg_r4_joint
-   (22,0)  -0.5   ; leg_r5_joint
+   (20,0)  -0.35   ; leg_r3_joint
+   (21,0)   0.7    ; leg_r4_joint
+   (22,0)  -0.35   ; leg_r5_joint
    (23,0)   0.00   ; leg_r6_joint
 }
 
@@ -360,11 +360,11 @@ stanceModeParams
 kalmanFilter
 {
     footRadius                  0.0
-    imuProcessNoisePosition     2.0
-    imuProcessNoiseVelocity     2.0
-    footProcessNoisePosition    0.01
+    imuProcessNoisePosition     0.1
+    imuProcessNoiseVelocity     0.1
+    footProcessNoisePosition    0.05
     footSensorNoisePosition     0.02
-    footSensorNoiseVelocity     0.02
+    footSensorNoiseVelocity     0.05
     footHeightSensorNoise       0.01
 }
 
