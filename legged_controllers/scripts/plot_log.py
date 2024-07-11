@@ -26,7 +26,7 @@ def plot_data(data, indices, column_names):
 
 def main():
     log_dir = os.path.join(os.path.expanduser('~'), 'mpc_log')
-    file_name = 'output_2024-07-07_21-25-26.csv'
+    file_name = 'output_2024-07-11_14-22-03.csv'
     file_path = os.path.join(log_dir, file_name)
 
     # indices = [7, 8, 9, 10, 11, 12]
@@ -38,18 +38,19 @@ def main():
     # indices = [13,14,15,16,17,18]
     # column_names = ['l1', 'l2', 'l3', 'l4', 'l5', 'l6']
 
-    indices = [19,20,21,22,23,24]
-    column_names = ['v_l1', 'l2', 'l3', 'l4', 'l5', 'l6']
+    # indices = [25,26,27,28,29,30]
+    # column_names = ['v_l1', 'l2', 'l3', 'l4', 'l5', 'l6']
 
-    start_time = 0.0
-    end_time = 60.0
+    indices = [37,38,39,40,41,42]
+    column_names = ['error_l1', 'l2', 'l3', 'l4', 'l5', 'l6']
 
     data = read_csv_numpy(file_path)
 
     selected_start_time = 0
-    selected_end_time = 20
+    selected_end_time = 15
     frequency = 400
     selected_data = data[selected_start_time*frequency:selected_end_time*frequency, :]
+    selected_data[:, 37:43] = selected_data[:, 13:19] - selected_data[:, 37:43]
 
     plot_data(selected_data, indices, column_names)
 

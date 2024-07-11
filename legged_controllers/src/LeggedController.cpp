@@ -352,7 +352,10 @@ void LeggedController::update(const ros::Time& time, const ros::Duration& period
       csvFile << currentObservation_.state(i)<< ",";
     }
     for (int i=0; i<hybridJointHandles_.size();i++){
-      csvFile << hybridJointHandles_[i].getVelocity()<< ",";;
+      csvFile << hybridJointHandles_[i].getVelocity()<< ",";
+    }
+    for (int i=0; i<hybridJointHandles_.size();i++){
+      csvFile << hybridJointHandles_[i].getPositionDesired()<< ",";
     }
     csvFile << std::endl;
     }
