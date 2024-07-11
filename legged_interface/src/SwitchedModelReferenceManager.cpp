@@ -255,7 +255,7 @@ void SwitchedModelReferenceManager::SwitchGait(scalar_t initTime, scalar_t final
     if(stance_flag){
       printf("start to trot\n");
       auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
-      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer+0.8, finalTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(trot, inserTimer+0.81, finalTime);
       stance_flag = false;
     }
   }
@@ -265,7 +265,7 @@ void SwitchedModelReferenceManager::SwitchGait(scalar_t initTime, scalar_t final
     {
       ROS_INFO("start to stance");
       auto inserTimer = findInsertModeSequenceTemplateTimer(modeSchedule, initTime);
-      gaitSchedulePtr_->insertModeSequenceTemplate(stance, inserTimer+0.8, finalTime);
+      gaitSchedulePtr_->insertModeSequenceTemplate(stance, inserTimer+0.81, finalTime);
       stance_flag = true;
     }
     else{
