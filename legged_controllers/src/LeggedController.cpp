@@ -687,8 +687,8 @@ void LeggedController::setupStateEstimate(const std::string& taskFile, bool verb
   currentObservation_.time = 0;
   last_linear_velocity.setZero();
   last_angular_velocity.setZero();
-  linear_velocity_lpf_ratio = 0.3;
-  angular_velocity_lpf_ratio = 0.3;
+  linear_velocity_lpf_ratio = 1.0;
+  angular_velocity_lpf_ratio = 1.0;
 }
 
 void LeggedController::dynamicParamCallback(legged_controllers::TutorialsConfig& config, uint32_t level)
