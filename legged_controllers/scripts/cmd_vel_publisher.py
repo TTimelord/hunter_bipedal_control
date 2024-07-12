@@ -67,9 +67,18 @@ class cmdVelContinuousPublisher:
         self.cmd_vel_pub = rospy.Publisher('cmd_vel_continuous', Twist, queue_size=1)
         self.cmd_vel = [0.0, 0.0, 0.0] # vx, vy, vtheta
 
+        self.cmd_vel_ub = [0.3, 0.1, 0.7]
+        self.cmd_vel_lb = [-0.2, -0.1, -0.7]
+
         rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
+            for i in range(len(self.cmd_vel)):
+                if self.cmd_vel[i] > self.cmd_vel_ub[i]:
+                    self.cmd_vel[i] = self.cmd_vel_ub[i]
+                elif self.cmd_vel[i] < self.cmd_vel_lb[i]:
+                    self.cmd_vel[i] = self.cmd_vel_lb[i]
+
             vel_msg = Twist()
             vel_msg.linear.x = self.cmd_vel[0]
             vel_msg.linear.y = self.cmd_vel[1]
