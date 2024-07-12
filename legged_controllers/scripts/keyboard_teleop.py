@@ -59,6 +59,8 @@ class Teleop:
         return self._is_running
 
     def _on_press(self, key):
+        if key == Key.esc:  
+            self._is_running = False
         if key.char == ('w'):
             self._command[0] += 0.1
         elif key.char == ('s'):
