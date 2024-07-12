@@ -60,7 +60,7 @@ ModeSequenceTemplate stance(stance_times, stance_modes);
 
 // std::vector<scalar_t> trot_times{ 0.0, 0.4, 0.8 };
 // std::vector<size_t> trot_modes{ 2, 1 };
-std::vector<scalar_t> trot_times{ 0.0, 0.37, 0.4, 0.77, 0.8};
+std::vector<scalar_t> trot_times{ 0.0, 0.35, 0.4, 0.75, 0.8};
 std::vector<size_t> trot_modes{ 2, 3, 1, 3 };
 ModeSequenceTemplate trot(trot_times, trot_modes);
 

@@ -339,7 +339,7 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
       ROS_ERROR("pos command jump!!!! =========");
       exit(1);
     }
-    fsa_list[i].SetPosition(filtered_pos, filtered_vel*0.5, filtered_current);
+    fsa_list[i].SetPosition(filtered_pos, filtered_vel, filtered_current);
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
     // std::cout<<i<<" pos: "<< write_joint_pos[i] - current_motor_pos[i] << 
     //         "vel: "<< write_joint_vel[i] - current_motor_vel[i]<< "current:" << current - current_motor_cur[i] <<"\n";
