@@ -8,6 +8,7 @@
 #include <main.h>
 #include <Eigen/Dense>
 #include <sensor_msgs/JointState.h>
+#include <sensor_msgs/Imu.h>
 
 #define TOTAL_JOINT_NUM 12  // total number of joints for legs
 #define JOINT_NUM 6 // number of joints per leg
@@ -165,6 +166,10 @@ private:
 
   ros::Publisher debug_joint_pub;
   sensor_msgs::JointState joint_state_gr1;
+
+  // IMU
+  sensor_msgs::Imu imu_msg;
+  ros::Publisher imu_pub;
 };
 
 

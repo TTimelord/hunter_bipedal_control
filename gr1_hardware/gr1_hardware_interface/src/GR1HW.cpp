@@ -30,6 +30,9 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
       joint_state_gr1.name[i] = ip_list[i];
   }
 
+  // IMU Pub
+  imu_pub = root_nh.advertise<sensor_msgs::Imu>("imu", 1);
+
   default_joint_pos.setZero(TOTAL_JOINT_NUM+3); // leg + waist
   ocs2::loadData::loadEigenMatrix(referenceFile, "defaultJointState", default_joint_pos);
 
@@ -283,6 +286,20 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   imuData_.linearAcc_[0] = imu.imudata(6);
   imuData_.linearAcc_[1] = imu.imudata(7);
   imuData_.linearAcc_[2] = imu.imudata(8);
+
+  imu_msg.orientation.x = quaternion.coeffs()(0);
+  imu_msg.orientation.y = quaternion.coeffs()(1);
+  imu_msg.orientation.z = quaternion.coeffs()(2);
+  imu_msg.orientation.w = quaternion.coeffs()(3);
+  imu_msg.angular_velocity.x = imu.imudata(3);
+  imu_msg.angular_velocity.y = imu.imudata(4);
+  imu_msg.angular_velocity.z = imu.imudata(5);
+  imu_msg.linear_acceleration.x = imu.imudata(6);
+  imu_msg.linear_acceleration.y = imu.imudata(7);
+  imu_msg.linear_acceleration.z = imu.imudata(8);
+  imu_msg.header.stamp = time;
+
+  imu_pub.publish(imu_msg);
 
   // joint_state_gr1.header.stamp = ros::Time::now();
   // joint_state_gr1.position[0] = imuData_.angularVel_[0];
