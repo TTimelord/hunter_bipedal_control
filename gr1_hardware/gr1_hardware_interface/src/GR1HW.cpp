@@ -10,6 +10,10 @@
 // #define ESTIMATION_ONLY
 // #define TIMER
 
+#ifdef VN
+Eigen::VectorXd vnIMU::imuData{9};
+#endif
+
 namespace legged {
 
 bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
@@ -272,31 +276,38 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
     // std::cout<<"read joint "<<i<<" pos: "<< read_joint_pos[i] << "vel: "<< read_joint_vel[i] << "torq:" << read_joint_torq[i] <<"\n";
   }
 
-  Eigen::Quaterniond quaternion = Eigen::AngleAxisd(imu.imudata(0), Eigen::Vector3d::UnitZ()) *
-                                  Eigen::AngleAxisd(imu.imudata(1), Eigen::Vector3d::UnitY()) *
-                                  Eigen::AngleAxisd(imu.imudata(2), Eigen::Vector3d::UnitX());
+  #ifdef CH
+        common_data_imu = imu.imudata;
+  #endif
+  #ifdef VN
+        common_data_imu = vnIMU::imuData;
+  #endif
+
+  Eigen::Quaterniond quaternion = Eigen::AngleAxisd(common_data_imu(0), Eigen::Vector3d::UnitZ()) *
+                                  Eigen::AngleAxisd(common_data_imu(1), Eigen::Vector3d::UnitY()) *
+                                  Eigen::AngleAxisd(common_data_imu(2), Eigen::Vector3d::UnitX());
   
   imuData_.ori_[0] = quaternion.coeffs()(0);
   imuData_.ori_[1] = quaternion.coeffs()(1);
   imuData_.ori_[2] = quaternion.coeffs()(2);
   imuData_.ori_[3] = quaternion.coeffs()(3);
-  imuData_.angularVel_[0] = imu.imudata(3);
-  imuData_.angularVel_[1] = imu.imudata(4);
-  imuData_.angularVel_[2] = imu.imudata(5);
-  imuData_.linearAcc_[0] = imu.imudata(6);
-  imuData_.linearAcc_[1] = imu.imudata(7);
-  imuData_.linearAcc_[2] = imu.imudata(8);
+  imuData_.angularVel_[0] = common_data_imu(3);
+  imuData_.angularVel_[1] = common_data_imu(4);
+  imuData_.angularVel_[2] = common_data_imu(5);
+  imuData_.linearAcc_[0] = common_data_imu(6);
+  imuData_.linearAcc_[1] = common_data_imu(7);
+  imuData_.linearAcc_[2] = common_data_imu(8);
 
   imu_msg.orientation.x = quaternion.coeffs()(0);
   imu_msg.orientation.y = quaternion.coeffs()(1);
   imu_msg.orientation.z = quaternion.coeffs()(2);
   imu_msg.orientation.w = quaternion.coeffs()(3);
-  imu_msg.angular_velocity.x = imu.imudata(3);
-  imu_msg.angular_velocity.y = imu.imudata(4);
-  imu_msg.angular_velocity.z = imu.imudata(5);
-  imu_msg.linear_acceleration.x = imu.imudata(6);
-  imu_msg.linear_acceleration.y = imu.imudata(7);
-  imu_msg.linear_acceleration.z = imu.imudata(8);
+  imu_msg.angular_velocity.x = common_data_imu(3);
+  imu_msg.angular_velocity.y = common_data_imu(4);
+  imu_msg.angular_velocity.z = common_data_imu(5);
+  imu_msg.linear_acceleration.x = common_data_imu(6);
+  imu_msg.linear_acceleration.y = common_data_imu(7);
+  imu_msg.linear_acceleration.z = common_data_imu(8);
   imu_msg.header.stamp = time;
 
   imu_pub.publish(imu_msg);

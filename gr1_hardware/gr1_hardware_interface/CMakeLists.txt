@@ -42,11 +42,18 @@ include_directories(
         include
         ${catkin_INCLUDE_DIRS}
         ${Threads_INCLUDE_DIRS}
+        include/vnIMU
+)
+
+file(GLOB vn
+     "src/vnIMU/vn/*.cpp"
 )
 
 add_executable(${PROJECT_NAME}
         src/ch108IMU/ch_serial.c
         src/ch108IMU/ch108IMU.cpp
+        src/vnIMU/vnIMU.cpp
+        ${vn}
         src/GR1HW.cpp
         src/gr1_hardware.cpp
         )

@@ -2,7 +2,6 @@
 #include <iostream>
 #include <legged_hw/LeggedHW.h>
 #include <ros/ros.h>
-#include <ch108IMU/ch108IMU.h>
 #include <parallel_ankle/parallel_ankle.h>
 #include <Fsa.h>
 #include <main.h>
@@ -13,6 +12,16 @@
 #define TOTAL_JOINT_NUM 12  // total number of joints for legs
 #define JOINT_NUM 6 // number of joints per leg
 #define PI 3.141592
+
+#define VN
+// #define CH
+
+#ifdef VN
+#include <vnIMU/vnIMU.h>
+#endif
+#ifdef CH
+#include <ch108IMU/ch108IMU.h>
+#endif
 
 // #include <dynamic_reconfigure/server.h>
 
@@ -109,7 +118,14 @@ private:
   std::string referenceFile;
   std::string motorlistFile;
 
-  ch108::ch108IMU imu;
+  Eigen::VectorXd common_data_imu;
+  #ifdef CH
+    ch108::ch108IMU imu;
+  #endif
+  #ifdef VN
+    vnIMU imu;
+  #endif
+
   parallel_ankle funS2P;
 
   std::vector<FSA_CONNECT::FSA> fsa_list = std::vector<FSA_CONNECT::FSA>(TOTAL_JOINT_NUM+3);
