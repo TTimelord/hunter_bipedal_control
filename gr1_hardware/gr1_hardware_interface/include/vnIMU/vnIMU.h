@@ -21,7 +21,7 @@ using namespace vn::xplat;
 class vnIMU
 {
     private:
-        const std::string SensorPort = "/dev/ttyUSB0";
+        const std::string SensorPort = "/dev/ttyUSB1";
         const uint32_t SensorBaudrate = 115200;
         const uint32_t SensorBaudrate2 = 921600;
         VnSensor vs;        
@@ -65,6 +65,11 @@ class vnIMU
                 vec3f ypr = p.extractVec3f();
                 vec3f dypr = p.extractVec3f();
                 vec3f acc = p.extractVec3f();
+                // for (int i=0; i<3; ++i){
+                //     vnIMU::imuData(i) = (ypr[i]/180.0)*M_PI;
+                //     vnIMU::imuData(i+3) = dypr[i];
+                //     vnIMU::imuData(i+6) = acc[i];
+                // }
                 for (int i=0; i<3; ++i){
                     vnIMU::imuData(i) = (ypr[i]/180.0)*M_PI;
                     vnIMU::imuData(i+3) = dypr[i];

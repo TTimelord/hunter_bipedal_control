@@ -7,12 +7,12 @@
 #include <thread>
 #include <FsaConfig.h>
 
-// #define ESTIMATION_ONLY
+#define ESTIMATION_ONLY
 // #define TIMER
 
-#ifdef VN
+// #ifdef VN
 Eigen::VectorXd vnIMU::imuData{9};
-#endif
+// #endif
 
 namespace legged {
 
@@ -35,7 +35,7 @@ bool GR1HW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   }
 
   // IMU Pub
-  imu_pub = root_nh.advertise<sensor_msgs::Imu>("imu", 1);
+  imu_pub = root_nh.advertise<sensor_msgs::Imu>("imu_gr1_base", 1);
 
   default_joint_pos.setZero(TOTAL_JOINT_NUM+3); // leg + waist
   ocs2::loadData::loadEigenMatrix(referenceFile, "defaultJointState", default_joint_pos);
@@ -281,6 +281,12 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   #endif
   #ifdef VN
         common_data_imu = vnIMU::imuData;
+        common_data_imu(2) += M_PI;
+        if (common_data_imu(2) > M_PI){
+          common_data_imu(2) -= 2*M_PI;
+        }
+        common_data_imu(1) = -common_data_imu(1);
+
   #endif
 
   Eigen::Quaterniond quaternion = Eigen::AngleAxisd(common_data_imu(0), Eigen::Vector3d::UnitZ()) *
@@ -318,11 +324,11 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   // joint_state_gr1.position[2] =  imuData_.angularVel_[2];
   // debug_joint_pub.publish(joint_state_gr1);
 
-  // std::cout<<imu.imudata(0)<<" "<<imu.imudata(1)<<" "<<imu.imudata(2)<<std::endl;
-  // std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
-  // std::cout<<imuData_.angularVel_[0]<<" "<<imuData_.angularVel_[1]<<" "<<imuData_.angularVel_[2]<<std::endl;
-  // std::cout<<imuData_.linearAcc_[0]<<" "<<imuData_.linearAcc_[1]<<" "<<imuData_.linearAcc_[2]<<std::endl;
-  // std::cout<<"===============\n";
+  std::cout<<common_data_imu(0)<<" "<<common_data_imu(1)<<" "<<common_data_imu(2)<<std::endl;
+  std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
+  std::cout<<imuData_.angularVel_[0]<<" "<<imuData_.angularVel_[1]<<" "<<imuData_.angularVel_[2]<<std::endl;
+  std::cout<<imuData_.linearAcc_[0]<<" "<<imuData_.linearAcc_[1]<<" "<<imuData_.linearAcc_[2]<<std::endl;
+  std::cout<<"===============\n";
   #ifdef TIMER
   auto read_end_time = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(read_end_time - read_start_time);

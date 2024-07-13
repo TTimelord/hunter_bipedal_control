@@ -8,6 +8,8 @@
 #include <Eigen/Dense>
 #include <sensor_msgs/JointState.h>
 #include <sensor_msgs/Imu.h>
+#include <vnIMU/vnIMU.h>
+#include <ch108IMU/ch108IMU.h>
 
 #define TOTAL_JOINT_NUM 12  // total number of joints for legs
 #define JOINT_NUM 6 // number of joints per leg
@@ -15,13 +17,6 @@
 
 #define VN
 // #define CH
-
-#ifdef VN
-#include <vnIMU/vnIMU.h>
-#endif
-#ifdef CH
-#include <ch108IMU/ch108IMU.h>
-#endif
 
 // #include <dynamic_reconfigure/server.h>
 
