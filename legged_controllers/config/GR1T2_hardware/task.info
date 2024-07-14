@@ -30,7 +30,7 @@ swing_trajectory_config
   feet_bias_y                   0.15
   feet_bias_z                  -0.88
   
-  next_position_z               0.0
+  next_position_z               0.005
 }
 
 ; DDP settings
@@ -364,7 +364,7 @@ kalmanFilter
     imuProcessNoiseVelocity     0.01
     footProcessNoisePosition    0.01
     footSensorNoisePosition     0.01
-    footSensorNoiseVelocity     0.2
+    footSensorNoiseVelocity     0.05
     footHeightSensorNoise       0.01
 }
 

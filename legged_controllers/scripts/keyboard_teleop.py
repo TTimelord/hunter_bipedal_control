@@ -62,13 +62,13 @@ class Teleop:
         if key == Key.esc:  
             self._is_running = False
         if key.char == ('w'):
-            self._command[0] += 0.1
+            self._command[0] += 0.05
         elif key.char == ('s'):
-            self._command[0] -= 0.1
+            self._command[0] -= 0.05
         elif key.char == ('d'):
-            self._command[1] += 0.05
-        elif key.char == ('a'):
             self._command[1] -= 0.05
+        elif key.char == ('a'):
+            self._command[1] += 0.05
         elif key.char == ('q'):
             self._command[2] += 0.1
         elif key.char == ('e'):
@@ -90,7 +90,7 @@ def main():
     while teleop.is_running():
         teleop.publish()
         print("\033[H\033[J", end="")
-        print(f"cmd_vel:\n {teleop._command[0]}\n{teleop._command[1]}\n{teleop._command[2]}")
+        print("cmd_vel:\n {:.3f}\n{:.3f}\n{:.3f}".format(teleop._command[0],teleop._command[1],teleop._command[2]))
         rate.sleep()
 
     return 0
