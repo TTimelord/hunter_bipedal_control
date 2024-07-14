@@ -45,3 +45,10 @@ http://lcm-proj.github.io/lcm/content/build-instructions.html#build-instructions
 ```
 catkin build legged_mujoco mujoco
 ```
+
+# ROS setup
+```bash
+# ros connection
+export ROS_HOSTNAME=192.168.137.252
+export ROS_MASTER_URI=http://192.168.137.252:11311
+```
