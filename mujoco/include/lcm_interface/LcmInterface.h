@@ -10,7 +10,7 @@
 
 #include <mujoco/mujoco.h>
 #include <chrono>
-
+#include <random>
 
 class MujocoLcm{
 
@@ -52,4 +52,7 @@ public:
     void joinLCMThread() {
         pthread_join(lcmThread_, NULL);
     }
+
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution;
 };

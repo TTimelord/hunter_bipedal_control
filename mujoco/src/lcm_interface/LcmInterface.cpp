@@ -12,6 +12,10 @@ MujocoLcm::MujocoLcm(/* args */)
         // 处理初始化失败的情况
     }
     lcm_.subscribe("LOWCMD", &MujocoLcm::HandleLowCmd, this);
+
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(seed);
+    std::normal_distribution<double> distribution(0.0, 1.0);
 }
 
 MujocoLcm::~MujocoLcm()
@@ -54,21 +58,23 @@ void MujocoLcm::SetSend(const mjData * d) {
     sendState_.quaternion[2] = d->qpos[5];
     sendState_.quaternion[3] = d->qpos[6];
 
-    sendState_.accelerometer[0] = d->sensordata[0];
-    sendState_.accelerometer[1] = d->sensordata[1];
-    sendState_.accelerometer[2] = d->sensordata[2];
+    const double sigma_acc = 0.05;
+    sendState_.accelerometer[0] = d->sensordata[0]*1 + distribution(generator)*sigma_acc;
+    sendState_.accelerometer[1] = d->sensordata[1]*1 + distribution(generator)*sigma_acc;
+    sendState_.accelerometer[2] = d->sensordata[2]*1 + distribution(generator)*sigma_acc;
 
-    sendState_.gyroscope[0] = d->sensordata[3];
-    sendState_.gyroscope[1] = d->sensordata[4];
-    sendState_.gyroscope[2] = d->sensordata[5];
+    const double sigma_angular_vel = 0.01;
+    sendState_.gyroscope[0] = d->sensordata[3] + distribution(generator)*sigma_angular_vel;
+    sendState_.gyroscope[1] = d->sensordata[4] + distribution(generator)*sigma_angular_vel;
+    sendState_.gyroscope[2] = d->sensordata[5] + distribution(generator)*sigma_angular_vel;
 
 
     for (size_t i = 0; i < 12; i++)
     {
         // sendState_.joint_pos[i] = d->qpos[7+i];
         // sendState_.joint_vel[i] = d->qvel[6+i];
-        sendState_.joint_pos[i] = d->sensordata[6+i];
-        sendState_.joint_vel[i] = d->sensordata[18+i];
+        sendState_.joint_pos[i] = d->sensordata[6+i] + distribution(generator)*0.005;
+        sendState_.joint_vel[i] = d->sensordata[18+i] + distribution(generator)*0.01;
         sendState_.joint_torque[i] = d->qfrc_applied[i];
     }
 
