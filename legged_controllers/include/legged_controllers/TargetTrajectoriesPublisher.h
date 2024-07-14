@@ -91,6 +91,8 @@ public:
       cmdGoal[4] = q.toRotationMatrix().eulerAngles(0, 1, 2).y();
       cmdGoal[5] = q.toRotationMatrix().eulerAngles(0, 1, 2).x();
 
+      ROS_INFO("cmdGoal %f, %f, %f", cmdGoal[0], cmdGoal[1], cmdGoal[3]);
+
       const auto trajectories = goalToTargetTrajectories_(cmdGoal, latestObservation_);
       targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);
     };

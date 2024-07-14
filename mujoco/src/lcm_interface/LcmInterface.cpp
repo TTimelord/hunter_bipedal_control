@@ -58,12 +58,12 @@ void MujocoLcm::SetSend(const mjData * d) {
     sendState_.quaternion[2] = d->qpos[5];
     sendState_.quaternion[3] = d->qpos[6];
 
-    const double sigma_acc = 0.05;
+    const double sigma_acc = 0.01;
     sendState_.accelerometer[0] = d->sensordata[0]*1 + distribution(generator)*sigma_acc;
     sendState_.accelerometer[1] = d->sensordata[1]*1 + distribution(generator)*sigma_acc;
     sendState_.accelerometer[2] = d->sensordata[2]*1 + distribution(generator)*sigma_acc;
 
-    const double sigma_angular_vel = 0.01;
+    const double sigma_angular_vel = 0.001;
     sendState_.gyroscope[0] = d->sensordata[3] + distribution(generator)*sigma_angular_vel;
     sendState_.gyroscope[1] = d->sensordata[4] + distribution(generator)*sigma_angular_vel;
     sendState_.gyroscope[2] = d->sensordata[5] + distribution(generator)*sigma_angular_vel;
@@ -73,7 +73,7 @@ void MujocoLcm::SetSend(const mjData * d) {
     {
         // sendState_.joint_pos[i] = d->qpos[7+i];
         // sendState_.joint_vel[i] = d->qvel[6+i];
-        sendState_.joint_pos[i] = d->sensordata[6+i] + distribution(generator)*0.005;
+        sendState_.joint_pos[i] = d->sensordata[6+i] + distribution(generator)*0.001;
         sendState_.joint_vel[i] = d->sensordata[18+i] + distribution(generator)*0.01;
         sendState_.joint_torque[i] = d->qfrc_applied[i];
     }
