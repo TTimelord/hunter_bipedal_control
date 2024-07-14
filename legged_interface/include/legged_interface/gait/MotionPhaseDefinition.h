@@ -71,19 +71,19 @@ inline contact_flag_t modeNumber2StanceLeg(const size_t& modeNumber)
   {
     case 0:
       // stanceLegs = contact_flag_t{ false, false, false, false };
-      stanceLegs = contact_flag_t{ false, false, false, false, false, false};//, false, false};
+      stanceLegs = contact_flag_t{ false, false, false, false, false, false, false, false};
       break;  // 0:
     case 1:
       // stanceLegs = contact_flag_t{ false, true, false, true };
-      stanceLegs = contact_flag_t{ false, true, false, true, false, true};//, false, true };
+      stanceLegs = contact_flag_t{ false, true, false, true, false, true, false, true };
       break;  // 1:
     case 2:
       // stanceLegs = contact_flag_t{ true, false, true, false };
-      stanceLegs = contact_flag_t{ true, false, true, false, true, false};//, true, false };
+      stanceLegs = contact_flag_t{ true, false, true, false, true, false, true, false };
       break;  // 2:
     case 3:
       // stanceLegs = contact_flag_t{ true, true, true, true };
-      stanceLegs = contact_flag_t{ true, true, true, true, true, true};//, true, true };
+      stanceLegs = contact_flag_t{ true, true, true, true, true, true, true, true };
       break;  // 3:
   }
 

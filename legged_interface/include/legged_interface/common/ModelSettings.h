@@ -60,7 +60,7 @@ struct ModelSettings
                                         "r_hip_roll", "r_hip_yaw", "r_hip_pitch", "r_knee_pitch", "r_ankle_pitch", "r_ankle_roll"};
   std::vector<std::string> contactNames6DoF{};
   // std::vector<std::string> contactNames3DoF{"l_foot_toe", "r_foot_toe", "l_foot_heel", "r_foot_heel"};
-  std::vector<std::string> contactNames3DoF{"l_foot_toe_1", "r_foot_toe_1", "l_foot_heel_1", "r_foot_heel_1", "l_foot_toe_2", "r_foot_toe_2"};//, "l_foot_heel_2", "r_foot_heel_2"};
+  std::vector<std::string> contactNames3DoF{"l_foot_toe_1", "r_foot_toe_1", "l_foot_heel_1", "r_foot_heel_1", "l_foot_toe_2", "r_foot_toe_2", "l_foot_heel_2", "r_foot_heel_2"};
 
 };
 
