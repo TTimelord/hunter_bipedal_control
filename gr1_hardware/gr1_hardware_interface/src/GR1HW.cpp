@@ -7,7 +7,7 @@
 #include <thread>
 #include <FsaConfig.h>
 
-#define ESTIMATION_ONLY
+// #define ESTIMATION_ONLY
 // #define TIMER
 
 // #ifdef VN
@@ -286,6 +286,7 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
           common_data_imu(2) -= 2*M_PI;
         }
         common_data_imu(1) = -common_data_imu(1);
+        common_data_imu(0) = -common_data_imu(0);
 
   #endif
 
@@ -318,11 +319,11 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 
   imu_pub.publish(imu_msg);
 
-  // joint_state_gr1.header.stamp = ros::Time::now();
-  // joint_state_gr1.position[0] = imuData_.angularVel_[0];
-  // joint_state_gr1.position[1] =  imuData_.angularVel_[1];
-  // joint_state_gr1.position[2] =  imuData_.angularVel_[2];
-  // debug_joint_pub.publish(joint_state_gr1);
+  joint_state_gr1.header.stamp = ros::Time::now();
+  joint_state_gr1.position[0] = imuData_.angularVel_[0];
+  joint_state_gr1.position[1] =  imuData_.angularVel_[1];
+  joint_state_gr1.position[2] =  imuData_.angularVel_[2];
+  debug_joint_pub.publish(joint_state_gr1);
 
   std::cout<<common_data_imu(0)<<" "<<common_data_imu(1)<<" "<<common_data_imu(2)<<std::endl;
   std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;

@@ -21,7 +21,7 @@ using namespace vn::xplat;
 class vnIMU
 {
     private:
-        const std::string SensorPort = "/dev/ttyUSB1";
+        const std::string SensorPort = "/dev/ttyUSB0";
         const uint32_t SensorBaudrate = 115200;
         const uint32_t SensorBaudrate2 = 921600;
         VnSensor vs;        
