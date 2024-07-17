@@ -72,7 +72,7 @@ class cmdVelContinuousPublisher:
 
         self.last_cmd_vel_time = rospy.get_time()
 
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(1)
 
         while not rospy.is_shutdown():
             for i in range(len(self.cmd_vel)):
