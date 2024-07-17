@@ -70,6 +70,8 @@ class cmdVelContinuousPublisher:
         self.cmd_vel_ub = [0.3, 0.1, 0.7]
         self.cmd_vel_lb = [-0.2, -0.1, -0.7]
 
+        self.last_cmd_vel_time = rospy.get_time()
+
         rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
@@ -78,6 +80,11 @@ class cmdVelContinuousPublisher:
                     self.cmd_vel[i] = self.cmd_vel_ub[i]
                 elif self.cmd_vel[i] < self.cmd_vel_lb[i]:
                     self.cmd_vel[i] = self.cmd_vel_lb[i]
+
+            if (rospy.get_time() > self.last_cmd_vel_time + 5):
+                self.cmd_vel[0] = 0
+                self.cmd_vel[1] = 0
+                self.cmd_vel[2] = 0
 
             vel_msg = Twist()
             vel_msg.linear.x = self.cmd_vel[0]
@@ -90,6 +97,7 @@ class cmdVelContinuousPublisher:
         self.cmd_vel[0] = data.linear.x
         self.cmd_vel[1] = data.linear.y
         self.cmd_vel[2] = data.angular.z
+        self.last_cmd_vel_time = rospy.get_time()
 
 
 if __name__ == '__main__':
