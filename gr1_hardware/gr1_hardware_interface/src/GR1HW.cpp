@@ -319,17 +319,17 @@ void GR1HW::read(const ros::Time& time, const ros::Duration& /*period*/) {
 
   imu_pub.publish(imu_msg);
 
-  joint_state_gr1.header.stamp = ros::Time::now();
-  joint_state_gr1.position[0] = imuData_.angularVel_[0];
-  joint_state_gr1.position[1] =  imuData_.angularVel_[1];
-  joint_state_gr1.position[2] =  imuData_.angularVel_[2];
-  debug_joint_pub.publish(joint_state_gr1);
+  // joint_state_gr1.header.stamp = ros::Time::now();
+  // joint_state_gr1.position[0] = imuData_.angularVel_[0];
+  // joint_state_gr1.position[1] =  imuData_.angularVel_[1];
+  // joint_state_gr1.position[2] =  imuData_.angularVel_[2];
+  // debug_joint_pub.publish(joint_state_gr1);
 
-  std::cout<<common_data_imu(0)<<" "<<common_data_imu(1)<<" "<<common_data_imu(2)<<std::endl;
-  std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
-  std::cout<<imuData_.angularVel_[0]<<" "<<imuData_.angularVel_[1]<<" "<<imuData_.angularVel_[2]<<std::endl;
-  std::cout<<imuData_.linearAcc_[0]<<" "<<imuData_.linearAcc_[1]<<" "<<imuData_.linearAcc_[2]<<std::endl;
-  std::cout<<"===============\n";
+  // std::cout<<common_data_imu(0)<<" "<<common_data_imu(1)<<" "<<common_data_imu(2)<<std::endl;
+  // std::cout<<imuData_.ori_[0]<<" "<<imuData_.ori_[1]<<" "<<imuData_.ori_[2]<<" "<<imuData_.ori_[3]<<std::endl;
+  // std::cout<<imuData_.angularVel_[0]<<" "<<imuData_.angularVel_[1]<<" "<<imuData_.angularVel_[2]<<std::endl;
+  // std::cout<<imuData_.linearAcc_[0]<<" "<<imuData_.linearAcc_[1]<<" "<<imuData_.linearAcc_[2]<<std::endl;
+  // std::cout<<"===============\n";
   #ifdef TIMER
   auto read_end_time = std::chrono::steady_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(read_end_time - read_start_time);
@@ -374,7 +374,14 @@ void GR1HW::write(const ros::Time& time, const ros::Duration& /*period*/) {
       ROS_ERROR("pos command jump!!!! =========");
       exit(1);
     }
-    fsa_list[i].SetPosition(filtered_pos, filtered_vel, filtered_current);
+    const double vel_coeff = 0.75;
+    // if (i == 0 || i == 6){
+    //   vel_coeff = 1.0;
+    // }
+    // else{
+    //   vel_coeff = 0.7;
+    // }
+    fsa_list[i].SetPosition(filtered_pos, filtered_vel*vel_coeff, filtered_current);
     // std::cout<<"write joint "<<i<<" pos: "<< write_joint_pos[i] << "current: "<< current<< "torq:" << write_joint_torq[i] <<"\n";
     // std::cout<<i<<" pos: "<< write_joint_pos[i] - current_motor_pos[i] << 
     //         "vel: "<< write_joint_vel[i] - current_motor_vel[i]<< "current:" << current - current_motor_cur[i] <<"\n";
